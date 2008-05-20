@@ -1,8 +1,12 @@
 package com.atlassian.sal.jira.search;
 
 import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.issue.search.*;
+import com.atlassian.jira.issue.search.SearchContext;
+import com.atlassian.jira.issue.search.SearchContextImpl;
+import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.issue.search.SearchProvider;
+import com.atlassian.jira.issue.search.SearchRequest;
+import com.atlassian.jira.issue.search.SearchRequestManager;
 import com.atlassian.jira.issue.search.managers.IssueSearcherManager;
 import com.atlassian.jira.issue.search.searchers.IssueSearcher;
 import com.atlassian.jira.issue.search.util.QueryCreator;
@@ -18,13 +22,18 @@ import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.message.DefaultMessage;
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.search.BasicSearchMatch;
+import com.atlassian.sal.api.search.query.DefaultQueryParser;
+import com.atlassian.sal.api.search.query.QueryParser;
 import com.atlassian.sal.api.search.SearchMatch;
 import com.atlassian.sal.api.search.SearchResults;
-
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpUtils;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -51,10 +60,11 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
 
     public SearchResults search(String searchQuery)
     {
-        return search(searchQuery, -1);
+        QueryParser queryParser = new DefaultQueryParser(searchQuery);
+        return search(queryParser.getSearchString(), queryParser.getMaxHits());
     }
 
-    public SearchResults search(String searchQuery, int maxHits)
+    private SearchResults search(String searchQuery, int maxHits)
     {
         final ErrorCollection errors = new SimpleErrorCollection();
         SearchRequest searchRequest = createSearchRequest(searchQuery, errors);

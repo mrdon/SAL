@@ -1,13 +1,5 @@
 package com.atlassian.sal.confluence.search;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import com.atlassian.bonnie.Searcher;
 import com.atlassian.bonnie.search.summary.Summary;
 import com.atlassian.confluence.core.Addressable;
@@ -24,10 +16,19 @@ import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.message.DefaultMessage;
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.search.BasicSearchMatch;
+import com.atlassian.sal.api.search.query.DefaultQueryParser;
+import com.atlassian.sal.api.search.query.QueryParser;
 import com.atlassian.sal.api.search.ResourceType;
 import com.atlassian.sal.api.search.SearchMatch;
 import com.atlassian.sal.api.search.SearchProvider;
 import com.atlassian.sal.api.search.SearchResults;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  */
@@ -44,10 +45,11 @@ public class ConfluenceSearchProvider implements SearchProvider
 
     public SearchResults search(String searchQuery)
     {
-        return search(searchQuery, -1);
+        QueryParser queryParser = new DefaultQueryParser(searchQuery);
+        return search(queryParser.getSearchString(), queryParser.getMaxHits());
     }
 
-    public SearchResults search(String searchQuery, int maxHits)
+    private SearchResults search(String searchQuery, int maxHits)
     {
         try
         {
@@ -149,7 +151,7 @@ public class ConfluenceSearchProvider implements SearchProvider
 
     String getExcerpt(String searchQuery, String contentBodyString)
     {
-        if(StringUtils.isBlank(contentBodyString))
+        if (StringUtils.isBlank(contentBodyString))
         {
             return "";
         }
