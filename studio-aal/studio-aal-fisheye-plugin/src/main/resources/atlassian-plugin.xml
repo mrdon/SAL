@@ -1,0 +1,21 @@
+<atlassian-plugin key="com.atlassian.sal.fisheye.fisheye" name="Application Access Layer for FishEye" system="true">
+    <plugin-info>
+        <description>
+            A plugin that links FishEye to other Atlassian applications    
+        </description>
+        <vendor name="Atlassian Software Systems" url="http://www.atlassian.com"/>
+        <version>${pom.version}</version>
+    </plugin-info>
+
+	<spring key="pluginSettingsFactory" class="com.atlassian.sal.fisheye.pluginsettings.FisheyePluginSettingsFactory"/>
+    <spring key="componentLocator" class="com.atlassian.sal.api.component.SpringComponentLocator"/>
+    <spring key="pluginUpgradeManager" class="com.atlassian.sal.api.upgrade.DefaultPluginUpgradeManager"/>
+    <spring key="certificateFactory" class="com.atlassian.sal.fisheye.trusted.FisheyeCertificateFactory"/>
+    <spring key="userManager" class="com.atlassian.sal.fisheye.user.DefaultUserManager"/>
+    <spring key="applicationProperties" class="com.atlassian.sal.fisheye.FisheyeApplicationProperties"/>
+    <spring key="licenseHandler" class="com.atlassian.sal.fisheye.license.FisheyeLicenseHandler" />
+    <spring key="lifecycleManager" class="com.atlassian.sal.fisheye.lifecycle.FisheyeLifecycleManager" />
+    <spring key="readWriteTransactionTemplate" class="com.atlassian.sal.api.transaction.ReadWriteTransactionTemplate" />
+    <spring key="studioScheduler" class="com.atlassian.sal.fisheye.scheduling.FisheyeStudioScheduler" />
+
+</atlassian-plugin>

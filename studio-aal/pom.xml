@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>studio-aal-parent</artifactId>
+    <name>JIRA Studio Application Access Layer POM</name>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>com.atlassian.studio</groupId>
+        <artifactId>studio-parent</artifactId>
+        <version>1.1.1-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+        <jdkLevel>1.5</jdkLevel>
+    </properties>
+
+    <modules>
+        <module>studio-aal-core</module>
+        <module>studio-aal-confluence-plugin</module>
+        <module>studio-aal-jira-plugin</module>
+        <module>studio-aal-fisheye-plugin</module>
+  </modules>
+    <build>
+      <defaultGoal>install</defaultGoal>
+    </build>  
+</project>
