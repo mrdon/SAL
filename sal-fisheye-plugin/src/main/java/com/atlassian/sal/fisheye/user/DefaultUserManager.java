@@ -1,7 +1,7 @@
 package com.atlassian.sal.fisheye.user;
 
-import com.atlassian.sal.api.logging.Logger;
-import com.atlassian.sal.api.logging.LoggerFactory;
+import org.apache.log4j.Logger;
+
 import com.atlassian.sal.api.user.UserManager;
 import com.cenqua.crucible.filters.CrucibleFilter;
 import com.cenqua.fisheye.AppConfig;
@@ -13,7 +13,7 @@ import com.cenqua.fisheye.user.UserLogin;
  */
 public class DefaultUserManager implements UserManager
 {
-    private static final Logger log = LoggerFactory.getLogger(DefaultUserManager.class);
+	private static final Logger log = Logger.getLogger(DefaultUserManager.class);
 
     public String getRemoteUsername()
     {

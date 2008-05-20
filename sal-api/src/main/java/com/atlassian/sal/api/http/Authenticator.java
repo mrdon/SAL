@@ -9,6 +9,7 @@ import java.util.Map;
  * authenticate a connection. An Authenticator typically doesn't do any actual authentication, instead it stores
  * information used in authentication.
  */
+//REVIEW make this an interface and put implementation into sal-core
 public abstract class Authenticator implements Serializable
 {
 

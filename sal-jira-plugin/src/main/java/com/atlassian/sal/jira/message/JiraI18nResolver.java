@@ -7,14 +7,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.web.bean.I18nBean;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.elements.ResourceDescriptor;
-import com.atlassian.sal.api.logging.Logger;
-import com.atlassian.sal.api.logging.LoggerFactory;
 import com.atlassian.sal.api.message.AbstractI18nResolver;
 
 /**
@@ -23,7 +23,7 @@ import com.atlassian.sal.api.message.AbstractI18nResolver;
  */
 public class JiraI18nResolver extends AbstractI18nResolver
 {
-    private static final Logger log = LoggerFactory.getLogger(JiraI18nResolver.class);
+	private static final Logger log = Logger.getLogger(JiraI18nResolver.class);
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final PluginAccessor pluginAccessor;
     private final List<String> pluginResources;

@@ -1,15 +1,13 @@
 package com.atlassian.sal.api.util;
 
-import com.atlassian.sal.api.logging.Logger;
-import com.atlassian.sal.api.logging.LoggerFactory;
-
-import org.apache.commons.lang.StringUtils;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Utility class responsible for loading {@link java.util.Properties} from the classpath or a location
@@ -17,8 +15,7 @@ import java.util.Properties;
  */
 public class PropertiesLoader
 {
-    private static final Logger log = LoggerFactory.getLogger(PropertiesLoader.class);
-
+	private static final Logger log = Logger.getLogger(PropertiesLoader.class);
 
     /**
      * Tries to load properties either from a location provided via a -DpropertiesName.location=/blah/blah.properties

@@ -6,42 +6,20 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>sal-core</artifactId>
+	<artifactId>sal-spring</artifactId>
 	<packaging>jar</packaging>
-	<name>Shared Application Access Layer Core</name>
+	<name>Shared Application Access Layer Spring Implementation</name>
 	<dependencies>
-		<dependency>
-			<groupId>com.atlassian.sal</groupId>
-			<artifactId>sal-api</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>3.8.1</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.0.4</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-			<version>3.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.atlassian.seraph</groupId>
-			<artifactId>atlassian-seraph</artifactId>
-			<version>0.36</version>
-		</dependency>
-		<dependency>
-			<groupId>com.atlassian.plugins</groupId>
-			<artifactId>atlassian-plugins</artifactId>
-			<version>0.16</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

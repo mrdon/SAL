@@ -1,22 +1,28 @@
 package com.atlassian.sal.confluence.scheduling;
 
-import com.atlassian.sal.api.scheduling.StudioScheduler;
-import com.atlassian.sal.api.scheduling.StudioJob;
-import com.atlassian.sal.api.component.ComponentLocator;
-import com.atlassian.sal.api.logging.Logger;
-import com.atlassian.sal.api.logging.LoggerFactory;
-
-import java.util.Map;
 import java.util.Date;
+import java.util.Map;
 
-import org.quartz.*;
+import org.apache.log4j.Logger;
+import org.quartz.Job;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SimpleTrigger;
+
+import com.atlassian.sal.api.component.ComponentLocator;
+import com.atlassian.sal.api.scheduling.StudioJob;
+import com.atlassian.sal.api.scheduling.StudioScheduler;
 
 public class ConfluenceStudioScheduler implements StudioScheduler
 {
 
     private static final String STUDIO_JOB_CLASS_KEY = "studioJobClass";
     private static final String STUDIO_JOB_DATA_MAP_KEY = "studioJobDataMap";
-    private static final Logger log = LoggerFactory.getLogger(ConfluenceStudioScheduler.class);
+    private static final Logger log = Logger.getLogger(ConfluenceStudioScheduler.class);
 
     public void scheduleJob(String name, Class<? extends StudioJob> job, Map jobDataMap, Date startTime,
         long repeatInterval)
@@ -83,7 +89,6 @@ public class ConfluenceStudioScheduler implements StudioScheduler
             job.execute(studioJobMap);
         }
 
-        private static final Logger log = LoggerFactory.getLogger(ConfluenceStudioJob.class);
 
     }
 

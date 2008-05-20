@@ -1,24 +1,28 @@
 package com.atlassian.sal.api.upgrade;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginManager;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
-import com.atlassian.sal.api.logging.Logger;
-import com.atlassian.sal.api.logging.LoggerFactory;
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
-
-import java.util.*;
 
 /**
  * Processes plugin upgrade operations.  Upgrades are triggered by the start lifecycle event.
  */
 public class DefaultPluginUpgradeManager implements PluginUpgradeManager, LifecycleAware
 {
-    private final Logger log = LoggerFactory.getLogger(DefaultPluginUpgradeManager.class);
+	private static final Logger log = Logger.getLogger(DefaultPluginUpgradeManager.class);
 
     /**
 	 * @return map of all upgrade tasks (stored by pluginKey)

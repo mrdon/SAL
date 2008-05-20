@@ -1,13 +1,18 @@
 package com.atlassian.sal.api.upgrade;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
 import com.atlassian.plugin.Plugin;
-import com.atlassian.sal.api.logging.Logger;
-import com.atlassian.sal.api.logging.LoggerFactory;
 import com.atlassian.sal.api.message.DefaultMessage;
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
-
-import java.util.*;
 
 /**
  * Performs an upgrade of a plugin.  Originally copied from Confluence's AbstractUpgradeManager.
@@ -17,7 +22,7 @@ public class PluginUpgrader
 
     public static final String BUILD = ":build";
     protected List<PluginUpgradeTask> upgradeTasks = new ArrayList<PluginUpgradeTask>();
-    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = Logger.getLogger(PluginUpgrader.class);
     protected Plugin plugin;
     protected PluginSettings pluginSettings;
     protected List<Message> errors = new ArrayList<Message>();

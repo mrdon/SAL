@@ -1,11 +1,16 @@
 package com.atlassian.sal.fisheye.scheduling;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import org.apache.log4j.Logger;
+
 import com.atlassian.sal.api.scheduling.StudioJob;
 import com.atlassian.sal.api.scheduling.StudioScheduler;
-import com.atlassian.sal.api.logging.Logger;
-import com.atlassian.sal.api.logging.LoggerFactory;
-
-import java.util.*;
 
 
 public class FisheyeStudioScheduler implements StudioScheduler
@@ -36,11 +41,11 @@ public class FisheyeStudioScheduler implements StudioScheduler
         timer.scheduleAtFixedRate(task, startTime, repeatInterval);
     }
 
-    private class FisheyeStudioTimerTask extends TimerTask
+    private static class FisheyeStudioTimerTask extends TimerTask
     {
         private Class<? extends StudioJob> jobClass;
         private Map jobDataMap;
-        private final Logger log = LoggerFactory.getLogger(FisheyeStudioTimerTask.class);
+        private static final Logger log = Logger.getLogger(FisheyeStudioTimerTask.class);
 
         public void run()
         {

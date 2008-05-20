@@ -1,15 +1,15 @@
 package com.atlassian.sal.api.lifecycle;
 
-import com.atlassian.sal.api.component.ComponentLocator;
-import com.atlassian.sal.api.logging.Logger;
-import com.atlassian.sal.api.logging.LoggerFactory;
-
 import java.util.Collection;
+
+import org.apache.log4j.Logger;
+
+import com.atlassian.sal.api.component.ComponentLocator;
 
 public abstract class DefaultLifecycleManager implements LifecycleManager
 {
     private boolean started = false;
-    private final Logger log = LoggerFactory.getLogger(DefaultLifecycleManager.class);
+    private static final Logger log = Logger.getLogger(DefaultLifecycleManager.class);
 
     public synchronized void start()
     {
@@ -34,7 +34,7 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
                 entry.onStart();
             } catch (RuntimeException ex)
             {
-                log.error("Unable to start component: $1", ex, entry.getClass().getName());
+                log.error("Unable to start component: "+ entry.getClass().getName(), ex);
             }
         }
     }

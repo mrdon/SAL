@@ -1,10 +1,10 @@
 package com.atlassian.sal.jira.user;
 
+import org.apache.log4j.Logger;
+
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.Permissions;
-import com.atlassian.sal.api.logging.Logger;
-import com.atlassian.sal.api.logging.LoggerFactory;
 import com.atlassian.sal.api.user.UserManager;
 import com.opensymphony.user.EntityNotFoundException;
 import com.opensymphony.user.User;
@@ -12,7 +12,7 @@ import com.opensymphony.user.User;
 /** OSUser based user operations */
 public class DefaultUserManager implements UserManager
 {
-    private static final Logger log = LoggerFactory.getLogger(DefaultUserManager.class);
+    private static final Logger log = Logger.getLogger(DefaultUserManager.class);
     private final GlobalPermissionManager globalPermissionManager;
     private final JiraAuthenticationContext authenticationContext;
 

@@ -1,26 +1,26 @@
 package com.atlassian.sal.jira.scheduling;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import com.atlassian.configurable.ObjectConfiguration;
 import com.atlassian.configurable.ObjectConfigurationException;
 import com.atlassian.configurable.ObjectConfigurationImpl;
 import com.atlassian.configurable.StringObjectDescription;
 import com.atlassian.jira.service.AbstractService;
 import com.atlassian.jira.service.ServiceManager;
+import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.scheduling.StudioJob;
 import com.atlassian.sal.api.scheduling.StudioScheduler;
-import com.atlassian.sal.api.component.ComponentLocator;
-import com.atlassian.sal.api.logging.Logger;
-import com.atlassian.sal.api.logging.LoggerFactory;
 import com.opensymphony.module.propertyset.PropertySet;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Collections;
 
 public class JiraStudioScheduler implements StudioScheduler
 {
-    private static final Logger log = LoggerFactory.getLogger(JiraStudioScheduler.class);
+    private static final Logger log = Logger.getLogger(JiraStudioScheduler.class);
     private static final String STUDIO_JOB_NAME = "studioJobName";
     private Map<String, JiraStudioSchedulerServiceDescriptor> serviceMap;
 
@@ -90,7 +90,7 @@ public class JiraStudioScheduler implements StudioScheduler
 
     public static class JiraStudioSchedulerService extends AbstractService
     {
-        private static final Logger log = LoggerFactory.getLogger(JiraStudioSchedulerService.class);
+        private static final Logger log = Logger.getLogger(JiraStudioSchedulerService.class);
         private static final Map params = new HashMap();
 
         static
