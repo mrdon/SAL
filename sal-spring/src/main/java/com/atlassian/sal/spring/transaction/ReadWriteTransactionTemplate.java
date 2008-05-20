@@ -1,11 +1,13 @@
-package com.atlassian.sal.api.transaction;
-
-import com.atlassian.sal.api.component.ComponentLocator;
+package com.atlassian.sal.spring.transaction;
 
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+
+import com.atlassian.sal.api.component.ComponentLocator;
+import com.atlassian.sal.api.transaction.TransactionCallback;
+import com.atlassian.sal.api.transaction.TransactionTemplate;
 
 /**
  * An implementation that executes an action in a ReadWrite transaction.  Requires spring.

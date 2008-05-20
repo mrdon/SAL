@@ -1,4 +1,8 @@
-package com.atlassian.sal.api.component;
+package com.atlassian.sal.spring.component;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
@@ -8,9 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractApplicationContext;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import com.atlassian.sal.api.component.ComponentLocator;
 
 public class SpringComponentLocator extends ComponentLocator implements ApplicationContextAware
 {
