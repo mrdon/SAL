@@ -1,7 +1,7 @@
 package com.atlassian.sal.api.http.httpclient;
 
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Map;
@@ -10,10 +10,10 @@ import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
-import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Category;
@@ -25,8 +25,8 @@ import com.atlassian.sal.api.http.HttpResponse;
 import com.atlassian.sal.api.http.HttpRetrievalService;
 
 /**
- * Default retrieval service for JIRA Studio. <code>HttpClientRetrievalService</code> retrieves data from a specified
- * URL. Mechanisms exist for specifying timeouts and maximum amount of data retrieved.
+ * Default HTTP retrieval service. <code>HttpClientRetrievalService</code> retrieves data from a specified
+ * URL. Mechanisms exist for specifying timeouts and maximum amount of data retrieved. Handles authorization protocols such trusted applications.
  */
 public final class HttpClientHttpRetrievalService implements HttpRetrievalService
 {

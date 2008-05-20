@@ -1,4 +1,4 @@
-<atlassian-plugin key="com.atlassian.sal.fisheye.fisheye" name="Application Access Layer for FishEye" system="true">
+<atlassian-plugin key="com.atlassian.sal.fisheye" name="${project.name}" system="true">
     <plugin-info>
         <description>
             A plugin that links FishEye to other Atlassian applications    

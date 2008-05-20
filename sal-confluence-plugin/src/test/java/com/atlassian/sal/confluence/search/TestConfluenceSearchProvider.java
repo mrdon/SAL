@@ -17,7 +17,6 @@ import com.atlassian.confluence.search.actions.SearchQueryBean;
 import com.atlassian.confluence.search.actions.SearchResultWithExcerpt;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.search.SearchResults;
-import com.atlassian.sal.confluence.search.ConfluenceSearchProvider;
 
 /**
  *
@@ -147,7 +146,7 @@ public class TestConfluenceSearchProvider extends TestCase
                 MockControl mockApplicationPropertiesControl = MockControl.createControl(ApplicationProperties.class);
                 ApplicationProperties mockApplicationProperties = (ApplicationProperties) mockApplicationPropertiesControl.getMock();
                 mockApplicationProperties.getBaseUrl();
-                mockApplicationPropertiesControl.setDefaultReturnValue("http://studio.atlassian.com/wiki");
+                mockApplicationPropertiesControl.setDefaultReturnValue("http://www.atlassian.com/wiki");
                 mockApplicationProperties.getApplicationName();
                 mockApplicationPropertiesControl.setDefaultReturnValue("Confluence");
                 mockApplicationPropertiesControl.replay();
@@ -168,11 +167,11 @@ public class TestConfluenceSearchProvider extends TestCase
         assertEquals(0, results.getErrors().size());
         assertEquals(1, results.getMatches().size());
         assertEquals("Home page", results.getMatches().get(0).getTitle());
-        assertEquals("http://studio.atlassian.com/wiki/display/TST/Home", results.getMatches().get(0).getUrl());
+        assertEquals("http://www.atlassian.com/wiki/display/TST/Home", results.getMatches().get(0).getUrl());
         assertEquals("Some content that we're searching <span class=\"highlight\">test</span> for!", results.getMatches().get(0).getExcerpt());
         assertEquals("Confluence", results.getMatches().get(0).getResourceType().getName());
         assertEquals("page", results.getMatches().get(0).getResourceType().getType());
-        assertEquals("http://studio.atlassian.com/wiki", results.getMatches().get(0).getResourceType().getUrl());
+        assertEquals("http://www.atlassian.com/wiki", results.getMatches().get(0).getResourceType().getUrl());
 
 
 

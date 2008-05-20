@@ -13,6 +13,16 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-spring</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-core</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.fisheye</groupId>
             <artifactId>fisheye-jar</artifactId>
             <version>1.5.1b</version>
@@ -29,11 +39,6 @@
             <artifactId>jsp-api</artifactId>
             <version>2.1</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.sal</groupId>
-            <artifactId>sal-core</artifactId>
-            <version>${pom.version}</version>
         </dependency>
         <dependency>
             <groupId>opensymphony</groupId>

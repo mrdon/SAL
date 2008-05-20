@@ -21,7 +21,7 @@ public class PropertiesLoader
      * Tries to load properties either from a location provided via a -DpropertiesName.location=/blah/blah.properties
      * paramenter or from the classpath.
      *
-     * @param propertiesName The name of the properties to load.  E.g. studio.properites
+     * @param propertiesName The name of the properties to load.  E.g. foo.properites
      * @return Loaded properties.
      */
     public static Properties loadProperties(String propertiesName)

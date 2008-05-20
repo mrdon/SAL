@@ -1,4 +1,4 @@
-<atlassian-plugin key="com.atlassian.studio.aal.confluence" name="studio-aal-confluence-plugin" system="false">
+<atlassian-plugin key="com.atlassian.sal.confluence" name="${project.name}" system="false">
     <plugin-info>
         <description>
             A plugin that provides an access layer for the underlying application.    
