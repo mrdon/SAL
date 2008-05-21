@@ -8,7 +8,7 @@
     </plugin-info>
 
     <component name="I18n Resolver" key="i18nResolver" class="com.atlassian.sal.confluence.message.ConfluenceI18nResolver" system="true"/>
-    <component name="Component Locator" key="componentLocator" class="com.atlassian.sal.api.component.SpringComponentLocator" system="true"/>
+    <component name="Component Locator" key="componentLocator" class="com.atlassian.sal.spring.component.SpringComponentLocator" system="true"/>
     <component name="Plugin Settings Factory" key="pluginSettingsFactory" class="com.atlassian.sal.confluence.pluginsettings.ConfluencePluginSettingsFactory" system="true"/>
     <component name="Plugin Upgrade Manager" key="pluginUpgradeManager" class="com.atlassian.sal.api.upgrade.DefaultPluginUpgradeManager" system="true" />
     <component name="Certificate Factory" key="certificateFactory" class="com.atlassian.sal.confluence.trusted.ConfluenceCertificateFactory"  system="true"/>
