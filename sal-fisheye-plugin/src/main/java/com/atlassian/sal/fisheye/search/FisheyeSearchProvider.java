@@ -78,40 +78,10 @@ public class FisheyeSearchProvider implements SearchProvider
     private SearchResults doCrucibleSearch(String searchQuery, int maxHits)
     {
         long startTime = System.currentTimeMillis();
-        final ReviewSearchTerms terms = new ReviewSearchTerms(searchQuery);
-        final List<Integer> resultIds = new LinkedList<Integer>();
-        boolean first = true;
-        for (Iterator iterator = terms.getAllTerms().iterator(); iterator.hasNext();)
-        {
-            String term = (String) iterator.next();
-            final Set resultSet = ReviewManager.searchReviewForTerm(term, "review.id", "review.id");
-            if (first)
-            {
-                resultIds.addAll(resultSet);
-                first = false;
-            }
-            else
-            {
-                resultIds.retainAll(resultSet);
-            }
-        }
-        Collections.sort(resultIds, NaturalComparator.REVERSE_INSTANCE);
 
-        final List<SearchMatch> matches = new ArrayList<SearchMatch>();
-        final ApplicationProperties applicationProperties = ComponentLocator.getComponent(ApplicationProperties.class);
-        int count = 0;
-        for (Integer resultId : resultIds)
-        {
-            if (count++ > maxHits)
-            {
-                break;
-            }
-            final Review review = ReviewManager.getReviewById(resultId);
-            final BasicSearchMatch searchMatch =
-                    new BasicSearchMatch(review.getLink(), review.getName(), review.getDescription(),
-                            new FisheyeResourceType(applicationProperties, "review"));
-            matches.add(searchMatch);
-        }
+        final List<Integer> resultIds = getReviewIds(searchQuery, maxHits);
+        final List<SearchMatch> matches = transformCrucibleResults(resultIds);
+
         return new SearchResults(matches, System.currentTimeMillis() - startTime);
     }
 
@@ -151,7 +121,7 @@ public class FisheyeSearchProvider implements SearchProvider
             long startTime = System.currentTimeMillis();
 
             com.cenqua.fisheye.cvsrep.search.SearchResults collator = search.runQuery(q, true);
-            final List<SearchMatch> matches = transformResults(maxHits, repositoryName, collator);
+            final List<SearchMatch> matches = transformFisheyeResults(maxHits, repositoryName, collator);
 
             return new SearchResults(matches, System.currentTimeMillis() - startTime);
         }
@@ -162,7 +132,46 @@ public class FisheyeSearchProvider implements SearchProvider
         }
     }
 
-    private List<SearchMatch> transformResults(int maxHits, String repositoryName, com.cenqua.fisheye.cvsrep.search.SearchResults collator)
+    private List<SearchMatch> transformCrucibleResults(List<Integer> resultIds)
+    {
+        final List<SearchMatch> matches = new ArrayList<SearchMatch>();
+        final ApplicationProperties applicationProperties = ComponentLocator.getComponent(ApplicationProperties.class);
+        for (Integer resultId : resultIds)
+        {
+            final Review review = ReviewManager.getReviewById(resultId);
+            final BasicSearchMatch searchMatch =
+                    new BasicSearchMatch(review.getLink(), review.getName(), review.getDescription(),
+                            new FisheyeResourceType(applicationProperties, "review"));
+            matches.add(searchMatch);
+        }
+        return matches;
+    }
+
+    private List<Integer> getReviewIds(String searchQuery, int maxHits)
+    {
+        final ReviewSearchTerms terms = new ReviewSearchTerms(searchQuery);
+        final List<Integer> resultIds = new LinkedList<Integer>();
+        boolean first = true;
+        int count = 0;
+        for (Iterator iterator = terms.getAllTerms().iterator(); iterator.hasNext() && count < maxHits; count++)
+        {
+            String term = (String) iterator.next();
+            final Set resultSet = ReviewManager.searchReviewForTerm(term, "review.id", "review.id");
+            if (first)
+            {
+                resultIds.addAll(resultSet);
+                first = false;
+            }
+            else
+            {
+                resultIds.retainAll(resultSet);
+            }
+        }
+        Collections.sort(resultIds, NaturalComparator.REVERSE_INSTANCE);
+        return resultIds;
+    }
+
+    private List<SearchMatch> transformFisheyeResults(int maxHits, String repositoryName, com.cenqua.fisheye.cvsrep.search.SearchResults collator)
             throws Exception
     {
         final UrlHelper searchUrl = new UrlHelper();
