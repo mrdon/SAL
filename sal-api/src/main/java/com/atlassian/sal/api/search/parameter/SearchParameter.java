@@ -8,6 +8,7 @@ public interface SearchParameter
 {
     public static final String MAXHITS = "maxhits";
     public static final String APPLICATION = "application";
+    public static final String PATH = "path";
 
     String getName();
 
