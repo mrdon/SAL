@@ -1,18 +1,16 @@
-package com.atlassian.sal.fisheye.search;
+package com.atlassian.sal.api.search;
 
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.search.ResourceType;
 
 /**
- *
  */
-public class FisheyeResourceType implements ResourceType
+public class BasicResourceType implements ResourceType
 {
     private String name;
     private String url;
     private String type;
 
-    public FisheyeResourceType(ApplicationProperties applicationProperties, String type)
+    public BasicResourceType(ApplicationProperties applicationProperties, String type)
     {
         this.name = applicationProperties.getApplicationName();
         this.url = applicationProperties.getBaseUrl();

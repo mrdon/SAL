@@ -13,8 +13,9 @@ public interface SearchProvider
      * The searchQuery should be URLencoded, as it may contain parameters as well.  For example if a search should only
      * return a maximum number of hits the searchQuery would be '<searchString>&maxHits=20'
      *
+     * @param username The user to run the search as.  May be null for anonymous searches.
      * @param searchQuery The query to run
      * @return A SearchResults object
      */
-    SearchResults search(String searchQuery);
+    SearchResults search(String username, String searchQuery);
 }

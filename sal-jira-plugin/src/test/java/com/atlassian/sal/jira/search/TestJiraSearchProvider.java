@@ -2,7 +2,11 @@ package com.atlassian.sal.jira.search;
 
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.issuetype.IssueType;
-import com.atlassian.jira.issue.search.*;
+import com.atlassian.jira.issue.search.SearchContext;
+import com.atlassian.jira.issue.search.SearchException;
+import com.atlassian.jira.issue.search.SearchRequest;
+import com.atlassian.jira.issue.search.SearchRequestManager;
+import com.atlassian.jira.issue.search.SearchResults;
 import com.atlassian.jira.issue.search.util.QueryCreator;
 import com.atlassian.jira.issue.transport.FieldValuesHolder;
 import com.atlassian.jira.issue.transport.impl.FieldValuesHolderImpl;
@@ -12,8 +16,7 @@ import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.search.SearchMatch;
-import com.atlassian.sal.jira.search.JiraSearchProvider;
-
+import com.opensymphony.user.User;
 import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.easymock.classextension.MockClassControl;
@@ -61,9 +64,9 @@ public class TestJiraSearchProvider extends TestCase
         mockSearchRequestManagerControl.setDefaultReturnValue(mockSearchRequest);
         mockSearchRequestManagerControl.replay();
 
-        JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockJiraAuthenticationContext, mockQueryCreator, mockSearchRequestManager, mockSearchProvider)
+        JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchRequestManager, mockSearchProvider, null)
         {
-            void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors)
+            void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors, User remoteUser)
             {
                 fieldValuesHolder.put("query", "query");
             }
@@ -77,9 +80,14 @@ public class TestJiraSearchProvider extends TestCase
             {
                 return null;
             }
+
+            User getUser(String username)
+            {
+                return null;
+            }
         };
 
-        com.atlassian.sal.api.search.SearchResults results = searchProvider.search("query");
+        com.atlassian.sal.api.search.SearchResults results = searchProvider.search(null, "query");
         assertNotNull(results);
         assertEquals(0, results.getErrors().size());
         assertEquals(0, results.getMatches().size());
@@ -105,9 +113,9 @@ public class TestJiraSearchProvider extends TestCase
         mockQueryCreatorControl.setDefaultReturnValue("?query=query&summary=true");
         mockQueryCreatorControl.replay();
 
-        JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockJiraAuthenticationContext, mockQueryCreator, null, null)
+        JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, null, null, null)
         {
-            void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors)
+            void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors, User user)
             {
                 errors.addError("query", "invalid query string provided");
             }
@@ -121,9 +129,15 @@ public class TestJiraSearchProvider extends TestCase
             {
                 return null;
             }
+
+
+            User getUser(String username)
+            {
+                return null;
+            }
         };
 
-        com.atlassian.sal.api.search.SearchResults results = searchProvider.search("badquery");
+        com.atlassian.sal.api.search.SearchResults results = searchProvider.search(null, "badquery");
         assertNotNull(results);
         assertEquals(1, results.getErrors().size());
         assertEquals("invalid query string provided", results.getErrors().get(0).getKey());
@@ -187,9 +201,9 @@ public class TestJiraSearchProvider extends TestCase
         mockSearchRequestManagerControl.setDefaultReturnValue(mockSearchRequest);
         mockSearchRequestManagerControl.replay();
 
-        JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockJiraAuthenticationContext, mockQueryCreator, mockSearchRequestManager, mockSearchProvider)
+        JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchRequestManager, mockSearchProvider, null)
         {
-            void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors)
+            void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors, User user)
             {
                 fieldValuesHolder.put("query", "query");
             }
@@ -204,16 +218,21 @@ public class TestJiraSearchProvider extends TestCase
                 MockControl mockWebPropertiesControl = MockControl.createControl(ApplicationProperties.class);
                 ApplicationProperties mockApplicationProperties = (ApplicationProperties) mockWebPropertiesControl.getMock();
                 mockApplicationProperties.getBaseUrl();
-                mockWebPropertiesControl.setDefaultReturnValue("http://jira.atlassian.com/");
+                mockWebPropertiesControl.setDefaultReturnValue("http://jira.atlassian.com");
                 mockApplicationProperties.getApplicationName();
                 mockWebPropertiesControl.setDefaultReturnValue("JIRA");
                 mockWebPropertiesControl.replay();
 
                 return mockApplicationProperties;
             }
+
+            User getUser(String username)
+            {
+                return null;
+            }
         };
 
-        com.atlassian.sal.api.search.SearchResults results = searchProvider.search("query");
+        com.atlassian.sal.api.search.SearchResults results = searchProvider.search(null, "query");
         assertNotNull(results);
         assertEquals(0, results.getErrors().size());
         assertEquals(1, results.getMatches().size());
@@ -224,7 +243,7 @@ public class TestJiraSearchProvider extends TestCase
         assertEquals("Sample description for the <span id=\"highlight\">query</span>", searchMatch.getExcerpt());
         assertEquals("1", searchMatch.getResourceType().getType());
         assertEquals("JIRA", searchMatch.getResourceType().getName());
-        assertEquals("http://jira.atlassian.com/", searchMatch.getResourceType().getUrl());
+        assertEquals("http://jira.atlassian.com", searchMatch.getResourceType().getUrl());
 
         mockJiraAuthenticationContextControl.verify();
         mockQueryCreatorControl.verify();

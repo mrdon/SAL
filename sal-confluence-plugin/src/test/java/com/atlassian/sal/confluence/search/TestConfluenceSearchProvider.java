@@ -1,22 +1,21 @@
 package com.atlassian.sal.confluence.search;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
-import org.apache.lucene.search.Query;
-import org.easymock.MockControl;
-import org.easymock.classextension.MockClassControl;
-
 import com.atlassian.confluence.core.Addressable;
 import com.atlassian.confluence.search.actions.SearchBean;
 import com.atlassian.confluence.search.actions.SearchQueryBean;
 import com.atlassian.confluence.search.actions.SearchResultWithExcerpt;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.search.SearchResults;
+import com.atlassian.user.User;
+import junit.framework.Assert;
+import junit.framework.TestCase;
+import org.apache.lucene.search.Query;
+import org.easymock.MockControl;
+import org.easymock.classextension.MockClassControl;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -47,9 +46,14 @@ public class TestConfluenceSearchProvider extends TestCase
                 mockSearchQueryBeanControl.replay();
                 return mockSearchQueryBean;
             }
+
+            User getUser(String username)
+            {
+                return null;
+            }
         };
         searchProvider.setSearchBean(mockSearchBean);
-        SearchResults results = searchProvider.search("test");
+        SearchResults results = searchProvider.search(null, "test");
 
         assertNotNull(results);
         assertEquals(1, results.getErrors().size());
@@ -89,9 +93,14 @@ public class TestConfluenceSearchProvider extends TestCase
             {
                 return null;
             }
+
+            User getUser(String username)
+            {
+                return null;
+            }
         };
         searchProvider.setSearchBean(mockSearchBean);
-        SearchResults results = searchProvider.search("test");
+        SearchResults results = searchProvider.search(null, "test");
 
         assertNotNull(results);
         assertEquals(0, results.getErrors().size());
@@ -103,7 +112,7 @@ public class TestConfluenceSearchProvider extends TestCase
 
     public void testGetResults() throws ClassNotFoundException
     {
-         MockControl mockQueryControl = MockClassControl.createControl(Query.class);
+        MockControl mockQueryControl = MockClassControl.createControl(Query.class);
         final Query mockQuery = (Query) mockQueryControl.getMock();
         mockQueryControl.replay();
 
@@ -159,9 +168,14 @@ public class TestConfluenceSearchProvider extends TestCase
                 Assert.assertEquals("Some content that we're searching test for!", contentBodyString);
                 return "Some content that we're searching <span class=\"highlight\">test</span> for!";
             }
+
+            User getUser(String username)
+            {
+                return null;
+            }
         };
         searchProvider.setSearchBean(mockSearchBean);
-        SearchResults results = searchProvider.search("test");
+        SearchResults results = searchProvider.search(null, "test");
 
         assertNotNull(results);
         assertEquals(0, results.getErrors().size());
@@ -172,7 +186,6 @@ public class TestConfluenceSearchProvider extends TestCase
         assertEquals("Confluence", results.getMatches().get(0).getResourceType().getName());
         assertEquals("page", results.getMatches().get(0).getResourceType().getType());
         assertEquals("http://www.atlassian.com/wiki", results.getMatches().get(0).getResourceType().getUrl());
-
 
 
         mockQueryControl.verify();

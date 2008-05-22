@@ -9,19 +9,22 @@ import com.atlassian.confluence.search.actions.SearchQueryBean;
 import com.atlassian.confluence.search.actions.SearchResultWithExcerpt;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.spaces.SpaceManager;
+import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.confluence.util.GeneralUtil;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.message.DefaultMessage;
 import com.atlassian.sal.api.message.Message;
+import com.atlassian.sal.api.search.BasicResourceType;
 import com.atlassian.sal.api.search.BasicSearchMatch;
-import com.atlassian.sal.api.search.query.DefaultQueryParser;
-import com.atlassian.sal.api.search.query.QueryParser;
 import com.atlassian.sal.api.search.ResourceType;
 import com.atlassian.sal.api.search.SearchMatch;
 import com.atlassian.sal.api.search.SearchProvider;
 import com.atlassian.sal.api.search.SearchResults;
+import com.atlassian.sal.api.search.query.DefaultQueryParser;
+import com.atlassian.sal.api.search.query.QueryParser;
+import com.atlassian.user.User;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -43,14 +46,17 @@ public class ConfluenceSearchProvider implements SearchProvider
     private LabelManager labelManager;
     private SettingsManager settingsManager;
 
-    public SearchResults search(String searchQuery)
+    public SearchResults search(String username, String searchQuery)
     {
         QueryParser queryParser = new DefaultQueryParser(searchQuery);
-        return search(queryParser.getSearchString(), queryParser.getMaxHits());
+        return search(queryParser.getSearchString(), queryParser.getMaxHits(), username);
     }
 
-    private SearchResults search(String searchQuery, int maxHits)
+    private SearchResults search(String searchQuery, int maxHits, String username)
     {
+        //set the user to be the user that was passed in
+        final User oldUser = AuthenticatedUserThreadLocal.getUser();
+        AuthenticatedUserThreadLocal.setUser(getUser(username));
         try
         {
             long startTime = System.currentTimeMillis();
@@ -65,6 +71,11 @@ public class ConfluenceSearchProvider implements SearchProvider
             List<Message> errors = new ArrayList<Message>();
             errors.add(new DefaultMessage(e.getMessage()));
             return new SearchResults(errors);
+        }
+        finally
+        {
+            //restore the user to who it was before running the search.
+            AuthenticatedUserThreadLocal.setUser(oldUser);
         }
     }
 
@@ -83,7 +94,7 @@ public class ConfluenceSearchProvider implements SearchProvider
             if (searchResultWithExcerpt.getResultObject() instanceof Addressable)
             {
                 Addressable result = (Addressable) searchResultWithExcerpt.getResultObject();
-                ResourceType resultType = new ConfluenceResourceType(webProperties, result.getType());
+                ResourceType resultType = new BasicResourceType(webProperties, result.getType());
                 String excerpt = getExcerpt(searchQuery, searchResultWithExcerpt.getContentBodyString());
                 matches.add(new BasicSearchMatch(webProperties.getBaseUrl() + result.getUrlPath(),
                         result.getRealTitle(), excerpt, resultType));
@@ -171,5 +182,10 @@ public class ConfluenceSearchProvider implements SearchProvider
             }
         }
         return excerpt.toString();
+    }
+
+    User getUser(String username)
+    {
+        return userAccessor.getUser(username);
     }
 }
