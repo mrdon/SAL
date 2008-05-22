@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.quartz.JobExecutionException;
 
 import com.atlassian.configurable.ObjectConfiguration;
 import com.atlassian.configurable.ObjectConfigurationException;
@@ -14,31 +15,32 @@ import com.atlassian.configurable.StringObjectDescription;
 import com.atlassian.jira.service.AbstractService;
 import com.atlassian.jira.service.ServiceManager;
 import com.atlassian.sal.api.component.ComponentLocator;
-import com.atlassian.sal.api.scheduling.StudioJob;
-import com.atlassian.sal.api.scheduling.StudioScheduler;
+import com.atlassian.sal.api.scheduling.PluginJob;
+import com.atlassian.sal.api.scheduling.PluginScheduler;
 import com.opensymphony.module.propertyset.PropertySet;
 
-public class JiraStudioScheduler implements StudioScheduler
+public class JiraPluginScheduler implements PluginScheduler
 {
-    private static final Logger log = Logger.getLogger(JiraStudioScheduler.class);
-    private static final String STUDIO_JOB_NAME = "studioJobName";
-    private Map<String, JiraStudioSchedulerServiceDescriptor> serviceMap;
+    private static final Logger log = Logger.getLogger(JiraPluginScheduler.class);
+    private static final String STUDIO_JOB_NAME = "pluginJobName";
+    private Map<String, JiraPluginSchedulerServiceDescriptor> serviceMap;
+    private ServiceManager serviceManager;
 
-    public JiraStudioScheduler()
+    public JiraPluginScheduler(ServiceManager serviceManager)
     {
-        serviceMap = Collections.synchronizedMap(new HashMap<String, JiraStudioSchedulerServiceDescriptor>());
+        serviceMap = Collections.synchronizedMap(new HashMap<String, JiraPluginSchedulerServiceDescriptor>());
+        this.serviceManager = serviceManager;
     }
 
-    public void scheduleJob(String name, Class<? extends StudioJob> job, Map jobDataMap, Date startTime,
+    public void scheduleJob(String name, Class<? extends PluginJob> job, Map<String, Object> jobDataMap, Date startTime,
         long repeatInterval)
     {
-        ServiceManager serviceManager = ComponentLocator.getComponent(ServiceManager.class);
         // Create a map to hold the configuration for the job
         Map serviceDataMap = new HashMap();
         serviceDataMap.put(STUDIO_JOB_NAME, new String[]{name});
 
         // Put a service descriptor in the map
-        JiraStudioSchedulerServiceDescriptor sd = new JiraStudioSchedulerServiceDescriptor();
+        JiraPluginSchedulerServiceDescriptor sd = new JiraPluginSchedulerServiceDescriptor();
         sd.setJob(job);
         sd.setJobDataMap(jobDataMap);
         serviceMap.put(name, sd);
@@ -47,7 +49,7 @@ public class JiraStudioScheduler implements StudioScheduler
         try
         {
             serviceManager.addService(name,
-                "com.atlassian.sal.jira.scheduling.JiraStudioScheduler$JiraStudioSchedulerService",
+                "com.atlassian.sal.jira.scheduling.JiraPluginScheduler$JiraPluginSchedulerService",
                 repeatInterval,
                 serviceDataMap);
         }
@@ -57,22 +59,26 @@ public class JiraStudioScheduler implements StudioScheduler
         }
     }
 
-    private JiraStudioSchedulerServiceDescriptor getServiceDescriptor(String name)
+    private JiraPluginSchedulerServiceDescriptor getServiceDescriptor(String name)
     {
         return serviceMap.get(name);
     }
 
-    private class JiraStudioSchedulerServiceDescriptor
+    /**
+     * Holds information about a PluginJob for storing in a String to descriptor Map.  This is needed because JIRA
+     * services won't allow anything but Strings to be stored in its descriptor map, but we need the Map stored.
+     */
+    private static class JiraPluginSchedulerServiceDescriptor
     {
-        private Class<? extends StudioJob> job;
+        private Class<? extends PluginJob> job;
         private Map jobDataMap;
 
-        public Class<? extends StudioJob> getJob()
+        public Class<? extends PluginJob> getJob()
         {
             return job;
         }
 
-        public void setJob(Class<? extends StudioJob> job)
+        public void setJob(Class<? extends PluginJob> job)
         {
             this.job = job;
         }
@@ -88,9 +94,12 @@ public class JiraStudioScheduler implements StudioScheduler
         }
     }
 
-    public static class JiraStudioSchedulerService extends AbstractService
+    /**
+     * JIRA service that executes a PluginJob
+     */
+    public static class JiraPluginSchedulerService extends AbstractService
     {
-        private static final Logger log = Logger.getLogger(JiraStudioSchedulerService.class);
+        private static final Logger log = Logger.getLogger(JiraPluginSchedulerService.class);
         private static final Map params = new HashMap();
 
         static
@@ -114,19 +123,24 @@ public class JiraStudioScheduler implements StudioScheduler
             String jobName = props.getString(STUDIO_JOB_NAME);
 
             // Find the descriptor
-            JiraStudioScheduler scheduler = (JiraStudioScheduler) ComponentLocator.getComponent(StudioScheduler.class);
-            JiraStudioSchedulerServiceDescriptor sd = scheduler.getServiceDescriptor(jobName);
+            JiraPluginScheduler scheduler = (JiraPluginScheduler) ComponentLocator.getComponent(PluginScheduler.class);
+            JiraPluginSchedulerServiceDescriptor sd = scheduler.getServiceDescriptor(jobName);
 
-            Class<? extends StudioJob> jobClass = sd.getJob();
+            Class<? extends PluginJob> jobClass = sd.getJob();
             Map jobMap = sd.getJobDataMap();
-            StudioJob job;
+            PluginJob job;
             try
             {
                 job = jobClass.newInstance();
             }
-            catch (Exception e)
+            catch (InstantiationException ie)
             {
-                log.error("Error instantiating job", e);
+                log.error("Error instantiating job", ie);
+                return;
+            }
+            catch (IllegalAccessException iae)
+            {
+                log.error("Cannot access job class", iae);
                 return;
             }
             job.execute(jobMap);
@@ -135,7 +149,7 @@ public class JiraStudioScheduler implements StudioScheduler
         public ObjectConfiguration getObjectConfiguration() throws ObjectConfigurationException
         {
             ObjectConfiguration oc = new ObjectConfigurationImpl(params, new StringObjectDescription(
-                "Studio Scheduler Service"));
+                "Plugin Scheduler Service"));
             return oc;
         }
 

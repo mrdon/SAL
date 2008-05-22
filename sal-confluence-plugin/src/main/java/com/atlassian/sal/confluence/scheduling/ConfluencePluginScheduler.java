@@ -14,35 +14,38 @@ import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 
 import com.atlassian.sal.api.component.ComponentLocator;
-import com.atlassian.sal.api.scheduling.StudioJob;
-import com.atlassian.sal.api.scheduling.StudioScheduler;
+import com.atlassian.sal.api.scheduling.PluginJob;
+import com.atlassian.sal.api.scheduling.PluginScheduler;
 
-public class ConfluenceStudioScheduler implements StudioScheduler
+/**
+ * Confluence plugin scheduler, uses Quartz
+ */
+public class ConfluencePluginScheduler implements PluginScheduler
 {
 
-    private static final String STUDIO_JOB_CLASS_KEY = "studioJobClass";
-    private static final String STUDIO_JOB_DATA_MAP_KEY = "studioJobDataMap";
-    private static final Logger log = Logger.getLogger(ConfluenceStudioScheduler.class);
+    private static final String JOB_CLASS_KEY = "pluginJobClass";
+    private static final String JOB_DATA_MAP_KEY = "pluginJobDataMap";
+    private static final Logger log = Logger.getLogger(ConfluencePluginScheduler.class);
 
-    public void scheduleJob(String name, Class<? extends StudioJob> job, Map jobDataMap, Date startTime,
+    public void scheduleJob(String name, Class<? extends PluginJob> job, Map<String, Object> jobDataMap, Date startTime,
         long repeatInterval)
     {
         // Get the scheduler
         Scheduler scheduler = ComponentLocator.getComponent(Scheduler.class);
         // Create a new job detail
         JobDetail jobDetail = new JobDetail();
-        jobDetail.setGroup("studioSchedulerJobGroup");
+        jobDetail.setGroup("pluginSchedulerJobGroup");
         jobDetail.setName(name);
-        jobDetail.setJobClass(ConfluenceStudioJob.class);
+        jobDetail.setJobClass(ConfluencePluginJob.class);
         JobDataMap jobDetailMap = new JobDataMap();
         jobDetailMap.put("runOncePerCluster", "false");
-        jobDetailMap.put(STUDIO_JOB_CLASS_KEY, job);
-        jobDetailMap.put(STUDIO_JOB_DATA_MAP_KEY, jobDataMap);
+        jobDetailMap.put(JOB_CLASS_KEY, job);
+        jobDetailMap.put(JOB_DATA_MAP_KEY, jobDataMap);
         jobDetail.setJobDataMap(jobDetailMap);
 
         // Create a new trigger
         SimpleTrigger trigger = new SimpleTrigger();
-        trigger.setGroup("studioSchedulerTriggerGroup");
+        trigger.setGroup("pluginSchedulerTriggerGroup");
         trigger.setName(name + "Trigger");
         if (startTime != null)
         {
@@ -69,27 +72,32 @@ public class ConfluenceStudioScheduler implements StudioScheduler
         }
     }
 
-    public static class ConfluenceStudioJob implements Job
+    /**
+     * A Quartz job that executes a PluginJob
+     */
+    public static class ConfluencePluginJob implements Job
     {
         public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException
         {
             JobDataMap map = jobExecutionContext.getJobDetail().getJobDataMap();
-            Class<? extends StudioJob> jobClass = (Class<? extends StudioJob>) map.get(STUDIO_JOB_CLASS_KEY);
-            Map studioJobMap = (Map) map.get(STUDIO_JOB_DATA_MAP_KEY);
+            Class<? extends PluginJob> jobClass = (Class<? extends PluginJob>) map.get(JOB_CLASS_KEY);
+            Map pluginJobMap = (Map) map.get(JOB_DATA_MAP_KEY);
             // Instantiate the job
-            StudioJob job;
+            PluginJob job;
             try
             {
                 job = jobClass.newInstance();
             }
-            catch (Exception e)
+            catch (InstantiationException ie)
             {
-                throw new JobExecutionException("Error instantiating studio job", e, false);
+                throw new JobExecutionException("Error instantiating job", ie, false);
             }
-            job.execute(studioJobMap);
+            catch (IllegalAccessException iae)
+            {
+                throw new JobExecutionException("Cannot access job class", iae, false);
+            }
+            job.execute(pluginJobMap);
         }
-
-
     }
 
 }

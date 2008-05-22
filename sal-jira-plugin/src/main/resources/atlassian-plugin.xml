@@ -43,9 +43,9 @@
         <interface>com.atlassian.sal.api.license.LicenseHandler</interface>
     </component>
 
-    <component name="Studio Scheduler" key="studioScheduler"
-        class="com.atlassian.sal.jira.scheduling.JiraStudioScheduler" system="true">
-        <interface>com.atlassian.sal.api.scheduling.StudioScheduler</interface>
+    <component name="Plugin Scheduler" key="pluginScheduler"
+        class="com.atlassian.sal.jira.scheduling.JiraPluginScheduler" system="true">
+        <interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
     </component>
 
     <component name="Plugin Lifecycle Manager" key="lifecycleManager"

@@ -9,21 +9,23 @@ import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 
-import com.atlassian.sal.api.scheduling.StudioJob;
-import com.atlassian.sal.api.scheduling.StudioScheduler;
+import com.atlassian.sal.api.scheduling.PluginJob;
+import com.atlassian.sal.api.scheduling.PluginScheduler;
 
-
-public class FisheyeStudioScheduler implements StudioScheduler
+/**
+ * Plugin scheduler for fisheye, that uses java.util.Timer
+ */
+public class FisheyePluginScheduler implements PluginScheduler
 {
 
     private Map<String, Timer> tasks;
 
-    public FisheyeStudioScheduler()
+    public FisheyePluginScheduler()
     {
         tasks = Collections.synchronizedMap(new HashMap<String, Timer>());
     }
 
-    public synchronized void scheduleJob(String name, Class<? extends StudioJob> job, Map jobDataMap, Date startTime,
+    public synchronized void scheduleJob(String name, Class<? extends PluginJob> job, Map<String, Object> jobDataMap, Date startTime,
         long repeatInterval)
     {
         // Use one timer per task, this will allow us to remove them if that functionality is wanted in future
@@ -41,33 +43,41 @@ public class FisheyeStudioScheduler implements StudioScheduler
         timer.scheduleAtFixedRate(task, startTime, repeatInterval);
     }
 
+    /**
+     * TimerTask that executes a PluginJob
+     */
     private static class FisheyeStudioTimerTask extends TimerTask
     {
-        private Class<? extends StudioJob> jobClass;
+        private Class<? extends PluginJob> jobClass;
         private Map jobDataMap;
         private static final Logger log = Logger.getLogger(FisheyeStudioTimerTask.class);
 
         public void run()
         {
-            StudioJob job;
+            PluginJob job;
             try
             {
                 job = jobClass.newInstance();
             }
-            catch (Exception e)
+            catch (InstantiationException ie)
             {
-                log.error("Error instantiating job", e);
+                log.error("Error instantiating job", ie);
+                return;
+            }
+            catch (IllegalAccessException iae)
+            {
+                log.error("Cannot access job class", iae);
                 return;
             }
             job.execute(jobDataMap);
         }
 
-        public Class<? extends StudioJob> getJobClass()
+        public Class<? extends PluginJob> getJobClass()
         {
             return jobClass;
         }
 
-        public void setJobClass(Class<? extends StudioJob> jobClass)
+        public void setJobClass(Class<? extends PluginJob> jobClass)
         {
             this.jobClass = jobClass;
         }

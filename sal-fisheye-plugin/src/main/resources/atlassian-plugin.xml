@@ -17,6 +17,6 @@
     <spring key="lifecycleManager" class="com.atlassian.sal.fisheye.lifecycle.FisheyeLifecycleManager" />
     <spring key="readWriteTransactionTemplate" class="com.atlassian.sal.spring.transaction.ReadWriteTransactionTemplate" />
     <spring key="fisheyeSearchProvider" class="com.atlassian.sal.fisheye.search.FisheyeSearchProvider" />
-    <spring key="studioScheduler" class="com.atlassian.sal.fisheye.scheduling.FisheyeStudioScheduler" />
+    <spring key="pluginScheduler" class="com.atlassian.sal.fisheye.scheduling.FisheyePluginScheduler" />
 
 </atlassian-plugin>

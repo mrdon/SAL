@@ -18,6 +18,6 @@
     <component name="Plugin Lifecycle Manager" key="pluginLifecycleManager" class="com.atlassian.sal.confluence.lifecycle.ConfluenceLifecycleManager" system="true"/>
     <component name="Read Write Transaction Template" key="readWriteTransactionTemplate" class="com.atlassian.sal.spring.transaction.ReadWriteTransactionTemplate" system="true"/>
     <component name="Confluence search provider" key="confluenceSearchProvider" class="com.atlassian.sal.confluence.search.ConfluenceSearchProvider" system="true"/>
-    <component name="Studio Scheduler" key="studioScheduler" class="com.atlassian.sal.confluence.scheduling.ConfluenceStudioScheduler" system="true" />
+    <component name="Plugin Scheduler" key="pluginScheduler" class="com.atlassian.sal.confluence.scheduling.ConfluencePluginScheduler" system="true" />
 
 </atlassian-plugin>
