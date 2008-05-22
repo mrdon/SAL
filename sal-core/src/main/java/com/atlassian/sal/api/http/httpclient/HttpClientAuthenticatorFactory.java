@@ -38,6 +38,9 @@ public final class HttpClientAuthenticatorFactory implements AuthenticatorFactor
      */
     public final Authenticator getTrustedTokenAuthenticator(String username)
     {
+        if (username == null || "".equals(username))
+            return new NullAuthenticator();
+
         CertificateFactory certificateFactory = ComponentLocator.getComponent(CertificateFactory.class);
         EncryptedCertificate certificate = certificateFactory.createCertificate(username);
 
