@@ -14,9 +14,6 @@ import com.atlassian.sal.api.search.parameter.SearchParameter;
 import com.atlassian.sal.api.search.query.DefaultQueryParser;
 import com.atlassian.sal.api.search.query.QueryParser;
 import com.cenqua.crucible.filters.CrucibleFilter;
-import com.cenqua.crucible.model.Review;
-import com.cenqua.crucible.model.managers.ReviewManager;
-import com.cenqua.crucible.util.ReviewSearchTerms;
 import com.cenqua.fisheye.AppConfig;
 import com.cenqua.fisheye.LicensePolicyException;
 import com.cenqua.fisheye.cvsrep.search.SearchManager;
@@ -25,78 +22,77 @@ import com.cenqua.fisheye.rep.DbException;
 import com.cenqua.fisheye.rep.FileRevision;
 import com.cenqua.fisheye.rep.RepositoryEngine;
 import com.cenqua.fisheye.rep.RepositoryHandle;
+import com.cenqua.fisheye.user.UserLogin;
 import com.cenqua.fisheye.user.UserManager;
-import com.cenqua.fisheye.util.NaturalComparator;
 import com.cenqua.fisheye.web.FishEyePathInfo;
 import com.cenqua.fisheye.web.SearchResultsExplorer;
 import com.cenqua.fisheye.web.UrlHelper;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 /**
+ * A FishEye specific search provider.  Groups search results by change sets.  Only repositories that the user
+ * has permission for will be returned in the search.  An optional PATH parameter can be specified to limit the search
+ * to a specific repository.
  */
 public class FisheyeSearchProvider implements SearchProvider
 {
+    private static final Logger log = Logger.getLogger(FisheyeSearchProvider.class);
+
     private static final int MAX_FILES = 5;
-    private static final String FISH_EYE = "FishEye";
-    private static final String CRUCIBLE = "Crucible";
 
     public SearchResults search(String username, String searchQuery)
     {
-        final QueryParser queryParser = new DefaultQueryParser(searchQuery);
-        final List<Message> errors = validateQuery(queryParser, username);
+        final QueryParser parser = new DefaultQueryParser(searchQuery);
+        final List<Message> errors = validateQuery(parser, username);
         if (!errors.isEmpty())
         {
             return new SearchResults(errors);
         }
 
-        return search(queryParser.getSearchString(), queryParser.getMaxHits(),
-                queryParser.getParameter(SearchParameter.APPLICATION),
-                queryParser.getParameter(SearchParameter.PATH), username);
-    }
-
-    private SearchResults search(String searchQuery, int maxHits, SearchParameter applicationParam,
-                                 SearchParameter pathParameter, String username)
-    {
+        int maxHits = parser.getMaxHits();
         if (maxHits == -1)
         {
             maxHits = Integer.MAX_VALUE;
         }
-        if (FISH_EYE.equals(applicationParam.getValue()))
-        {
-            return doFisheyeSearch(searchQuery, maxHits, pathParameter, username);
-        }
-        else if (CRUCIBLE.equals(applicationParam.getValue()))
-        {
-            return doCrucibleSearch(searchQuery, maxHits);
-        }
-        //TODO: implement global app search.
-        return null;
+
+        return doFisheyeSearch(parser.getSearchString(), maxHits, parser.getParameter(SearchParameter.PATH), username);
     }
 
-    private SearchResults doCrucibleSearch(String searchQuery, int maxHits)
+    private List<Message> validateQuery(QueryParser queryParser, String username)
     {
-        long startTime = System.currentTimeMillis();
-
-        final List<Integer> resultIds = getReviewIds(searchQuery, maxHits);
-        final List<SearchMatch> matches = transformCrucibleResults(resultIds);
-
-        return new SearchResults(matches, System.currentTimeMillis() - startTime);
+        final List<Message> errors = new ArrayList<Message>();
+        //FishEye also may have a pathParameter...
+        final SearchParameter pathParameter = queryParser.getParameter(SearchParameter.PATH);
+        if (pathParameter != null)
+        {
+            final FishEyePathInfo pathInfo = new FishEyePathInfo(pathParameter.getValue());
+            final String repositoryName = pathInfo.getRepname();
+            if (repositoryName == null)
+            {
+                errors.add(new DefaultMessage("studio.search.errors.no.repository.found", pathParameter.getValue()));
+            }
+            else
+            {
+                getRepositoryEngine(repositoryName, errors, username);
+            }
+        }
+        return errors;
     }
 
-    private SearchResults doFisheyeSearch(String searchQuery, int maxHits, SearchParameter pathParameter,                         String username)
+
+    private SearchResults doFisheyeSearch(String searchQuery, int maxHits, SearchParameter pathParameter, String username)
     {
         //if no path was specified, try to search all repositories!
         if (pathParameter == null)
         {
             long startTime = System.currentTimeMillis();
-            final List<SearchMatch> matches = new ArrayList<SearchMatch>();
+            List<SearchMatch> matches = new ArrayList<SearchMatch>();
             final List<Message> errors = new ArrayList<Message>();
 
             final Set<String> projectKeys = getLocalProjectKeys();
@@ -113,6 +109,11 @@ public class FisheyeSearchProvider implements SearchProvider
             }
             if (errors.isEmpty())
             {
+                //need to ensure we don't return more than maxHits results!
+                if (matches.size() > maxHits)
+                {
+                    matches = new ArrayList<SearchMatch>(matches.subList(0, maxHits));
+                }
                 return new SearchResults(matches, System.currentTimeMillis() - startTime);
             }
             else
@@ -172,45 +173,6 @@ public class FisheyeSearchProvider implements SearchProvider
         }
     }
 
-    private List<SearchMatch> transformCrucibleResults(List<Integer> resultIds)
-    {
-        final List<SearchMatch> matches = new ArrayList<SearchMatch>();
-        final ApplicationProperties applicationProperties = ComponentLocator.getComponent(ApplicationProperties.class);
-        for (Integer resultId : resultIds)
-        {
-            final Review review = ReviewManager.getReviewById(resultId);
-            final BasicSearchMatch searchMatch =
-                    new BasicSearchMatch(review.getLink(), review.getName(), review.getDescription(),
-                            new BasicResourceType(applicationProperties, "review"));
-            matches.add(searchMatch);
-        }
-        return matches;
-    }
-
-    private List<Integer> getReviewIds(String searchQuery, int maxHits)
-    {
-        final ReviewSearchTerms terms = new ReviewSearchTerms(searchQuery);
-        final List<Integer> resultIds = new LinkedList<Integer>();
-        boolean first = true;
-        int count = 0;
-        for (Iterator iterator = terms.getAllTerms().iterator(); iterator.hasNext() && count < maxHits; count++)
-        {
-            String term = (String) iterator.next();
-            final Set resultSet = ReviewManager.searchReviewForTerm(term, "review.id", "review.id");
-            if (first)
-            {
-                resultIds.addAll(resultSet);
-                first = false;
-            }
-            else
-            {
-                resultIds.retainAll(resultSet);
-            }
-        }
-        Collections.sort(resultIds, NaturalComparator.REVERSE_INSTANCE);
-        return resultIds;
-    }
-
     private List<SearchMatch> transformFisheyeResults(int maxHits, String repositoryName, com.cenqua.fisheye.cvsrep.search.SearchResults collator)
             throws Exception
     {
@@ -258,74 +220,21 @@ public class FisheyeSearchProvider implements SearchProvider
         return excerpt.toString();
     }
 
-    private boolean accessAllowed(RepositoryHandle h, String username)
-    {
-        final UserManager um = AppConfig.getsConfig().getUserManager();
-        try
-        {
-            return um.hasPermissionToAccess(um.createTrustedUserLogin(username), h);
-        }
-        catch (DbException e)
-        {
-            throw new RuntimeException(e);
-        }
-        catch (LicensePolicyException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private List<Message> validateQuery(QueryParser queryParser, String username)
-    {
-        final List<Message> errors = new ArrayList<Message>();
-        final SearchParameter applicationParameter = queryParser.getParameter(SearchParameter.APPLICATION);
-        if (applicationParameter == null)
-        {
-            errors.add(new DefaultMessage("studio.search.errors.search.param.missing", SearchParameter.APPLICATION));
-        }
-        else if (!FISH_EYE.equals(applicationParameter.getValue()) && !CRUCIBLE.equals(applicationParameter.getValue()))
-        {
-            errors.add(new DefaultMessage("studio.search.errors.search.param.invalid.value", applicationParameter.getValue(), applicationParameter.getName()));
-        }
-
-        if (errors.isEmpty() && FISH_EYE.equals(applicationParameter.getValue()))
-        {
-            //FishEye also may have a pathParameter...
-            final SearchParameter pathParameter = queryParser.getParameter(SearchParameter.PATH);
-            if (pathParameter != null)
-            {
-                FishEyePathInfo pathInfo = new FishEyePathInfo(pathParameter.getValue());
-                final String repositoryName = pathInfo.getRepname();
-                if (repositoryName == null)
-                {
-                    errors.add(new DefaultMessage("studio.search.errors.no.repository.found", pathParameter.getValue()));
-                }
-                else
-                {
-                    getRepositoryEngine(repositoryName, errors, username);
-                }
-            }
-        }
-
-
-        return errors;
-    }
-
-    private RepositoryEngine getRepositoryEngine(String name, List<Message> errors, String username)
+    private RepositoryEngine getRepositoryEngine(String repositoryName, List<Message> errors, String username)
     {
         try
         {
-            RepositoryHandle handle = AppConfig.getsConfig().getRepositoryManager().getRepository(name);
+            RepositoryHandle handle = AppConfig.getsConfig().getRepositoryManager().getRepository(repositoryName);
 
             if (handle == null)
             {
-                errors.add(new DefaultMessage("studio.search.errors.no.repository.found", name));
+                errors.add(new DefaultMessage("studio.search.errors.no.repository.found", repositoryName));
                 return null;
             }
 
-            if (!accessAllowed(handle, username))
+            if (!hasPermissionToView(username, handle))
             {
-                errors.add(new DefaultMessage("studio.search.errors.access.not.allowed.for.repository", name));
+                errors.add(new DefaultMessage("studio.search.errors.access.not.allowed.for.repository", repositoryName));
                 return null;
             }
 
@@ -333,10 +242,39 @@ public class FisheyeSearchProvider implements SearchProvider
         }
         catch (RepositoryHandle.StateException e)
         {
-            errors.add(new DefaultMessage("studio.search.errors.opening.repository", name));
+            errors.add(new DefaultMessage("studio.search.errors.opening.repository", repositoryName));
             return null;
         }
     }
+
+    private boolean hasPermissionToView(String username, RepositoryHandle handle)
+    {
+        final UserManager um = AppConfig.getsConfig().getUserManager();
+        UserLogin userLogin;
+        if (username == null)
+        {
+            userLogin = null;
+        }
+        else
+        {
+            try
+            {
+                userLogin = um.createTrustedUserLogin(username);
+            }
+            catch (DbException e)
+            {
+                log.warn("Invalid user '" + username + "' tried to view review. Access denied.");
+                return false;
+            }
+            catch (LicensePolicyException e)
+            {
+                log.warn("License exception when user '" + username + "' tried to view review. Access denied.");
+                return false;
+            }
+        }
+        return um.hasPermissionToAccess(userLogin, handle);
+    }
+
 
     private Set<String> getLocalProjectKeys()
     {
