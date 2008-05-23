@@ -95,6 +95,7 @@ public class FisheyeSearchProvider implements SearchProvider
             List<SearchMatch> matches = new ArrayList<SearchMatch>();
             final List<Message> errors = new ArrayList<Message>();
 
+            int combinedTotal = 0;
             final Set<String> projectKeys = getLocalProjectKeys();
             for (String projectKey : projectKeys)
             {
@@ -102,10 +103,7 @@ public class FisheyeSearchProvider implements SearchProvider
                         new BasicSearchParameter(SearchParameter.PATH, projectKey), username);
                 matches.addAll(results.getMatches());
                 errors.addAll(results.getErrors());
-                if (matches.size() >= maxHits)
-                {
-                    break;
-                }
+                combinedTotal += results.getTotalResults();
             }
             if (errors.isEmpty())
             {
@@ -114,7 +112,7 @@ public class FisheyeSearchProvider implements SearchProvider
                 {
                     matches = new ArrayList<SearchMatch>(matches.subList(0, maxHits));
                 }
-                return new SearchResults(matches, System.currentTimeMillis() - startTime);
+                return new SearchResults(matches, combinedTotal, System.currentTimeMillis() - startTime);
             }
             else
             {
@@ -164,7 +162,7 @@ public class FisheyeSearchProvider implements SearchProvider
             com.cenqua.fisheye.cvsrep.search.SearchResults collator = search.runQuery(q, true);
             final List<SearchMatch> matches = transformFisheyeResults(maxHits, repositoryName, collator);
 
-            return new SearchResults(matches, System.currentTimeMillis() - startTime);
+            return new SearchResults(matches, collator.size(), System.currentTimeMillis() - startTime);
         }
         catch (Exception e)
         {

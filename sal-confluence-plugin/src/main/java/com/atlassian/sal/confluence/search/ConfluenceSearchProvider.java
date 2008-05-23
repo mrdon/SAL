@@ -63,7 +63,7 @@ public class ConfluenceSearchProvider implements SearchProvider
             SearchQueryBean wiredSearchQueryBean = getWiredSearchQueryBean(searchQuery);
             List list = searchBean.search(wiredSearchQueryBean.buildQuery());
 
-            return new SearchResults(transformSearchResults(searchQuery, maxHits, list), System.currentTimeMillis() - startTime);
+            return new SearchResults(transformSearchResults(searchQuery, maxHits, list), list.size(), System.currentTimeMillis() - startTime);
         }
         catch (Exception e)
         {

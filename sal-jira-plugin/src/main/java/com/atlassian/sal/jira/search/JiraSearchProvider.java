@@ -106,7 +106,8 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
             pagerFilter.setMax(maxHits);
             com.atlassian.jira.issue.search.SearchResults searchResults =
                     searchProvider.search(searchRequest, remoteUser, pagerFilter);
-            return new SearchResults(transformResults(searchQuery, searchResults), System.currentTimeMillis() - startTime);
+            return new SearchResults(transformResults(searchQuery, searchResults), searchResults.getTotal(),
+                    System.currentTimeMillis() - startTime);
         }
         catch (SearchException e)
         {

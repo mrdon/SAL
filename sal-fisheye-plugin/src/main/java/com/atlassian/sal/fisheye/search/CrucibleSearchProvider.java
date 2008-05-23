@@ -55,7 +55,7 @@ public class CrucibleSearchProvider implements SearchProvider
         final List<Integer> resultIds = getReviewIds(searchQuery);
         final List<SearchMatch> matches = transformCrucibleResults(resultIds, maxHits, username);
 
-        return new SearchResults(matches, System.currentTimeMillis() - startTime);
+        return new SearchResults(matches, resultIds.size(), System.currentTimeMillis() - startTime);
     }
 
     private List<SearchMatch> transformCrucibleResults(List<Integer> resultIds, int maxHits, String username)
