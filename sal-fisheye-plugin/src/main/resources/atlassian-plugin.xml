@@ -18,5 +18,6 @@
     <spring key="readWriteTransactionTemplate" class="com.atlassian.sal.spring.transaction.ReadWriteTransactionTemplate" />
     <spring key="cenquaSearchProvider" class="com.atlassian.sal.fisheye.search.CenquaSearchProvider" />
     <spring key="pluginScheduler" class="com.atlassian.sal.fisheye.scheduling.FisheyePluginScheduler" />
+    <spring key="requestFactory" class="com.atlassian.sal.api.net.HttpClientRequestFactory"/>
 
 </atlassian-plugin>
