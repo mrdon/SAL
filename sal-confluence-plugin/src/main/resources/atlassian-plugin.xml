@@ -19,5 +19,6 @@
     <component name="Read Write Transaction Template" key="readWriteTransactionTemplate" class="com.atlassian.sal.spring.transaction.ReadWriteTransactionTemplate" system="true"/>
     <component name="Confluence search provider" key="confluenceSearchProvider" class="com.atlassian.sal.confluence.search.ConfluenceSearchProvider" system="true"/>
     <component name="Plugin Scheduler" key="pluginScheduler" class="com.atlassian.sal.confluence.scheduling.ConfluencePluginScheduler" system="true" />
+    <component name="Request Factory" key="requestFactory" class="com.atlassian.sal.api.net.HttpClientRequestFactory" system="true" />
 
 </atlassian-plugin>
