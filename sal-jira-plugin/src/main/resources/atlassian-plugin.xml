@@ -42,25 +42,25 @@
                class="com.atlassian.sal.jira.license.JiraLicenseHandler" system="true">
         <interface>com.atlassian.sal.api.license.LicenseHandler</interface>
     </component>
-
     <component name="Plugin Scheduler" key="pluginScheduler"
         class="com.atlassian.sal.jira.scheduling.JiraPluginScheduler" system="true">
         <interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
     </component>
-
     <component name="Plugin Lifecycle Manager" key="lifecycleManager"
                class="com.atlassian.sal.jira.lifecycle.JiraLifecycleManager" system="true">
         <interface>com.atlassian.sal.api.lifecycle.LifecycleManager</interface>
     </component>
-
     <component name="NoOp Transaction Template" key="noopTransactionTemplate"
                class="com.atlassian.sal.api.transaction.NoOpTransactionTemplate" system="true">
         <interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>
     </component>
-
     <component name="Jira Search Provider" key="jiraSearchProvider"
                class="com.atlassian.sal.jira.search.JiraSearchProvider" system="true">
         <interface>com.atlassian.sal.api.search.SearchProvider</interface>
+    </component>
+    <component name="Request Factory" key="requestFactory" 
+               class="com.atlassian.sal.api.net.HttpClientRequestFactory" system="true">
+        <interface>com.atlassian.sal.api.net.RequestFactory</interface>
     </component>
 
 </atlassian-plugin>
