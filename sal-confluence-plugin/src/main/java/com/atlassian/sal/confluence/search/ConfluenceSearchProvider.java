@@ -1,7 +1,6 @@
 package com.atlassian.sal.confluence.search;
 
 import com.atlassian.bonnie.Searcher;
-import com.atlassian.bonnie.search.summary.Summary;
 import com.atlassian.confluence.core.Addressable;
 import com.atlassian.confluence.labels.LabelManager;
 import com.atlassian.confluence.search.actions.SearchBean;
@@ -11,7 +10,6 @@ import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.UserAccessor;
-import com.atlassian.confluence.util.GeneralUtil;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.message.DefaultMessage;
@@ -25,7 +23,6 @@ import com.atlassian.sal.api.search.SearchResults;
 import com.atlassian.sal.api.search.query.DefaultQueryParser;
 import com.atlassian.sal.api.search.query.QueryParser;
 import com.atlassian.user.User;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -63,7 +60,7 @@ public class ConfluenceSearchProvider implements SearchProvider
             SearchQueryBean wiredSearchQueryBean = getWiredSearchQueryBean(searchQuery);
             List list = searchBean.search(wiredSearchQueryBean.buildQuery());
 
-            return new SearchResults(transformSearchResults(searchQuery, maxHits, list), list.size(), System.currentTimeMillis() - startTime);
+            return new SearchResults(transformSearchResults(maxHits, list), list.size(), System.currentTimeMillis() - startTime);
         }
         catch (Exception e)
         {
@@ -79,7 +76,7 @@ public class ConfluenceSearchProvider implements SearchProvider
         }
     }
 
-    private List<SearchMatch> transformSearchResults(String searchQuery, int maxHits, List list)
+    private List<SearchMatch> transformSearchResults(int maxHits, List list)
     {
         List<SearchMatch> matches = new ArrayList<SearchMatch>();
         ApplicationProperties webProperties = getApplicationProperties();
@@ -95,9 +92,8 @@ public class ConfluenceSearchProvider implements SearchProvider
             {
                 Addressable result = (Addressable) searchResultWithExcerpt.getResultObject();
                 ResourceType resultType = new BasicResourceType(webProperties, result.getType());
-                String excerpt = getExcerpt(searchQuery, searchResultWithExcerpt.getContentBodyString());
                 matches.add(new BasicSearchMatch(webProperties.getBaseUrl() + result.getUrlPath(),
-                        result.getRealTitle(), excerpt, resultType));
+                        result.getRealTitle(), searchResultWithExcerpt.getContentBodyString(), resultType));
             }
         }
         return matches;
@@ -158,30 +154,6 @@ public class ConfluenceSearchProvider implements SearchProvider
         }
 
         return searchQueryBean;
-    }
-
-    String getExcerpt(String searchQuery, String contentBodyString)
-    {
-        if (StringUtils.isBlank(contentBodyString))
-        {
-            return "";
-        }
-        Summary summary = GeneralUtil.makeSummary(contentBodyString, searchQuery);
-        StringBuffer excerpt = new StringBuffer();
-        for (int i = 0; i < summary.getFragments().length; i++)
-        {
-            Summary.Fragment fragment = summary.getFragments()[i];
-            if (fragment.isHighlight())
-            {
-                excerpt.append("<span class=\"highlight\">").
-                        append(GeneralUtil.htmlEncode(fragment.toString())).append("</span>");
-            }
-            else
-            {
-                excerpt.append(GeneralUtil.htmlEncode(fragment.toString()));
-            }
-        }
-        return excerpt.toString();
     }
 
     User getUser(String username)

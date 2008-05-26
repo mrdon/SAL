@@ -15,6 +15,7 @@ import com.atlassian.jira.issue.transport.impl.FieldValuesHolderImpl;
 import com.atlassian.jira.issue.transport.impl.IssueNavigatorActionParams;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.SimpleErrorCollection;
+import com.atlassian.jira.util.searchers.ThreadLocalSearcherCache;
 import com.atlassian.jira.web.bean.I18nBean;
 import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -38,6 +39,7 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.io.IOException;
 
 /**
  *
@@ -106,7 +108,7 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
             pagerFilter.setMax(maxHits);
             com.atlassian.jira.issue.search.SearchResults searchResults =
                     searchProvider.search(searchRequest, remoteUser, pagerFilter);
-            return new SearchResults(transformResults(searchQuery, searchResults), searchResults.getTotal(),
+            return new SearchResults(transformResults(searchResults), searchResults.getTotal(),
                     System.currentTimeMillis() - startTime);
         }
         catch (SearchException e)
@@ -116,9 +118,20 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
             errors.add(new DefaultMessage(e.getMessage()));
             return new SearchResults(errors);
         }
+        finally
+        {
+            try
+            {
+                ThreadLocalSearcherCache.resetSearchers();
+            }
+            catch (IOException e)
+            {
+                log.error("Error closing searchers", e);
+            }
+        }
     }
 
-    private List<SearchMatch> transformResults(String searchQuery, com.atlassian.jira.issue.search.SearchResults searchResults)
+    private List<SearchMatch> transformResults(com.atlassian.jira.issue.search.SearchResults searchResults)
     {
         final List<SearchMatch> matches = new ArrayList<SearchMatch>();
         final ApplicationProperties applicationProperties = getWebProperties();
@@ -127,7 +140,7 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
         {
             final Issue issue = (Issue) iterator.next();
             matches.add(new BasicSearchMatch(applicationProperties.getBaseUrl() + "/browse/" + issue.getKey(),
-                    "[" + issue.getKey() + "] " + issue.getSummary(), SearchUtils.summarize(issue.getDescription(), searchQuery),
+                    "[" + issue.getKey() + "] " + issue.getSummary(), issue.getDescription(),
                     new BasicResourceType(applicationProperties, issue.getIssueTypeObject().getId())));
         }
         return matches;

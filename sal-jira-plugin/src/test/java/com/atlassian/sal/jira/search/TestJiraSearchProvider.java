@@ -240,7 +240,7 @@ public class TestJiraSearchProvider extends TestCase
         SearchMatch searchMatch = results.getMatches().get(0);
         assertEquals("http://jira.atlassian.com/browse/JST-234", searchMatch.getUrl());
         assertEquals("[JST-234] Sample Summary", searchMatch.getTitle());
-        assertEquals("Sample description for the <span id=\"highlight\">query</span>", searchMatch.getExcerpt());
+        assertEquals("Sample description for the query issue.", searchMatch.getExcerpt());
         assertEquals("1", searchMatch.getResourceType().getType());
         assertEquals("JIRA", searchMatch.getResourceType().getName());
         assertEquals("http://jira.atlassian.com", searchMatch.getResourceType().getUrl());

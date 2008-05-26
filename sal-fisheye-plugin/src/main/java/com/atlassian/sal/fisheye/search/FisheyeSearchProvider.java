@@ -160,9 +160,10 @@ public class FisheyeSearchProvider implements SearchProvider
             long startTime = System.currentTimeMillis();
 
             com.cenqua.fisheye.cvsrep.search.SearchResults collator = search.runQuery(q, true);
-            final List<SearchMatch> matches = transformFisheyeResults(maxHits, repositoryName, collator);
+            SearchResultsExplorer results = getSearchResultsExplorer(repositoryName, collator);
+            final List<SearchMatch> matches = transformFisheyeResults(maxHits, repositoryName, results);
 
-            return new SearchResults(matches, collator.size(), System.currentTimeMillis() - startTime);
+            return new SearchResults(matches, results.getGroups().size(), System.currentTimeMillis() - startTime);
         }
         catch (Exception e)
         {
@@ -171,16 +172,12 @@ public class FisheyeSearchProvider implements SearchProvider
         }
     }
 
-    private List<SearchMatch> transformFisheyeResults(int maxHits, String repositoryName, com.cenqua.fisheye.cvsrep.search.SearchResults collator)
+    private List<SearchMatch> transformFisheyeResults(int maxHits, String repositoryName, SearchResultsExplorer results)
             throws Exception
     {
-        final UrlHelper searchUrl = new UrlHelper();
-        ApplicationProperties applicationProperties = ComponentLocator.getComponent(ApplicationProperties.class);
+        final ApplicationProperties applicationProperties = ComponentLocator.getComponent(ApplicationProperties.class);
         final String baseUrl = applicationProperties.getBaseUrl();
-        searchUrl.setUrl(baseUrl + "/search/" + repositoryName + "/");
 
-        SearchResultsExplorer results = new SearchResultsExplorer(collator);
-        results.init(CrucibleFilter.getRequest(), searchUrl);
         final List groups = results.getGroups();
         final List<SearchMatch> matches = new ArrayList<SearchMatch>();
         int count = 0;
@@ -190,25 +187,22 @@ public class FisheyeSearchProvider implements SearchProvider
             final FileRevision firstRevision = groupItem.getFirst();
 
             final List<FileRevision> revisionList = groupItem.getItems();
-            String excerpt = buildExcerpt(baseUrl, repositoryName, firstRevision, revisionList);
+            String excerpt = buildExcerpt(firstRevision, revisionList);
             matches.add(new BasicSearchMatch(baseUrl + "/changelog/" + repositoryName + "/" + firstRevision.getPath() + "/?cs=" + firstRevision.getChangeSetId(),
                     firstRevision.getChangeSetId() + " by " + firstRevision.getAuthor(), excerpt, new BasicResourceType(applicationProperties, "changeset")));
         }
         return matches;
     }
 
-    private String buildExcerpt(String baseUrl, String repositoryName, FileRevision firstRevision, List<FileRevision> revisionList)
+    private String buildExcerpt(FileRevision firstRevision, List<FileRevision> revisionList)
     {
         StringBuffer excerpt = new StringBuffer();
-        excerpt.append("<span class=\"csComment\">").append(firstRevision.getComment()).append("</span><br/>");
+        excerpt.append(firstRevision.getComment()).append("\n");
         int count = 0;
         for (FileRevision fileRevision : revisionList)
         {
             count++;
-            excerpt.append("<a class=\"revLink\" href=\"").
-                    append(baseUrl).append("/browse/").append(repositoryName).append("/").append(fileRevision.getPath()).append("\">").
-                    append(fileRevision.getPath()).
-                    append("</a><br/>");
+            excerpt.append(fileRevision.getPath()).append("\n");
             if (count > MAX_FILES)
             {
                 excerpt.append("...");
@@ -273,7 +267,6 @@ public class FisheyeSearchProvider implements SearchProvider
         return um.hasPermissionToAccess(userLogin, handle);
     }
 
-
     private Set<String> getLocalProjectKeys()
     {
         Set<String> repoData = new HashSet<String>();
@@ -282,5 +275,17 @@ public class FisheyeSearchProvider implements SearchProvider
             repoData.add(h.getName());
         }
         return repoData;
+    }
+
+
+    private SearchResultsExplorer getSearchResultsExplorer(String repositoryName, com.cenqua.fisheye.cvsrep.search.SearchResults collator)
+    {
+        final ApplicationProperties applicationProperties = ComponentLocator.getComponent(ApplicationProperties.class);
+        final String baseUrl = applicationProperties.getBaseUrl();
+        final UrlHelper searchUrl = new UrlHelper();
+        searchUrl.setUrl(baseUrl + "/search/" + repositoryName + "/");
+        SearchResultsExplorer results = new SearchResultsExplorer(collator);
+        results.init(CrucibleFilter.getRequest(), searchUrl);
+        return results;
     }
 }

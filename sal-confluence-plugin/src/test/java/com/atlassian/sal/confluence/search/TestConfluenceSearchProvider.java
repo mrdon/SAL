@@ -160,14 +160,7 @@ public class TestConfluenceSearchProvider extends TestCase
                 mockApplicationPropertiesControl.setDefaultReturnValue("Confluence");
                 mockApplicationPropertiesControl.replay();
                 return mockApplicationProperties;
-            }
-
-            String getExcerpt(String searchQuery, String contentBodyString)
-            {
-                Assert.assertEquals("test", searchQuery);
-                Assert.assertEquals("Some content that we're searching test for!", contentBodyString);
-                return "Some content that we're searching <span class=\"highlight\">test</span> for!";
-            }
+            }           
 
             User getUser(String username)
             {
@@ -182,7 +175,7 @@ public class TestConfluenceSearchProvider extends TestCase
         assertEquals(1, results.getMatches().size());
         assertEquals("Home page", results.getMatches().get(0).getTitle());
         assertEquals("http://www.atlassian.com/wiki/display/TST/Home", results.getMatches().get(0).getUrl());
-        assertEquals("Some content that we're searching <span class=\"highlight\">test</span> for!", results.getMatches().get(0).getExcerpt());
+        assertEquals("Some content that we're searching test for!", results.getMatches().get(0).getExcerpt());
         assertEquals("Confluence", results.getMatches().get(0).getResourceType().getName());
         assertEquals("page", results.getMatches().get(0).getResourceType().getType());
         assertEquals("http://www.atlassian.com/wiki", results.getMatches().get(0).getResourceType().getUrl());
