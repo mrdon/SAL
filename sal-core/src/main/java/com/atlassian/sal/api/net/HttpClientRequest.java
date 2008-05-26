@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.URI;
@@ -172,7 +173,9 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 				exhaustResponseContents(method);
 				method.releaseConnection();
 				// see https://extranet.atlassian.com/display/~doflynn/2008/05/19/HttpClient+leaks+sockets+into+CLOSE_WAIT
-				httpClient.getHttpConnectionManager().closeIdleConnections(0);
+				final HttpConnectionManager httpConnectionManager = httpClient.getHttpConnectionManager();
+				if (httpConnectionManager!=null)
+					httpConnectionManager.closeIdleConnections(0);
 			}
 		}
 		// log exception if there was one

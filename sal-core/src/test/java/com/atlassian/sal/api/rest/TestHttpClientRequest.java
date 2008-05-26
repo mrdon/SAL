@@ -25,8 +25,11 @@ public class TestHttpClientRequest extends TestCase
 
 	public void testAuthentication() throws IOException
 	{
-		final HttpClient mockHttpClient = EasyMock.createMock(HttpClient.class);
-
+		final IMocksControl httpClientMockControl = EasyMock.createNiceControl();
+		final HttpClient mockHttpClient = httpClientMockControl.createMock(HttpClient.class);
+		httpClientMockControl.replay();
+		
+		
 		// counter how many time was authentication called
 		final AtomicInteger authenticatorCounter = new AtomicInteger(0);
 
@@ -94,15 +97,15 @@ public class TestHttpClientRequest extends TestCase
 		mockControl.replay();
 
 		// create HttpClient that will return 301 Moved Permanently
-		final IMocksControl httpMockControl = EasyMock.createNiceControl();
-		final HttpClient httpMock = httpMockControl.createMock(HttpClient.class);
-		httpMock.executeMethod(mockPostMethod);
-		httpMockControl.andReturn(302);
-		httpMockControl.times(HttpClientRequest.MAX_ATTEMPTS*HttpClientRequest.MAX_REDIRECTS);   // it should try to follow redirection MAX_REDIRECTS times and then retry MAX_ATTEMPTS times
-		httpMockControl.replay();
+		final IMocksControl httpClientMockControl = EasyMock.createNiceControl();
+		final HttpClient httpClientMock = httpClientMockControl.createMock(HttpClient.class);
+		httpClientMock.executeMethod(mockPostMethod);
+		httpClientMockControl.andReturn(302);
+		httpClientMockControl.times(HttpClientRequest.MAX_ATTEMPTS*HttpClientRequest.MAX_REDIRECTS);   // it should try to follow redirection MAX_REDIRECTS times and then retry MAX_ATTEMPTS times
+		httpClientMockControl.replay();
 		
 		// create a request that will return mockPostMethod
-		HttpClientRequest request = new HttpClientRequest(httpMock, MethodType.POST, "http://url")
+		HttpClientRequest request = new HttpClientRequest(httpClientMock, MethodType.POST, "http://url")
 		{
 			@Override
 			protected HttpMethod makeMethod() throws UnsupportedEncodingException
@@ -162,8 +165,14 @@ public class TestHttpClientRequest extends TestCase
 		mockPostMethod.addParameter("x", "y");
 		mockControl.replay();
 		
+
+		final IMocksControl httpClientMockControl = EasyMock.createNiceControl();
+		final HttpClient mockHttpClient = httpClientMockControl.createMock(HttpClient.class);
+		httpClientMockControl.replay();
+
+		
 		// create a request that will return mockPostMethod
-		HttpClientRequest request = new HttpClientRequest(EasyMock.createMock(HttpClient.class), MethodType.POST, "http://url")
+		HttpClientRequest request = new HttpClientRequest(mockHttpClient, MethodType.POST, "http://url")
 		{
 			@Override
 			protected HttpMethod makeMethod() throws UnsupportedEncodingException
