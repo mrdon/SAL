@@ -171,6 +171,8 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 			{
 				exhaustResponseContents(method);
 				method.releaseConnection();
+				// see https://extranet.atlassian.com/display/~doflynn/2008/05/19/HttpClient+leaks+sockets+into+CLOSE_WAIT
+				httpClient.getHttpConnectionManager().closeIdleConnections(0);
 			}
 		}
 		// log exception if there was one
