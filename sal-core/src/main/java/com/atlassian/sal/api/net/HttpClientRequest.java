@@ -2,6 +2,7 @@ package com.atlassian.sal.api.net;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -168,6 +169,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 			}
 			finally
 			{
+				exhaustResponseContents(method);
 				method.releaseConnection();
 			}
 		}
@@ -178,6 +180,56 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 		}
 		throw new IOException("Maximum number of retries ("+MAX_ATTEMPTS+") exceeded.");
 	}
+
+    private static void exhaustResponseContents(HttpMethod response)
+    {
+        InputStream body = null;
+        try
+        {
+            body = response.getResponseBodyAsStream();
+            if (body==null)
+            {
+            	return;
+            }
+            byte[] buf = new byte[512];
+            @SuppressWarnings("unused")
+			int bytesRead = 0;
+            while ((bytesRead = body.read(buf)) != -1)
+            {
+                // throw the bytes away! :)
+            }
+        }
+        catch (IOException e)
+        {
+            // Ignore, we're already done with the response anyway.
+        }
+        finally
+        {
+            shutdownStream(body);
+        }
+    }
+    
+    /**
+     * Unconditionally close an <code>InputStream</code>.
+     * Equivalent to {@link InputStream#close()}, except any exceptions will be ignored.
+     * @param input A (possibly null) InputStream
+     */
+    public static void shutdownStream( final InputStream input )
+    {
+        if( null == input )
+        {
+            return;
+        }
+
+        try
+        {
+            input.close();
+        }
+        catch( final IOException ioe )
+        {
+        }
+    }    
+    
 
 	public String execute() throws IOException
 	{
