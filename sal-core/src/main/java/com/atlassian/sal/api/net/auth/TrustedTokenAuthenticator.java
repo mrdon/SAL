@@ -35,6 +35,7 @@ public class TrustedTokenAuthenticator implements HttpClientAuthenticator
 		{
 			final CommonsHttpClientTrustedRequest commonsHttpClientTrustedRequest = new CommonsHttpClientTrustedRequest(method);
 			TrustedApplicationUtils.addRequestParameters(userCertificate, commonsHttpClientTrustedRequest);
+			method.removeRequestHeader("X-Seraph-Trusted-App-Version");
 		}
 	}
 
