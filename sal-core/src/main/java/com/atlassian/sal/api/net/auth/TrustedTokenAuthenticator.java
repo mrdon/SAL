@@ -31,12 +31,12 @@ public class TrustedTokenAuthenticator implements HttpClientAuthenticator
 	 */
 	public void process(HttpClient httpClient, HttpMethod method)
 	{
-		if (this.userCertificate!=null)
-		{
-			final CommonsHttpClientTrustedRequest commonsHttpClientTrustedRequest = new CommonsHttpClientTrustedRequest(method);
-			TrustedApplicationUtils.addRequestParameters(userCertificate, commonsHttpClientTrustedRequest);
-			method.removeRequestHeader("X-Seraph-Trusted-App-Version");
-		}
+		if (userCertificate!=null && userCertificate.getID() != null && !"".equals(userCertificate.getID().trim()))
+        {
+            method.setRequestHeader(TrustedApplicationUtils.Header.Request.ID, userCertificate.getID());
+            method.setRequestHeader(TrustedApplicationUtils.Header.Request.SECRET_KEY, userCertificate.getSecretKey());
+            method.setRequestHeader(TrustedApplicationUtils.Header.Request.CERTIFICATE, userCertificate.getCertificate());
+        }
 	}
 
 }
