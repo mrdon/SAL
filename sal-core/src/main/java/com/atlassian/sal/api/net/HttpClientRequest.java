@@ -75,12 +75,8 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 	public HttpClientRequest addTrustedTokenAuthentication()
 	{
 		final UserManager userManager = ComponentLocator.getComponent(UserManager.class);
-		final String remoteUsername = userManager.getRemoteUsername();
-		if (remoteUsername != null && !remoteUsername.equals(""))
-		{
-			TrustedTokenAuthenticator trustedTokenAuthenticator = new TrustedTokenAuthenticator(remoteUsername);
-			this.authenticators.add(trustedTokenAuthenticator);
-		} 
+		TrustedTokenAuthenticator trustedTokenAuthenticator = new TrustedTokenAuthenticator(userManager.getRemoteUsername());
+		this.authenticators.add(trustedTokenAuthenticator);
 		return this;
 	}
 	

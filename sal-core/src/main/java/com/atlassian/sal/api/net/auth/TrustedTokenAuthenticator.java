@@ -16,7 +16,13 @@ public class TrustedTokenAuthenticator implements HttpClientAuthenticator
 	public TrustedTokenAuthenticator(String username)
 	{
 		final CertificateFactory certificateFactory = ComponentLocator.getComponent(CertificateFactory.class);
-		this.userCertificate = certificateFactory.createCertificate(username);
+		if (username != null && !username.equals(""))
+		{
+			this.userCertificate = certificateFactory.createCertificate(username);
+		} else
+		{
+			this.userCertificate = null;
+		}
 	}
 
 	/**
@@ -25,8 +31,11 @@ public class TrustedTokenAuthenticator implements HttpClientAuthenticator
 	 */
 	public void process(HttpClient httpClient, HttpMethod method)
 	{
-		final CommonsHttpClientTrustedRequest commonsHttpClientTrustedRequest = new CommonsHttpClientTrustedRequest(method);
-		TrustedApplicationUtils.addRequestParameters(userCertificate, commonsHttpClientTrustedRequest);
+		if (this.userCertificate!=null)
+		{
+			final CommonsHttpClientTrustedRequest commonsHttpClientTrustedRequest = new CommonsHttpClientTrustedRequest(method);
+			TrustedApplicationUtils.addRequestParameters(userCertificate, commonsHttpClientTrustedRequest);
+		}
 	}
 
 }
