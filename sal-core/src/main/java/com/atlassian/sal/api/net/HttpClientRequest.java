@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -139,7 +140,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 	/* (non-Javadoc)
 	 * @see com.atlassian.sal.api.net.Request#execute()
 	 */
-	public void execute(ResponseHandler responseHandler) throws IOException
+	public void execute(ResponseHandler responseHandler) throws ResponseException
 	{
 		Throwable lastException = null;
 		for (int attempts = 0; attempts < MAX_ATTEMPTS; attempts++)
@@ -147,18 +148,24 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 			HttpMethod method = makeMethod();
 			processAuthenticator(method);
 			processParameters(method);
+			if (log.isDebugEnabled())
+			{
+				
+				final Header[] requestHeaders = method.getRequestHeaders();
+				log.debug("Calling " + method.getName() + " " +  this.url + " with headers " + (requestHeaders==null?"none":Arrays.asList(requestHeaders).toString()));
+			}
 			method.setRequestHeader("Connection", "close");
 			try
 			{
 				executeMethod(method, 0);
 				responseHandler.handle(new HttpClientResponse(method));
 				return;	// success lets get out of here
-			} catch (ExecuteMethodException e)
+			} catch (RetryAgainException e)
 			{
 				// this exception occurs during executeMethod(). keep retrying.
 				lastException = e.getCause();
 				log.debug(e,e);
-			} catch (IOException e)
+			} catch (ResponseException e)
 			{
 				// this exception occurs during responseHandler.handle(). throw it all the way out.
 				// this catch block is here only to improve readability of the code
@@ -174,12 +181,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 					httpConnectionManager.closeIdleConnections(0);
 			}
 		}
-		// log exception if there was one
-		if (lastException!=null)
-		{
-			log.warn(lastException,lastException);	// We probably shouldn't log and rethrow. But then we would lose stacktrace (new IOException doesn't have cause argument);
-		}
-		throw new IOException("Maximum number of retries ("+MAX_ATTEMPTS+") exceeded.");
+		throw new ResponseException("Maximum number of retries ("+MAX_ATTEMPTS+") reached.", lastException);
 	}
 
     private static void exhaustResponseContents(HttpMethod response)
@@ -232,16 +234,16 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     }    
     
 
-	public String execute() throws IOException
+	public String execute() throws ResponseException
 	{
 		final Set<String> stringHolder = new HashSet<String>();
 		execute(new ResponseHandler()
 		{
-			public void handle(Response response) throws IOException
+			public void handle(Response response) throws ResponseException
 			{
 				if (!response.isSuccessful())
 				{
-					throw new IOException("Unexpected response received. Status code: " + response.getStatusCode());
+					throw new ResponseException("Unexpected response received. Status code: " + response.getStatusCode());
 				}
 				stringHolder.add(response.getResponseBodyAsString());
 			}
@@ -253,15 +255,15 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 	// -------------------------------------------------- private methods ------------------------------------------------------------------
 	// ------------------------------------------------------------------------------------------------------------------------------------
 	
-	private class ExecuteMethodException extends Exception
+	private class RetryAgainException extends Exception
 	{
-		public ExecuteMethodException(Exception e)
+		public RetryAgainException(Exception e)
 		{
 			super(e);
 		}
 	}
 	
-	protected HttpMethod makeMethod() throws UnsupportedEncodingException
+	protected HttpMethod makeMethod()
 	{
 		final HttpMethod method;
 		switch (methodType)
@@ -291,7 +293,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 		return method;
 	}
 	
-	private void executeMethod(final HttpMethod method, int redirectCounter) throws ExecuteMethodException
+	private void executeMethod(final HttpMethod method, int redirectCounter) throws RetryAgainException
 	{
 		try
 		{
@@ -321,20 +323,20 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 			}
 		} catch (URIException e)
 		{
-			throw new ExecuteMethodException(e);
+			throw new RetryAgainException(e);
 		} catch (HttpException e)
 		{
-			throw new ExecuteMethodException(e);
+			throw new RetryAgainException(e);
 		} catch (NullPointerException e)
 		{
-			throw new ExecuteMethodException(e);
+			throw new RetryAgainException(e);
 		} catch (IOException e)
 		{
-			throw new ExecuteMethodException(e);
+			throw new RetryAgainException(e);
 		}
 	}
 	
-	private void processParameters(final HttpMethod method) throws UnsupportedEncodingException
+	private void processParameters(final HttpMethod method)
 	{
 		if (!(method instanceof EntityEnclosingMethod))
 		{
@@ -360,7 +362,14 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 		{
 			EntityEnclosingMethod entityEnclosingMethod = (EntityEnclosingMethod) method;
 			final String contentType = requestContentType + "; charset=UTF-8";
-			final ByteArrayInputStream inputStream = new ByteArrayInputStream(requestBody.getBytes("UTF-8"));
+			ByteArrayInputStream inputStream;
+			try
+			{
+				inputStream = new ByteArrayInputStream(requestBody.getBytes("UTF-8"));
+			} catch (UnsupportedEncodingException e)
+			{
+				throw new RuntimeException(e);
+			}
 			entityEnclosingMethod.setRequestEntity(new InputStreamRequestEntity(inputStream, contentType));
 			
 		}

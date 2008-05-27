@@ -10,7 +10,6 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.atlassian.sal.api.net.RequestFactory;
 import com.atlassian.sal.api.net.Request.MethodType;
 
 public class HttpClientRequestFactory implements RequestFactory<HttpClientRequest>
@@ -30,7 +29,7 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
 	/* (non-Javadoc)
 	 * @see com.atlassian.sal.api.net.RequestFactory#createMethod(com.atlassian.sal.api.net.Request.MethodType, java.lang.String)
 	 */
-	public HttpClientRequest createRequest(MethodType methodType, String url) throws URISyntaxException
+	public HttpClientRequest createRequest(MethodType methodType, String url)
 	{
 		final HttpClient httpClient = getHttpClient(url);
 		return new HttpClientRequest(httpClient, methodType, url);
@@ -41,7 +40,7 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
 	 * @return
 	 * @throws URISyntaxException
 	 */
-	protected HttpClient getHttpClient(String url) throws URISyntaxException
+	protected HttpClient getHttpClient(String url)
 	{
 		final HttpClient httpClient = new HttpClient();
 		configureProxy(httpClient, url);
@@ -65,13 +64,21 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
 	/**
 	 * @param client
 	 * @param remoteUrl
-	 * @throws URISyntaxException
 	 */
-	protected void configureProxy(HttpClient client, String remoteUrl) throws URISyntaxException
+	protected void configureProxy(HttpClient client, String remoteUrl)
     {
         String proxyHost = System.getProperty("http.proxyHost");
 
-        if (proxyHost != null && !isNonProxyHost(new URI(remoteUrl).getHost()))
+        URI uri;
+		try
+		{
+			uri = new URI(remoteUrl);
+		} catch (URISyntaxException e)
+		{
+			log.warn("Invalid url: " + remoteUrl, e);
+			return;
+		}
+		if (proxyHost != null && !isNonProxyHost(uri.getHost()))
         {
             int port = 80;
             try

@@ -17,14 +17,26 @@ public class HttpClientResponse implements Response
 		this.method = method;
 	}
 
-	public String getResponseBodyAsString() throws IOException
+	public String getResponseBodyAsString() throws ResponseException
 	{
-		return method.getResponseBodyAsString();
+		try
+		{
+			return method.getResponseBodyAsString();
+		} catch (IOException e)
+		{
+			throw new ResponseException(e.getMessage(), e);
+		}
 	}
 
-	public InputStream getResponseBodyAsStream() throws IOException
+	public InputStream getResponseBodyAsStream() throws ResponseException
 	{
-		return method.getResponseBodyAsStream();
+		try
+		{
+			return method.getResponseBodyAsStream();
+		} catch (IOException e)
+		{
+			throw new ResponseException(e.getMessage(), e);
+		}
 	}
 	
 	public int getStatusCode()

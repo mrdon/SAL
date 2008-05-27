@@ -1,7 +1,6 @@
 package com.atlassian.sal.api.rest;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
@@ -16,6 +15,7 @@ import org.easymock.classextension.EasyMock;
 import org.easymock.classextension.IMocksControl;
 
 import com.atlassian.sal.api.net.HttpClientRequest;
+import com.atlassian.sal.api.net.ResponseException;
 import com.atlassian.sal.api.net.ResponseHandler;
 import com.atlassian.sal.api.net.Request.MethodType;
 import com.atlassian.sal.api.net.auth.HttpClientAuthenticator;
@@ -23,7 +23,7 @@ import com.atlassian.sal.api.net.auth.HttpClientAuthenticator;
 public class TestHttpClientRequest extends TestCase
 {
 
-	public void testAuthentication() throws IOException
+	public void testAuthentication() throws IOException, ResponseException
 	{
 		final IMocksControl httpClientMockControl = EasyMock.createNiceControl();
 		final HttpClient mockHttpClient = httpClientMockControl.createMock(HttpClient.class);
@@ -79,8 +79,8 @@ public class TestHttpClientRequest extends TestCase
 		try
 		{
 			request.execute(EasyMock.createMock(ResponseHandler.class));
-			fail("Should throw IOException - maximum retries reached.");
-		} catch (IOException e)
+			fail("Should throw ResponseException - maximum retries reached.");
+		} catch (ResponseException e)
 		{
 			assertEquals("It shoud try "+HttpClientRequest.MAX_ATTEMPTS+" times", HttpClientRequest.MAX_ATTEMPTS, executeCounter.get());
 		}
@@ -108,7 +108,7 @@ public class TestHttpClientRequest extends TestCase
 		HttpClientRequest request = new HttpClientRequest(httpClientMock, MethodType.POST, "http://url")
 		{
 			@Override
-			protected HttpMethod makeMethod() throws UnsupportedEncodingException
+			protected HttpMethod makeMethod()
 			{
 				return mockPostMethod;
 			}
@@ -119,7 +119,7 @@ public class TestHttpClientRequest extends TestCase
 		{
 			request.execute(EasyMock.createMock(ResponseHandler.class));
 			fail("Should throw IOException - maximum retries reached.");
-		} catch (IOException e)
+		} catch (ResponseException e)
 		{
 			// expect Exception
 		}
@@ -153,7 +153,7 @@ public class TestHttpClientRequest extends TestCase
 		}
 	}
 	
-	public void testAddRequestParameters() throws IOException
+	public void testAddRequestParameters() throws IOException, ResponseException
 	{
 		// create mock PostMethod - someone should call addParamater() on it 
 		final IMocksControl mockControl = EasyMock.createNiceControl();
@@ -175,7 +175,7 @@ public class TestHttpClientRequest extends TestCase
 		HttpClientRequest request = new HttpClientRequest(mockHttpClient, MethodType.POST, "http://url")
 		{
 			@Override
-			protected HttpMethod makeMethod() throws UnsupportedEncodingException
+			protected HttpMethod makeMethod()
 			{
 				return mockPostMethod;
 			}
