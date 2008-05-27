@@ -1,6 +1,5 @@
 package com.atlassian.sal.api.net;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -15,15 +14,15 @@ public interface Response
 
 	/**
 	 * @return the response body of the request.
-	 * @throws IOException
+	 * @throws ResponseException
 	 */
-	String getResponseBodyAsString() throws IOException;
+	String getResponseBodyAsString() throws ResponseException;
 
 	/**
 	 * @return the response body of the request.
-	 * @throws IOException
+	 * @throws ResponseException
 	 */
-	InputStream getResponseBodyAsStream() throws IOException;
+	InputStream getResponseBodyAsStream() throws ResponseException;
 
 	/**
 	 * @return status test of the response

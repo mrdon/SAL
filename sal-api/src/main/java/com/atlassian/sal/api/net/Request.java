@@ -1,7 +1,5 @@
 package com.atlassian.sal.api.net;
 
-import java.io.IOException;
-
 import com.atlassian.sal.api.net.auth.Authenticator;
 
 
@@ -74,17 +72,17 @@ public interface Request<T extends Request<?>>
 	/**
 	 * Executes the request.
 	 * @param responseHandler Callback handler of the response.
-	 * @throws IOException
+	 * @throws ResponseException
 	 */
-	void execute(ResponseHandler responseHandler) throws IOException;
+	void execute(ResponseHandler responseHandler) throws ResponseException;
 	
 	
 	/**
 	 * Executes a request and if response is successful, returns response as a string. @see {@link Response#getResponseBodyAsString()}
 	 * @return response as String
-	 * @throws IOException
+	 * @throws ResponseException
 	 */
-	String execute() throws IOException;
+	String execute() throws ResponseException;
 	
 	
 }

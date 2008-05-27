@@ -1,7 +1,5 @@
 package com.atlassian.sal.api.net;
 
-import java.net.URISyntaxException;
-
 import com.atlassian.sal.api.net.Request.MethodType;
 
 /**
@@ -15,7 +13,6 @@ public interface RequestFactory<T extends Request<?>>
 	 * @param methodType
 	 * @param url
 	 * @return
-	 * @throws URISyntaxException
 	 */
-	T createRequest(MethodType methodType, String url) throws URISyntaxException;
+	T createRequest(MethodType methodType, String url);
 }

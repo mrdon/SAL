@@ -1,6 +1,6 @@
 package com.atlassian.sal.api.net;
 
-import java.io.IOException;
+
 
 
 /**
@@ -12,7 +12,7 @@ public interface ResponseHandler
 	 * Triggered when response from {@link Request#execute(ResponseHandler)} method becomes available. Implementations of this method should handle the response.
 	 * 
 	 * @param response a response object. Never null.
-	 * @throws IOException
+	 * @throws ResponseException
 	 */
-	void handle(Response response) throws IOException;
+	void handle(Response response) throws ResponseException;
 }
