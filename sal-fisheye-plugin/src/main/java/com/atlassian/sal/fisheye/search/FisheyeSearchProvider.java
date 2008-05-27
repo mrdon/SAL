@@ -61,21 +61,21 @@ public class FisheyeSearchProvider implements SearchProvider
             maxHits = Integer.MAX_VALUE;
         }
 
-        return doFisheyeSearch(parser.getSearchString(), maxHits, parser.getParameter(SearchParameter.PATH), username);
+        return doFisheyeSearch(parser.getSearchString(), maxHits, parser.getParameter(SearchParameter.PROJECT), username);
     }
 
     private List<Message> validateQuery(QueryParser queryParser, String username)
     {
         final List<Message> errors = new ArrayList<Message>();
-        //FishEye also may have a pathParameter...
-        final SearchParameter pathParameter = queryParser.getParameter(SearchParameter.PATH);
-        if (pathParameter != null)
+        //FishEye also may have a projectParameter...
+        final SearchParameter projectParameter = queryParser.getParameter(SearchParameter.PROJECT);
+        if (projectParameter != null)
         {
-            final FishEyePathInfo pathInfo = new FishEyePathInfo(pathParameter.getValue());
+            final FishEyePathInfo pathInfo = new FishEyePathInfo(projectParameter.getValue());
             final String repositoryName = pathInfo.getRepname();
             if (repositoryName == null)
             {
-                errors.add(new DefaultMessage("studio.search.errors.no.repository.found", pathParameter.getValue()));
+                errors.add(new DefaultMessage("studio.search.errors.no.repository.found", projectParameter.getValue()));
             }
             else
             {
@@ -86,10 +86,10 @@ public class FisheyeSearchProvider implements SearchProvider
     }
 
 
-    private SearchResults doFisheyeSearch(String searchQuery, int maxHits, SearchParameter pathParameter, String username)
+    private SearchResults doFisheyeSearch(String searchQuery, int maxHits, SearchParameter projectParameter, String username)
     {
         //if no path was specified, try to search all repositories!
-        if (pathParameter == null)
+        if (projectParameter == null)
         {
             long startTime = System.currentTimeMillis();
             List<SearchMatch> matches = new ArrayList<SearchMatch>();
@@ -100,7 +100,7 @@ public class FisheyeSearchProvider implements SearchProvider
             for (String projectKey : projectKeys)
             {
                 final SearchResults results = doFisheyeRepositorySearch(searchQuery, maxHits,
-                        new BasicSearchParameter(SearchParameter.PATH, projectKey), username);
+                        new BasicSearchParameter(SearchParameter.PROJECT, projectKey), username);
                 matches.addAll(results.getMatches());
                 errors.addAll(results.getErrors());
                 combinedTotal += results.getTotalResults();
@@ -120,7 +120,7 @@ public class FisheyeSearchProvider implements SearchProvider
             }
 
         }
-        return doFisheyeRepositorySearch(searchQuery, maxHits, pathParameter, username);
+        return doFisheyeRepositorySearch(searchQuery, maxHits, projectParameter, username);
     }
 
     private SearchResults doFisheyeRepositorySearch(String searchQuery, int maxHits,

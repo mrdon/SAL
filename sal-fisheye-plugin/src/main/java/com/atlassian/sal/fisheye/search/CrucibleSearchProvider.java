@@ -7,6 +7,7 @@ import com.atlassian.sal.api.search.BasicSearchMatch;
 import com.atlassian.sal.api.search.SearchMatch;
 import com.atlassian.sal.api.search.SearchProvider;
 import com.atlassian.sal.api.search.SearchResults;
+import com.atlassian.sal.api.search.parameter.SearchParameter;
 import com.atlassian.sal.api.search.query.DefaultQueryParser;
 import com.atlassian.sal.api.search.query.QueryParser;
 import com.cenqua.crucible.model.Principal;
@@ -45,14 +46,12 @@ public class CrucibleSearchProvider implements SearchProvider
         {
             maxHits = Integer.MAX_VALUE;
         }
-        return doCrucibleSearch(queryParser.getSearchString(), maxHits, username);
-    }
 
-    private SearchResults doCrucibleSearch(String searchQuery, int maxHits, String username)
-    {
+        final String projectKey = queryParser.getParameterValue(SearchParameter.PROJECT);
+
         long startTime = System.currentTimeMillis();
 
-        final List<Integer> resultIds = getReviewIds(searchQuery);
+        final List<Integer> resultIds = getReviewIds(queryParser.getSearchString(), projectKey);
         final List<SearchMatch> matches = transformCrucibleResults(resultIds, maxHits, username);
 
         return new SearchResults(matches, resultIds.size(), System.currentTimeMillis() - startTime);
@@ -82,7 +81,18 @@ public class CrucibleSearchProvider implements SearchProvider
         return matches;
     }
 
-    private List<Integer> getReviewIds(String searchQuery)
+    private boolean isInProject(Review review, String projectKey)
+    {
+        //no project key specified.  return true
+        if (projectKey == null || projectKey.length() == 0)
+        {
+            return true;
+        }
+
+        return projectKey.equals(review.getProject().getKey());
+    }
+
+    private List<Integer> getReviewIds(String searchQuery, String projectKey)
     {
         final ReviewSearchTerms terms = new ReviewSearchTerms(searchQuery);
         final List<Integer> resultIds = new LinkedList<Integer>();
@@ -101,6 +111,19 @@ public class CrucibleSearchProvider implements SearchProvider
                 resultIds.retainAll(resultSet);
             }
         }
+
+        //some crude filtering here to remove all id's not in the right project. Would be nicer if
+        //Crucible would support this for us...
+        for (Iterator<Integer> resultIterator = resultIds.iterator(); resultIterator.hasNext();)
+        {
+            Integer resultId = resultIterator.next();
+            Review review = ReviewManager.getReviewById(resultId);
+            if (!isInProject(review, projectKey))
+            {
+                resultIterator.remove();
+            }
+        }
+
         Collections.sort(resultIds, NaturalComparator.REVERSE_INSTANCE);
         return resultIds;
     }

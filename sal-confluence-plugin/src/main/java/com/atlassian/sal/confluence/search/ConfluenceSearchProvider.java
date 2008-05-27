@@ -20,9 +20,11 @@ import com.atlassian.sal.api.search.ResourceType;
 import com.atlassian.sal.api.search.SearchMatch;
 import com.atlassian.sal.api.search.SearchProvider;
 import com.atlassian.sal.api.search.SearchResults;
+import com.atlassian.sal.api.search.parameter.SearchParameter;
 import com.atlassian.sal.api.search.query.DefaultQueryParser;
 import com.atlassian.sal.api.search.query.QueryParser;
 import com.atlassian.user.User;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -46,34 +48,31 @@ public class ConfluenceSearchProvider implements SearchProvider
     public SearchResults search(String username, String searchQuery)
     {
         QueryParser queryParser = new DefaultQueryParser(searchQuery);
-        return search(queryParser.getSearchString(), queryParser.getMaxHits(), username);
-    }
-
-    private SearchResults search(String searchQuery, int maxHits, String username)
-    {
+        SearchResults result;
         //set the user to be the user that was passed in
         final User oldUser = AuthenticatedUserThreadLocal.getUser();
         AuthenticatedUserThreadLocal.setUser(getUser(username));
         try
         {
             long startTime = System.currentTimeMillis();
-            SearchQueryBean wiredSearchQueryBean = getWiredSearchQueryBean(searchQuery);
+            SearchQueryBean wiredSearchQueryBean = getWiredSearchQueryBean(queryParser);
             List list = searchBean.search(wiredSearchQueryBean.buildQuery());
 
-            return new SearchResults(transformSearchResults(maxHits, list), list.size(), System.currentTimeMillis() - startTime);
+            result = new SearchResults(transformSearchResults(queryParser.getMaxHits(), list), list.size(), System.currentTimeMillis() - startTime);
         }
         catch (Exception e)
         {
-            log.error("Error running confluence search for query '" + searchQuery + "'", e);
+            log.error("Error running confluence search", e);
             List<Message> errors = new ArrayList<Message>();
             errors.add(new DefaultMessage(e.getMessage()));
-            return new SearchResults(errors);
+            result = new SearchResults(errors);
         }
         finally
         {
             //restore the user to who it was before running the search.
             AuthenticatedUserThreadLocal.setUser(oldUser);
         }
+        return result;
     }
 
     private List<SearchMatch> transformSearchResults(int maxHits, List list)
@@ -134,7 +133,7 @@ public class ConfluenceSearchProvider implements SearchProvider
         return ComponentLocator.getComponent(ApplicationProperties.class);
     }
 
-    SearchQueryBean getWiredSearchQueryBean(String searchQuery)
+    SearchQueryBean getWiredSearchQueryBean(QueryParser queryParser)
     {
         SearchQueryBean searchQueryBean = new SearchQueryBean();
         searchQueryBean.setSearcher(searcher);
@@ -142,10 +141,15 @@ public class ConfluenceSearchProvider implements SearchProvider
         searchQueryBean.setSpaceManager(spaceManager);
         searchQueryBean.setLabelManager(labelManager);
         searchQueryBean.setSettingsManager(settingsManager);
+        final String projectKey = queryParser.getParameterValue(SearchParameter.PROJECT);
+        if (StringUtils.isNotEmpty(projectKey))
+        {
+            searchQueryBean.setSpaceKey(projectKey);
+        }
 
         try
         {
-            searchQueryBean.setQueryString(searchQuery);
+            searchQueryBean.setQueryString(queryParser.getSearchString());
         }
         catch (IOException e)
         {

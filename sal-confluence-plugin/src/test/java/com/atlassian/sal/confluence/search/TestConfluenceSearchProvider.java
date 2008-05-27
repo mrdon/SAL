@@ -6,6 +6,7 @@ import com.atlassian.confluence.search.actions.SearchQueryBean;
 import com.atlassian.confluence.search.actions.SearchResultWithExcerpt;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.search.SearchResults;
+import com.atlassian.sal.api.search.query.QueryParser;
 import com.atlassian.user.User;
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -37,7 +38,7 @@ public class TestConfluenceSearchProvider extends TestCase
         ConfluenceSearchProvider searchProvider = new ConfluenceSearchProvider()
         {
 
-            SearchQueryBean getWiredSearchQueryBean(String searchQuery)
+            SearchQueryBean getWiredSearchQueryBean(QueryParser queryParser)
             {
                 MockControl mockSearchQueryBeanControl = MockClassControl.createControl(SearchQueryBean.class);
                 SearchQueryBean mockSearchQueryBean = (SearchQueryBean) mockSearchQueryBeanControl.getMock();
@@ -79,7 +80,7 @@ public class TestConfluenceSearchProvider extends TestCase
         ConfluenceSearchProvider searchProvider = new ConfluenceSearchProvider()
         {
 
-            SearchQueryBean getWiredSearchQueryBean(String searchQuery)
+            SearchQueryBean getWiredSearchQueryBean(QueryParser queryParser)
             {
                 MockControl mockSearchQueryBeanControl = MockClassControl.createControl(SearchQueryBean.class);
                 SearchQueryBean mockSearchQueryBean = (SearchQueryBean) mockSearchQueryBeanControl.getMock();
@@ -140,7 +141,7 @@ public class TestConfluenceSearchProvider extends TestCase
         ConfluenceSearchProvider searchProvider = new ConfluenceSearchProvider()
         {
 
-            SearchQueryBean getWiredSearchQueryBean(String searchQuery)
+            SearchQueryBean getWiredSearchQueryBean(QueryParser queryParser)
             {
                 MockControl mockSearchQueryBeanControl = MockClassControl.createControl(SearchQueryBean.class);
                 SearchQueryBean mockSearchQueryBean = (SearchQueryBean) mockSearchQueryBeanControl.getMock();

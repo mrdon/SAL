@@ -64,7 +64,7 @@ public class TestJiraSearchProvider extends TestCase
         mockSearchRequestManagerControl.setDefaultReturnValue(mockSearchRequest);
         mockSearchRequestManagerControl.replay();
 
-        JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchRequestManager, mockSearchProvider, null)
+        JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchRequestManager, mockSearchProvider, null, null)
         {
             void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors, User remoteUser)
             {
@@ -113,7 +113,7 @@ public class TestJiraSearchProvider extends TestCase
         mockQueryCreatorControl.setDefaultReturnValue("?query=query&summary=true");
         mockQueryCreatorControl.replay();
 
-        JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, null, null, null)
+        JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, null, null, null, null)
         {
             void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors, User user)
             {
@@ -201,7 +201,7 @@ public class TestJiraSearchProvider extends TestCase
         mockSearchRequestManagerControl.setDefaultReturnValue(mockSearchRequest);
         mockSearchRequestManagerControl.replay();
 
-        JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchRequestManager, mockSearchProvider, null)
+        JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchRequestManager, mockSearchProvider, null, null)
         {
             void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors, User user)
             {
