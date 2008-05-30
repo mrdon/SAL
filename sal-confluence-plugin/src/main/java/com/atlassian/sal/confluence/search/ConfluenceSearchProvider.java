@@ -1,5 +1,13 @@
 package com.atlassian.sal.confluence.search;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
 import com.atlassian.bonnie.Searcher;
 import com.atlassian.confluence.core.Addressable;
 import com.atlassian.confluence.labels.LabelManager;
@@ -21,16 +29,9 @@ import com.atlassian.sal.api.search.SearchMatch;
 import com.atlassian.sal.api.search.SearchProvider;
 import com.atlassian.sal.api.search.SearchResults;
 import com.atlassian.sal.api.search.parameter.SearchParameter;
-import com.atlassian.sal.api.search.query.DefaultQueryParser;
-import com.atlassian.sal.api.search.query.QueryParser;
+import com.atlassian.sal.api.search.query.SearchQuery;
+import com.atlassian.sal.api.search.query.SearchQueryParser;
 import com.atlassian.user.User;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  */
@@ -45,9 +46,10 @@ public class ConfluenceSearchProvider implements SearchProvider
     private LabelManager labelManager;
     private SettingsManager settingsManager;
 
-    public SearchResults search(String username, String searchQuery)
+    public SearchResults search(String username, String stringQuery)
     {
-        QueryParser queryParser = new DefaultQueryParser(searchQuery);
+        SearchQueryParser queryParser = ComponentLocator.getComponent(SearchQueryParser.class);
+        final SearchQuery searchQuery = queryParser.parse(stringQuery);
         SearchResults result;
         //set the user to be the user that was passed in
         final User oldUser = AuthenticatedUserThreadLocal.getUser();
@@ -55,10 +57,10 @@ public class ConfluenceSearchProvider implements SearchProvider
         try
         {
             long startTime = System.currentTimeMillis();
-            SearchQueryBean wiredSearchQueryBean = getWiredSearchQueryBean(queryParser);
-            List list = searchBean.search(wiredSearchQueryBean.buildQuery());
-
-            result = new SearchResults(transformSearchResults(queryParser.getMaxHits(), list), list.size(), System.currentTimeMillis() - startTime);
+			SearchQueryBean wiredSearchQueryBean = getWiredSearchQueryBean(searchQuery);
+			List list = searchBean.search(wiredSearchQueryBean.buildQuery());
+			int maxHits = searchQuery.getParameter(SearchParameter.MAXHITS, Integer.MAX_VALUE);
+            result = new SearchResults(transformSearchResults(maxHits, list), list.size(), System.currentTimeMillis() - startTime);
         }
         catch (Exception e)
         {
@@ -80,10 +82,6 @@ public class ConfluenceSearchProvider implements SearchProvider
         List<SearchMatch> matches = new ArrayList<SearchMatch>();
         ApplicationProperties webProperties = getApplicationProperties();
         int count = 0;
-        if (maxHits == -1)
-        {
-            maxHits = Integer.MAX_VALUE;
-        }
         for (Iterator iterator = list.iterator(); iterator.hasNext() && count < maxHits; count++)
         {
             SearchResultWithExcerpt searchResultWithExcerpt = (SearchResultWithExcerpt) iterator.next();
@@ -133,7 +131,7 @@ public class ConfluenceSearchProvider implements SearchProvider
         return ComponentLocator.getComponent(ApplicationProperties.class);
     }
 
-    SearchQueryBean getWiredSearchQueryBean(QueryParser queryParser)
+    SearchQueryBean getWiredSearchQueryBean(SearchQuery query)
     {
         SearchQueryBean searchQueryBean = new SearchQueryBean();
         searchQueryBean.setSearcher(searcher);
@@ -141,7 +139,7 @@ public class ConfluenceSearchProvider implements SearchProvider
         searchQueryBean.setSpaceManager(spaceManager);
         searchQueryBean.setLabelManager(labelManager);
         searchQueryBean.setSettingsManager(settingsManager);
-        final String projectKey = queryParser.getParameterValue(SearchParameter.PROJECT);
+        final String projectKey = query.getParameter(SearchParameter.PROJECT);
         if (StringUtils.isNotEmpty(projectKey))
         {
             searchQueryBean.setSpaceKey(projectKey);
@@ -149,7 +147,7 @@ public class ConfluenceSearchProvider implements SearchProvider
 
         try
         {
-            searchQueryBean.setQueryString(queryParser.getSearchString());
+            searchQueryBean.setQueryString(query.getSearchString());
         }
         catch (IOException e)
         {

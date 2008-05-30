@@ -1,28 +1,37 @@
 package com.atlassian.sal.confluence.search;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import junit.framework.TestCase;
+
+import org.apache.lucene.search.Query;
+import org.easymock.MockControl;
+import org.easymock.classextension.MockClassControl;
+
 import com.atlassian.confluence.core.Addressable;
 import com.atlassian.confluence.search.actions.SearchBean;
 import com.atlassian.confluence.search.actions.SearchQueryBean;
 import com.atlassian.confluence.search.actions.SearchResultWithExcerpt;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.component.MockComponentLocator;
 import com.atlassian.sal.api.search.SearchResults;
-import com.atlassian.sal.api.search.query.QueryParser;
+import com.atlassian.sal.api.search.query.DefaultSearchQueryParser;
+import com.atlassian.sal.api.search.query.SearchQuery;
 import com.atlassian.user.User;
-import junit.framework.Assert;
-import junit.framework.TestCase;
-import org.apache.lucene.search.Query;
-import org.easymock.MockControl;
-import org.easymock.classextension.MockClassControl;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  *
  */
 public class TestConfluenceSearchProvider extends TestCase
 {
+	@Override
+	protected void setUp() throws Exception
+	{
+		super.setUp();
+		MockComponentLocator.create(new DefaultSearchQueryParser());
+	}
     public void testErrorResult()
     {
         MockControl mockQueryControl = MockClassControl.createControl(Query.class);
@@ -37,8 +46,8 @@ public class TestConfluenceSearchProvider extends TestCase
 
         ConfluenceSearchProvider searchProvider = new ConfluenceSearchProvider()
         {
-
-            SearchQueryBean getWiredSearchQueryBean(QueryParser queryParser)
+        	@Override
+            SearchQueryBean getWiredSearchQueryBean(SearchQuery searchQuery)
             {
                 MockControl mockSearchQueryBeanControl = MockClassControl.createControl(SearchQueryBean.class);
                 SearchQueryBean mockSearchQueryBean = (SearchQueryBean) mockSearchQueryBeanControl.getMock();
@@ -80,7 +89,8 @@ public class TestConfluenceSearchProvider extends TestCase
         ConfluenceSearchProvider searchProvider = new ConfluenceSearchProvider()
         {
 
-            SearchQueryBean getWiredSearchQueryBean(QueryParser queryParser)
+        	@Override
+            SearchQueryBean getWiredSearchQueryBean(SearchQuery searchQuery)
             {
                 MockControl mockSearchQueryBeanControl = MockClassControl.createControl(SearchQueryBean.class);
                 SearchQueryBean mockSearchQueryBean = (SearchQueryBean) mockSearchQueryBeanControl.getMock();
@@ -128,7 +138,7 @@ public class TestConfluenceSearchProvider extends TestCase
         mockAddressableControl.replay();
 
         SearchResultWithExcerpt result = new SearchResultWithExcerpt("Some content that we're searching test for!", mockAddressable);
-        List mockResults = new ArrayList();
+        List<SearchResultWithExcerpt> mockResults = new ArrayList<SearchResultWithExcerpt>();
         mockResults.add(result);
 
 
@@ -141,7 +151,8 @@ public class TestConfluenceSearchProvider extends TestCase
         ConfluenceSearchProvider searchProvider = new ConfluenceSearchProvider()
         {
 
-            SearchQueryBean getWiredSearchQueryBean(QueryParser queryParser)
+        	@Override
+            SearchQueryBean getWiredSearchQueryBean(SearchQuery searchQuery)
             {
                 MockControl mockSearchQueryBeanControl = MockClassControl.createControl(SearchQueryBean.class);
                 SearchQueryBean mockSearchQueryBean = (SearchQueryBean) mockSearchQueryBeanControl.getMock();
