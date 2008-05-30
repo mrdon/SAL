@@ -58,6 +58,11 @@
                class="com.atlassian.sal.jira.search.JiraSearchProvider" system="true">
         <interface>com.atlassian.sal.api.search.SearchProvider</interface>
     </component>
+    <component name="Search Query Parser" key="searchQueryParser" 
+            class="com.atlassian.sal.api.search.query.SearchQueryParser" system="true">
+            <interface>com.atlassian.sal.api.search.SearchProvider</interface>
+    </component>
+    
     <component name="Request Factory" key="requestFactory" 
                class="com.atlassian.sal.api.net.HttpClientRequestFactory" system="true">
         <interface>com.atlassian.sal.api.net.RequestFactory</interface>
