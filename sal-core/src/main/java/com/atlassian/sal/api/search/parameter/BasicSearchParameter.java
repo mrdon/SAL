@@ -33,7 +33,7 @@ public class BasicSearchParameter implements SearchParameter
         return value;
     }
 
-    public String getQueryString()
+    public String buildQueryString()
     {
         try
         {

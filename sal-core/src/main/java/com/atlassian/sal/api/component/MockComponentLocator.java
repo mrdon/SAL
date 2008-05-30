@@ -1,6 +1,11 @@
 package com.atlassian.sal.api.component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Mock implementation of the component locator for testing
@@ -50,9 +55,9 @@ public class MockComponentLocator extends ComponentLocator
 		return null;
 	}
 	
-	public static MockComponentLocator create()
+	public static MockComponentLocator create(Object... objects)
 	{
-		final MockComponentLocator mockComponentLocator = new MockComponentLocator();
+		final MockComponentLocator mockComponentLocator = new MockComponentLocator(objects);
 		ComponentLocator.setComponentLocator(mockComponentLocator);
 		return mockComponentLocator;
 	}
