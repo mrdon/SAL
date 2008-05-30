@@ -1,5 +1,16 @@
 package com.atlassian.sal.jira.search;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.servlet.http.HttpUtils;
+
+import org.apache.log4j.Logger;
+
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.search.SearchContext;
 import com.atlassian.jira.issue.search.SearchContextImpl;
@@ -13,13 +24,13 @@ import com.atlassian.jira.issue.search.util.QueryCreator;
 import com.atlassian.jira.issue.transport.FieldValuesHolder;
 import com.atlassian.jira.issue.transport.impl.FieldValuesHolderImpl;
 import com.atlassian.jira.issue.transport.impl.IssueNavigatorActionParams;
+import com.atlassian.jira.project.Project;
+import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.jira.util.searchers.ThreadLocalSearcherCache;
 import com.atlassian.jira.web.bean.I18nBean;
 import com.atlassian.jira.web.bean.PagerFilter;
-import com.atlassian.jira.project.ProjectManager;
-import com.atlassian.jira.project.Project;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.message.DefaultMessage;
@@ -29,20 +40,11 @@ import com.atlassian.sal.api.search.BasicSearchMatch;
 import com.atlassian.sal.api.search.SearchMatch;
 import com.atlassian.sal.api.search.SearchResults;
 import com.atlassian.sal.api.search.parameter.SearchParameter;
-import com.atlassian.sal.api.search.query.DefaultQueryParser;
-import com.atlassian.sal.api.search.query.QueryParser;
+import com.atlassian.sal.api.search.query.SearchQuery;
+import com.atlassian.sal.api.search.query.SearchQueryParser;
 import com.opensymphony.user.EntityNotFoundException;
 import com.opensymphony.user.User;
 import com.opensymphony.user.UserManager;
-import org.apache.log4j.Logger;
-
-import javax.servlet.http.HttpUtils;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.io.IOException;
 
 /**
  *
@@ -70,22 +72,19 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
         this.projectManager = projectManager;
     }
 
-    public SearchResults search(String username, String searchQuery)
+    public SearchResults search(String username, String searchString)
     {
-        QueryParser queryParser = new DefaultQueryParser(searchQuery);
+        SearchQueryParser queryParser = ComponentLocator.getComponent(SearchQueryParser.class);
+        final SearchQuery searchQuery = queryParser.parse(searchString);
+		int maxHits = searchQuery.getParameter(SearchParameter.MAXHITS, Integer.MAX_VALUE);
 
-        int maxHits = queryParser.getMaxHits();        
-        if (maxHits == -1)
-        {
-            maxHits = Integer.MAX_VALUE;
-        }
         final User remoteUser = getUser(username);
         if (remoteUser == null)
         {
             log.info("User '" + username + "' not found. Running anonymous search...");
         }
         final ErrorCollection errors = new SimpleErrorCollection();
-        SearchRequest searchRequest = createSearchRequest(queryParser, errors, remoteUser);
+        SearchRequest searchRequest = createSearchRequest(searchQuery, errors, remoteUser);
         if (errors.hasAnyErrors())
         {
             final List<Message> errorMessages = new ArrayList<Message>();
@@ -148,13 +147,13 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
         return matches;
     }
 
-    private SearchRequest createSearchRequest(QueryParser queryParser, ErrorCollection errors, User remoteUser)
+    private SearchRequest createSearchRequest(SearchQuery query, ErrorCollection errors, User remoteUser)
     {
-        final String queryString = queryCreator.createQuery(queryParser.getSearchString());
+        final String queryString = queryCreator.createQuery(query.getSearchString());
         //TODO: Perhaps should use a non-deprecated utility here.
         Hashtable queryParams = HttpUtils.parseQueryString(queryString);
 
-        addProjectParam(queryParser, queryParams);
+        addProjectParam(query, queryParams);
 
         IssueNavigatorActionParams issueNavigatorActionParams = new IssueNavigatorActionParams(queryParams);
         FieldValuesHolderImpl holder = new FieldValuesHolderImpl();
@@ -167,12 +166,12 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
         return searchRequestManager.create(null, remoteUser, holder, getSearchContext());
     }
 
-    private void addProjectParam(QueryParser queryParser, Hashtable queryParams)
+    private void addProjectParam(SearchQuery query, Hashtable queryParams)
     {
-        final SearchParameter projectKey = queryParser.getParameter(SearchParameter.PROJECT);
+        final String projectKey = query.getParameter(SearchParameter.PROJECT);
         if(projectKey != null)
         {
-            final Project project = projectManager.getProjectObjByKey(projectKey.getValue());
+            final Project project = projectManager.getProjectObjByKey(projectKey);
             if(project!=null)
             {
                 queryParams.put("pid", new String[] {project.getId().toString()});

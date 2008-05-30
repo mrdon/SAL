@@ -1,5 +1,14 @@
 package com.atlassian.sal.jira.search;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import junit.framework.TestCase;
+
+import org.easymock.MockControl;
+import org.easymock.classextension.MockClassControl;
+
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.issue.search.SearchContext;
@@ -15,22 +24,22 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.component.MockComponentLocator;
 import com.atlassian.sal.api.search.SearchMatch;
+import com.atlassian.sal.api.search.query.DefaultSearchQueryParser;
 import com.opensymphony.user.User;
-import junit.framework.TestCase;
-import org.easymock.MockControl;
-import org.easymock.classextension.MockClassControl;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  *
  */
 public class TestJiraSearchProvider extends TestCase
 {
-
+	@Override
+	protected void setUp() throws Exception
+	{
+		super.setUp();
+		MockComponentLocator.create(new DefaultSearchQueryParser());
+	}
     public void testNoResults() throws SearchException
     {
         MockControl mockSearchRequestControl = MockClassControl.createControl(SearchRequest.class);
