@@ -18,5 +18,5 @@ public interface SearchParameter
      * Converts the parameter into a queryString suitable for a URL.
      * @return querystring to add to a URL
      */
-    String getQueryString();
+    String buildQueryString();
 }
