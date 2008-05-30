@@ -1,16 +1,25 @@
 package com.atlassian.sal.fisheye.search;
 
-import com.atlassian.sal.api.search.SearchProvider;
-import com.atlassian.sal.api.search.SearchResults;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import junit.framework.TestCase;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import com.atlassian.sal.api.component.MockComponentLocator;
+import com.atlassian.sal.api.search.SearchProvider;
+import com.atlassian.sal.api.search.SearchResults;
+import com.atlassian.sal.api.search.query.DefaultSearchQueryParser;
 
 /**
  *
  */
 public class TestCenquaSearchProvider extends TestCase
 {
+	@Override
+	protected void setUp() throws Exception
+	{
+		super.setUp();
+		MockComponentLocator.create(new DefaultSearchQueryParser());
+	}
 
     public void testValidation()
     {
