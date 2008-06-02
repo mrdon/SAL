@@ -59,7 +59,7 @@
         <interface>com.atlassian.sal.api.search.SearchProvider</interface>
     </component>
     <component name="Search Query Parser" key="searchQueryParser" 
-            class="com.atlassian.sal.api.search.query.SearchQueryParser" system="true">
+            class="com.atlassian.sal.api.search.query.DefaultSearchQueryParser" system="true">
             <interface>com.atlassian.sal.api.search.SearchProvider</interface>
     </component>
     
