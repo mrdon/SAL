@@ -8,6 +8,7 @@ public interface SearchQueryParser
 {
 
 	/**
+     * Query string submitted should already be url-encoded.
 	 * @param query
 	 * @return
 	 */

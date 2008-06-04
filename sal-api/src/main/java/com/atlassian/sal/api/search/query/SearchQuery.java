@@ -49,7 +49,8 @@ public interface SearchQuery
 	String buildQueryString();
 
 	/**
-	 * Returns original string that user is searching for. Same as {@link #buildQueryString()} without parameters.
+	 * Returns original string that user is searching for. Same as {@link #buildQueryString()} without parameters and
+     * not url-encoded
 	 * 
 	 * @return
 	 */

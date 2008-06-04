@@ -55,12 +55,12 @@ public class DefaultSearchQuery implements SearchQuery
         if (query.indexOf(SearchQuery.PARAMETER_SEPARATOR) == -1)
         {
             //looks like there's no params.
-            searchString.append(URIUtil.encodeWithinQuery(query));
+            searchString.append(query);
             return this;
         }
         
         final String[] strings = query.split(SearchQuery.PARAMETER_SEPARATOR);
-        searchString.append(URIUtil.encodeWithinQuery(strings[0]));
+        searchString.append(strings[0]);
         for (int i = 1; i < strings.length; i++)
         {
             String string = strings[i];

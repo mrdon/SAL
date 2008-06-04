@@ -135,14 +135,10 @@ public class FisheyeSearchProvider implements SearchProvider
             return new SearchResults(errors);
         }
 
-        StringBuffer query = new StringBuffer();
-        query.append("select revisions where path like ").append(searchQuery).append(" or ").
-                append("author = ").append(searchQuery).append(" or ").
-                append("comment matches ").append(searchQuery).
-                append(" group by changeset");
+        String query = buildEyeQL(searchQuery);
 
         final List errorStrings = new ArrayList();
-        FishQuery q = FishQuery.parse(query.toString(), errorStrings);
+        FishQuery q = FishQuery.parse(query, errorStrings);
         if (q == null)
         {
             for (Iterator iterator = errorStrings.iterator(); iterator.hasNext();)
@@ -168,6 +164,26 @@ public class FisheyeSearchProvider implements SearchProvider
             errors.add(new DefaultMessage(e.getMessage()));
             return new SearchResults(errors);
         }
+    }
+
+    private String buildEyeQL(String searchQuery)
+    {
+        StringBuilder query = new StringBuilder();
+        query.append("select revisions where ");
+        final String[] queryStrings = searchQuery.split(" ");
+        for (int i = 0; i < queryStrings.length; i++)
+        {
+            String queryString = queryStrings[i];
+            query.append("path like ").append(queryString).append(" or ").
+                    append("author = ").append(queryString).append(" or ").
+                    append("comment matches ").append(queryString).append(" ");
+            if(i+1 < queryStrings.length)
+            {
+                query.append("or ");
+            }
+        }
+        query.append("group by changeset");
+        return query.toString();
     }
 
     private List<SearchMatch> transformFisheyeResults(int maxHits, String repositoryName, SearchResultsExplorer results)
