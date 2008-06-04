@@ -46,8 +46,24 @@ public class DefaultPluginUpgradeManager implements PluginUpgradeManager, Lifecy
     	
     	return pluginUpgrades;
 	}
+
 	
 	public List<Message> upgrade()
+	{
+		//JRA-737: Need to ensure upgrades run in a transaction.  Just calling upgrade here may not provide this
+        //as no this may be executed outside of a 'normal' context where a transaction is available.
+        TransactionTemplate txTemplate = ComponentLocator.getComponent(TransactionTemplate.class);
+        List<Message> messages = (List<Message>) txTemplate.execute(new TransactionCallback()
+        {
+            public Object doInTransaction()
+            {
+                return upgradeInternal();
+            }
+        });
+		return messages;
+	}
+	
+	public List<Message> upgradeInternal()
 	{
         log.info("Running plugin upgrade tasks...");
 
@@ -82,16 +98,7 @@ public class DefaultPluginUpgradeManager implements PluginUpgradeManager, Lifecy
 
     public void onStart()
     {
-        //JRA-737: Need to ensure upgrades run in a transaction.  Just calling upgrade here may not provide this
-        //as no this may be executed outside of a 'normal' context where a transaction is available.
-        TransactionTemplate txTemplate = ComponentLocator.getComponent(TransactionTemplate.class);
-        List<Message> messages = (List<Message>) txTemplate.execute(new TransactionCallback()
-        {
-            public Object doInTransaction()
-            {
-                return upgrade();
-            }
-        });
+        List<Message> messages = upgrade();
 
         // TODO 1: should do something useful with the messages
     	// TODO 2: we don't know what upgrade tasks these messages came from
@@ -100,5 +107,6 @@ public class DefaultPluginUpgradeManager implements PluginUpgradeManager, Lifecy
             log.error("Upgrade error: "+msg);
         }
     }
+
 
 }

@@ -38,4 +38,15 @@ public abstract class AbstractI18nResolver implements I18nResolver
 
     public abstract String resolveText(String key, Serializable[] arguments);
 
+
+	public Message createMessage(String key, Serializable... arguments)
+	{
+		return new DefaultMessage(key, arguments);
+	}
+
+	public MessageCollection createMessageCollection()
+	{
+		return new DefaultMessageCollection();
+	}
+
 }

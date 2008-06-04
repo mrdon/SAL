@@ -49,7 +49,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 	public static final int MAX_REDIRECTS = 3;
 	
 	private final MethodType methodType;
-	private final String url;
+	private String url;
 	private final Map<String, List<String>> parameters = new HashMap<String, List<String>>();
 	private final List<HttpClientAuthenticator> authenticators = new ArrayList<HttpClientAuthenticator>();
 
@@ -62,6 +62,12 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 		this.httpClient = httpClient;
 		this.methodType = methodType;
 		this.url = url;
+	}
+
+	public HttpClientRequest setUrl(String url)
+	{
+		this.url = url;
+		return this;
 	}
 	// ------------------------ authenticators -------------------------------------------
 	public HttpClientRequest addAuthentication(Authenticator authenticator)
