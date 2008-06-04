@@ -32,4 +32,20 @@ public interface I18nResolver
      * @return I18ned string
      */
     String getText(Message message);
+    
+    /**
+	 * Creates an instance of Message.
+	 * 
+     * @param key
+     * @param arguments
+     * @return
+     */
+    Message createMessage(String key, Serializable... arguments);
+    
+    /**
+     * Creates an instance of MessageCollection.
+     * 
+     * @return
+     */
+    MessageCollection createMessageCollection();
 }

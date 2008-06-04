@@ -19,6 +19,12 @@ public interface Request<T extends Request<?>>
     }
 
     /**
+     * @param url
+     * @return
+     */
+    T setUrl(String url);
+    
+    /**
      * Sets the body of the request. In default implementation only requests of type {@link MethodType#POST} and {@link MethodType#POST} can have request body.
      *
      * @param requestBody the body of the request
@@ -83,6 +89,7 @@ public interface Request<T extends Request<?>>
 	 * @throws ResponseException
 	 */
 	String execute() throws ResponseException;
+
 	
 	
 }
