@@ -6,6 +6,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.easymock.EasyMock;
 import org.easymock.MockControl;
 import org.easymock.classextension.MockClassControl;
 
@@ -27,6 +28,7 @@ import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.component.MockComponentLocator;
 import com.atlassian.sal.api.search.SearchMatch;
 import com.atlassian.sal.api.search.query.DefaultSearchQueryParser;
+import com.atlassian.sal.api.user.UserManager;
 import com.opensymphony.user.User;
 
 /**
@@ -38,7 +40,7 @@ public class TestJiraSearchProvider extends TestCase
 	protected void setUp() throws Exception
 	{
 		super.setUp();
-		MockComponentLocator.create(new DefaultSearchQueryParser());
+		MockComponentLocator.create(new DefaultSearchQueryParser(), EasyMock.createNiceMock(UserManager.class));
 	}
     public void testNoResults() throws SearchException
     {

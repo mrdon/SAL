@@ -41,16 +41,16 @@
             <version>${pom.version}</version>
         </dependency>
         <dependency>
-            <groupId>easymock</groupId>
+            <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>1.2_Java1.3</version>
             <scope>test</scope>
+            <version>2.3</version>
         </dependency>
         <dependency>
-            <groupId>easymock</groupId>
+            <groupId>org.easymock</groupId>
             <artifactId>easymockclassextension</artifactId>
-            <version>1.2.1</version>
             <scope>test</scope>
+            <version>2.3</version>
         </dependency>
     </dependencies>
 </project>
