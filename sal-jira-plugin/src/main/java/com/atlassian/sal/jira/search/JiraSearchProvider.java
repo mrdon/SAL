@@ -10,6 +10,7 @@ import java.util.List;
 import javax.servlet.http.HttpUtils;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
 
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.search.SearchContext;
@@ -204,6 +205,10 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
 
     User getUser(String username)
     {
+        if(StringUtils.isEmpty(username))
+        {
+            return null;
+        }
         try
         {
             return userManager.getUser(username);

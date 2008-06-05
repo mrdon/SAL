@@ -128,6 +128,11 @@ public class FisheyeSearchProvider implements SearchProvider
         final FishEyePathInfo pathInfo = new FishEyePathInfo(pathParameter);
         final String repositoryName = pathInfo.getRepname();
         final RepositoryEngine engine = getRepositoryEngine(repositoryName, errors, username);
+        if(engine == null)
+        {
+            //couldn't get a handle on the engine...there's either some errors, or we didn't have permission.
+            return new SearchResults(errors);
+        }        
         final SearchManager search = engine.getSearchManager();
 
         if (!errors.isEmpty())
@@ -240,7 +245,6 @@ public class FisheyeSearchProvider implements SearchProvider
 
             if (!hasPermissionToView(username, handle))
             {
-                errors.add(new DefaultMessage("studio.search.errors.access.not.allowed.for.repository", repositoryName));
                 return null;
             }
 
