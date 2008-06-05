@@ -179,9 +179,11 @@ public class FisheyeSearchProvider implements SearchProvider
         for (int i = 0; i < queryStrings.length; i++)
         {
             String queryString = queryStrings[i];
-            query.append("path like ").append(queryString).append(" or ").
-                    append("author = ").append(queryString).append(" or ").
-                    append("comment matches ").append(queryString).append(" ");
+            //strip double quotes!
+            queryString = queryString.replaceAll("\"", "");
+            query.append("path like \"").append(queryString).append("\" or ").
+                    append("author = \"").append(queryString).append("\" or ").
+                    append("comment matches \"").append(queryString).append("\" ");
             if(i+1 < queryStrings.length)
             {
                 query.append("or ");
