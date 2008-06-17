@@ -21,5 +21,6 @@
     <spring key="pluginScheduler" class="com.atlassian.sal.fisheye.scheduling.FisheyePluginScheduler" />
     <spring key="requestFactory" class="com.atlassian.sal.api.net.HttpClientRequestFactory"/>
     <spring key="i18nResolver" class="com.atlassian.sal.fisheye.message.NoOpI18nResolver"/>
+    <spring key="fisheyeProjectManager" class="com.atlassian.sal.fisheye.project.FisheyeProjectManager" />
 
 </atlassian-plugin>

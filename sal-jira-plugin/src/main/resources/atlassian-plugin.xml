@@ -68,4 +68,9 @@
         <interface>com.atlassian.sal.api.net.RequestFactory</interface>
     </component>
 
+    <component name="JIRA Project Manager" key="jiraProjectManager"
+               class="com.atlassian.sal.jira.project.JiraProjectManager" system="true">
+        <interface>com.atlassian.sal.api.project.ProjectManager</interface>
+    </component>
+
 </atlassian-plugin>
