@@ -4,19 +4,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
 
-import com.atlassian.sal.api.project.ProjectManager;
 import com.cenqua.fisheye.AppConfig;
 import com.cenqua.fisheye.rep.RepositoryHandle;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.atlassian.sal.api.project.ProjectManager;
 
 /**
  * Fisheye implementation of the project key locator
  */
-public class FisheyeProjectManager implements com.atlassian.sal.api.project.ProjectManager
+public class FisheyeProjectManager implements ProjectManager
 {
-    @Autowired
-    private com.cenqua.crucible.model.managers.ProjectManager projectManager;
-
     /**
      * Get all project keys
      *
@@ -31,13 +27,6 @@ public class FisheyeProjectManager implements com.atlassian.sal.api.project.Proj
         {
             results.add(handle.getName());
         }
-        // Get crucible projects
-        results.addAll(projectManager.getAllProjectKeys());
         return results;
-    }
-
-    public void setProjectManager(com.cenqua.crucible.model.managers.ProjectManager projectManager)
-    {
-        this.projectManager = projectManager;
     }
 }
