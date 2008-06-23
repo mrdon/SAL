@@ -46,6 +46,19 @@ public class SpringComponentLocator extends ComponentLocator implements Applicat
         return (T) beansOfType.values().iterator().next();
     }
 
+	@Override
+	protected <T> T getComponentInternal(Class<T> iface, String componentId)
+	{
+    	Map<String, T> beansOfType = getBeansOfType(iface);
+
+    	T implementation = (T) beansOfType.get(componentId);
+    	if (implementation == null)
+    	{
+    		throw new RuntimeException("Could not retrieve " + iface.getName() + " with componentId '"+componentId+"'");
+    	}
+    	return implementation;
+	}
+
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
     {
         this.applicationContext = applicationContext;
@@ -98,4 +111,5 @@ public class SpringComponentLocator extends ComponentLocator implements Applicat
 		}
 		return results;
 	}
+
 }
