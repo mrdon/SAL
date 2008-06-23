@@ -49,17 +49,23 @@ public class MockComponentLocator extends ComponentLocator
         return (T) components.get(iface);
     }
 
+	public static MockComponentLocator create(Object... objects)
+	{
+		final MockComponentLocator mockComponentLocator = new MockComponentLocator(objects);
+		ComponentLocator.setComponentLocator(mockComponentLocator);
+		return mockComponentLocator;
+	}
+
 	@Override
 	protected <T> Collection<T> getComponentsInternal(Class<T> iface)
 	{
 		return null;
 	}
 	
-	public static MockComponentLocator create(Object... objects)
+	@Override
+	protected <T> T getComponentInternal(Class<T> iface, String componentId)
 	{
-		final MockComponentLocator mockComponentLocator = new MockComponentLocator(objects);
-		ComponentLocator.setComponentLocator(mockComponentLocator);
-		return mockComponentLocator;
+		return getComponentInternal(iface);
 	}
 
 

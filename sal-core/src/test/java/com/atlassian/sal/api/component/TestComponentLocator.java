@@ -1,11 +1,9 @@
 package com.atlassian.sal.api.component;
 
-import junit.framework.TestCase;
-
 import java.util.Collection;
 import java.util.HashMap;
 
-import com.atlassian.sal.api.component.ComponentLocator;
+import junit.framework.TestCase;
 
 public class TestComponentLocator extends TestCase
 {
@@ -21,13 +19,18 @@ public class TestComponentLocator extends TestCase
 
         protected <T> T getComponentInternal(Class<T> iface)
         {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null;
         }
 
 		@Override
 		protected <T> Collection<T> getComponentsInternal(Class<T> iface)
 		{
-			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		protected <T> T getComponentInternal(Class<T> iface, String componentId)
+		{
 			return null;
 		}
     }
