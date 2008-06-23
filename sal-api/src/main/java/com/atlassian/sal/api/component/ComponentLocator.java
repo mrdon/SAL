@@ -31,11 +31,31 @@ public abstract class ComponentLocator
     }
 
     /**
+     * Gets a component by its interface and its Id.
+     * 
+     * @param iface The interface to find an implementation for
+     * @param componentKey id of the component
+     * @return The implementation
+     */
+    public static <T> T getComponent(Class<T> iface, String componentKey)
+    {
+        return componentLocator.getComponentInternal(iface, componentKey);
+    }
+
+    /**
      * Gets the requested component, to be overridden for each application
      * @param iface The interface to lookup
      * @return The implementation
      */
     protected abstract <T> T getComponentInternal(Class<T> iface);
+
+    /**
+     * Gets the requested component, to be overridden for each application
+     * @param iface The interface to lookup
+     * @param componentKey key of the component
+     * @return The implementation
+     */
+    protected abstract <T> T getComponentInternal(Class<T> iface, String componentKey);
 
     /**
      * Gets a components by interface.  Applications that don't support interface-based components will need to
