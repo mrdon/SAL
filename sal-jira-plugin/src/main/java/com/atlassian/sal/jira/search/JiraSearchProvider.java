@@ -1,11 +1,9 @@
 package com.atlassian.sal.jira.search;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import javax.servlet.http.HttpUtils;
 
@@ -13,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.apache.commons.lang.StringUtils;
 
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.search.SearchContext;
 import com.atlassian.jira.issue.search.SearchContextImpl;
 import com.atlassian.jira.issue.search.SearchException;
@@ -29,9 +28,11 @@ import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.SimpleErrorCollection;
+import com.atlassian.jira.util.JiraKeyUtils;
 import com.atlassian.jira.util.searchers.ThreadLocalSearcherCache;
 import com.atlassian.jira.web.bean.I18nBean;
 import com.atlassian.jira.web.bean.PagerFilter;
+import com.atlassian.jira.exception.DataAccessException;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.message.DefaultMessage;
@@ -53,38 +54,43 @@ import com.opensymphony.user.UserManager;
 public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchProvider
 {
     private static final Logger log = Logger.getLogger(JiraSearchProvider.class);
-    private IssueSearcherManager issueManager;
+    private IssueSearcherManager issueSearcherManager;
     private final QueryCreator queryCreator;
     private final SearchRequestManager searchRequestManager;
     private final SearchProvider searchProvider;
     private final UserManager userManager;
     private final ProjectManager projectManager;
+    private IssueManager issueManager;
 
-    public JiraSearchProvider(IssueSearcherManager issueManager,
-                              QueryCreator queryCreator, SearchRequestManager searchRequestManager,
-                              com.atlassian.jira.issue.search.SearchProvider searchProvider,
-                              UserManager userManager, ProjectManager projectManager)
+    public JiraSearchProvider(IssueSearcherManager issueSearcherManager,
+        QueryCreator queryCreator, SearchRequestManager searchRequestManager,
+        com.atlassian.jira.issue.search.SearchProvider searchProvider,
+        UserManager userManager, ProjectManager projectManager, IssueManager issueManager)
     {
-        this.issueManager = issueManager;
+        this.issueSearcherManager = issueSearcherManager;
         this.queryCreator = queryCreator;
         this.searchRequestManager = searchRequestManager;
         this.searchProvider = searchProvider;
         this.userManager = userManager;
         this.projectManager = projectManager;
+        this.issueManager = issueManager;
     }
 
     public SearchResults search(String username, String searchString)
     {
         SearchQueryParser queryParser = ComponentLocator.getComponent(SearchQueryParser.class);
         final SearchQuery searchQuery = queryParser.parse(searchString);
-		int maxHits = searchQuery.getParameter(SearchParameter.MAXHITS, Integer.MAX_VALUE);
-
+        int maxHits = searchQuery.getParameter(SearchParameter.MAXHITS, Integer.MAX_VALUE);
+        
         final User remoteUser = getUser(username);
         if (remoteUser == null)
         {
             log.info("User '" + username + "' not found. Running anonymous search...");
         }
         final ErrorCollection errors = new SimpleErrorCollection();
+        // See if the search String contains a JIRA issue
+        Collection<Issue> issues = getIssuesFromQuery(searchQuery.getSearchString());
+
         SearchRequest searchRequest = createSearchRequest(searchQuery, errors, remoteUser);
         if (errors.hasAnyErrors())
         {
@@ -97,10 +103,11 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
             return new SearchResults(errorMessages);
         }
 
-        return performSearch(maxHits, searchRequest, remoteUser);
+        return performSearch(maxHits, searchRequest, issues, remoteUser);
     }
 
-    private SearchResults performSearch(int maxHits, SearchRequest searchRequest, User remoteUser)
+    private SearchResults performSearch(int maxHits, SearchRequest searchRequest, Collection<Issue> issues,
+       User remoteUser)
     {
         try
         {
@@ -109,9 +116,29 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
 
             pagerFilter.setMax(maxHits);
             com.atlassian.jira.issue.search.SearchResults searchResults =
-                    searchProvider.search(searchRequest, remoteUser, pagerFilter);
-            return new SearchResults(transformResults(searchResults), searchResults.getTotal(),
-                    System.currentTimeMillis() - startTime);
+                searchProvider.search(searchRequest, remoteUser, pagerFilter);
+            issues.addAll(searchResults.getIssues());
+            int numResults = issues.size();
+            if (numResults > maxHits)
+            {
+                // If we have tipped it over max hits, then our numResults is wrong, should be the total plus the
+                // number of issues we've added
+                numResults = searchResults.getTotal() + (numResults - maxHits);
+                // Cull excess results out of the set
+                Iterator<Issue> iter = issues.iterator();
+                int c = 0;
+                while (iter.hasNext())
+                {
+                    iter.next();
+                    c++;
+                    if (c > maxHits)
+                    {
+                        iter.remove();
+                    }
+                }
+            }
+            return new SearchResults(transformResults(issues), numResults,
+                System.currentTimeMillis() - startTime);
         }
         catch (SearchException e)
         {
@@ -133,17 +160,16 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
         }
     }
 
-    private List<SearchMatch> transformResults(com.atlassian.jira.issue.search.SearchResults searchResults)
+    private List<SearchMatch> transformResults(final Collection<Issue> issues)
     {
         final List<SearchMatch> matches = new ArrayList<SearchMatch>();
         final ApplicationProperties applicationProperties = getWebProperties();
-        final List issues = searchResults.getIssues();
         for (Iterator iterator = issues.iterator(); iterator.hasNext();)
         {
             final Issue issue = (Issue) iterator.next();
             matches.add(new BasicSearchMatch(applicationProperties.getBaseUrl() + "/browse/" + issue.getKey(),
-                    "[" + issue.getKey() + "] " + issue.getSummary(), issue.getDescription(),
-                    new BasicResourceType(applicationProperties, issue.getIssueTypeObject().getId())));
+                "[" + issue.getKey() + "] " + issue.getSummary(), issue.getDescription(),
+                new BasicResourceType(applicationProperties, issue.getIssueTypeObject().getId())));
         }
         return matches;
     }
@@ -167,23 +193,52 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
         return searchRequestManager.create(null, remoteUser, holder, getSearchContext());
     }
 
+    private Collection<Issue> getIssuesFromQuery(String query)
+    {
+        Collection<String> issueKeys = JiraKeyUtils.getIssueKeysFromString(query);
+        // Need to ensure issue order is maintained, while also ensuring uniqueness, hence LinkedHashSet
+        Collection<Issue> issues = new LinkedHashSet<Issue>();
+        for (String issueKey : issueKeys)
+        {
+            Issue issue = getIssueByKey(issueKey);
+            if (issue != null)
+            {
+                issues.add(issue);
+            }
+        }
+        return issues;
+    }
+
+    private Issue getIssueByKey(String issueKey)
+    {
+        try
+        {
+            return issueManager.getIssueObject(issueKey);
+        }
+        catch (DataAccessException dae)
+        {
+            // Not found
+            return null;
+        }
+    }
+
     private void addProjectParam(SearchQuery query, Hashtable queryParams)
     {
         final String projectKey = query.getParameter(SearchParameter.PROJECT);
-        if(projectKey != null)
+        if (projectKey != null)
         {
             final Project project = projectManager.getProjectObjByKey(projectKey);
-            if(project!=null)
+            if (project != null)
             {
-                queryParams.put("pid", new String[] {project.getId().toString()});
+                queryParams.put("pid", new String[]{project.getId().toString()});
             }
         }
     }
 
     void populateAndValidate(IssueNavigatorActionParams actionParams, final FieldValuesHolder fieldValuesHolder,
-                             ErrorCollection errors, User remoteUser)
+        ErrorCollection errors, User remoteUser)
     {
-        final Collection searchers = issueManager.getAllSearchers();
+        final Collection searchers = issueSearcherManager.getAllSearchers();
         SearchContext searchContext = getSearchContext();
         for (Iterator iterator = searchers.iterator(); iterator.hasNext();)
         {
@@ -205,7 +260,7 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
 
     User getUser(String username)
     {
-        if(StringUtils.isEmpty(username))
+        if (StringUtils.isEmpty(username))
         {
             return null;
         }
