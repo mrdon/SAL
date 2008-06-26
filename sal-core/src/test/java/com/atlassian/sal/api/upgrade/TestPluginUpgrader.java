@@ -37,6 +37,7 @@ public class TestPluginUpgrader extends TestCase
         mockPlugin.matchAndReturn("getPluginInformation", info);
         mockPluginSettings.expectAndReturn("get", C.args(C.eq("foo.bar:build")), null);
         mockPluginSettings.expectAndReturn("get", C.args(C.eq("foo.bar:build")), null);
+        mockPluginSettings.expectAndReturn("get", C.args(C.eq("foo.bar:build")), null);
         mockPluginSettings.expect("put", C.args(C.eq("foo.bar:build"), C.eq("10")));
 
         pu.upgrade();
@@ -102,6 +103,7 @@ public class TestPluginUpgrader extends TestCase
         mockPlugin.matchAndReturn("getPluginInformation", info);
         mockPluginSettings.expectAndReturn("get", C.args(C.eq("foo.bar:build")), "5");
         mockPluginSettings.expectAndReturn("get", C.args(C.eq("foo.bar:build")), "5");
+        mockPluginSettings.expectAndReturn("get", C.args(C.eq("foo.bar:build")), "5");
         mockPluginSettings.expect("put", C.args(C.eq("foo.bar:build"), C.eq("10")));
 
         pu.upgrade();
@@ -138,6 +140,7 @@ public class TestPluginUpgrader extends TestCase
 
         mockPlugin.matchAndReturn("getKey", "foo.bar");
         mockPlugin.matchAndReturn("getPluginInformation", new PluginInformation());
+        mockPluginSettings.expectAndReturn("get", C.args(C.eq("foo.bar:build")), "5");
         mockPluginSettings.expectAndReturn("get", C.args(C.eq("foo.bar:build")), "5");
         mockPluginSettings.expectAndReturn("get", C.args(C.eq("foo.bar:build")), "5");
 
