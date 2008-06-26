@@ -160,6 +160,6 @@ public class PluginUpgrader
 
     protected void postUpgrade()
     {
-        log.info("Plugin " + plugin.getKey() + " upgrade completed.");
+        log.info("Plugin " + plugin.getKey() + " upgrade completed. Current version is: "+ getDataBuildNumber());
     }
 }
