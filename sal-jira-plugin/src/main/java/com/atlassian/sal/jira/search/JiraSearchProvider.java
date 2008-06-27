@@ -81,7 +81,7 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
         SearchQueryParser queryParser = ComponentLocator.getComponent(SearchQueryParser.class);
         final SearchQuery searchQuery = queryParser.parse(searchString);
         int maxHits = searchQuery.getParameter(SearchParameter.MAXHITS, Integer.MAX_VALUE);
-        
+
         final User remoteUser = getUser(username);
         if (remoteUser == null)
         {
@@ -118,26 +118,13 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
             com.atlassian.jira.issue.search.SearchResults searchResults =
                 searchProvider.search(searchRequest, remoteUser, pagerFilter);
             issues.addAll(searchResults.getIssues());
-            int numResults = issues.size();
-            if (numResults > maxHits)
-            {
-                // If we have tipped it over max hits, then our numResults is wrong, should be the total plus the
-                // number of issues we've added
-                numResults = searchResults.getTotal() + (numResults - maxHits);
-                // Cull excess results out of the set
-                Iterator<Issue> iter = issues.iterator();
-                int c = 0;
-                while (iter.hasNext())
-                {
-                    iter.next();
-                    c++;
-                    if (c > maxHits)
-                    {
-                        iter.remove();
-                    }
-                }
-            }
-            return new SearchResults(transformResults(issues), numResults,
+            int numResults = searchResults.getTotal() - searchResults.getIssues().size()+issues.size();
+
+            List<Issue> trimedResults = new ArrayList<Issue>(issues);
+            if (trimedResults.size() > maxHits)
+                trimedResults = trimedResults.subList(0, maxHits);
+
+            return new SearchResults(transformResults(trimedResults), numResults,
                 System.currentTimeMillis() - startTime);
         }
         catch (SearchException e)
