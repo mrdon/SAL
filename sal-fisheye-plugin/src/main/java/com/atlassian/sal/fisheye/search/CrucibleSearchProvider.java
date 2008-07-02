@@ -59,10 +59,9 @@ public class CrucibleSearchProvider implements SearchProvider
     {
         final List<SearchMatch> matches = new ArrayList<SearchMatch>();
         final ApplicationProperties applicationProperties = ComponentLocator.getComponent(ApplicationProperties.class);
-        int count = 0;
         for (Integer resultId : resultIds)
         {
-            if (count > maxHits)
+            if (matches.size() >= maxHits)
             {
                 break;
             }
@@ -73,7 +72,6 @@ public class CrucibleSearchProvider implements SearchProvider
                         new BasicSearchMatch(review.getLink(), review.getName(), review.getDescription(),
                                 new BasicResourceType(applicationProperties, "review"));
                 matches.add(searchMatch);
-                count++;
             }
         }
         return matches;
