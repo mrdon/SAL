@@ -19,8 +19,15 @@ public interface Request<T extends Request<?>>
     }
 
     /**
+     * Setting connection timeout in milliseconds.
+     * 
+     * @param connectionTimeout
+     * @return a reference to this object.
+     */
+    T setConnectionTimeout(int connectionTimeout);
+    /**
      * @param url
-     * @return
+     * @return a reference to this object.
      */
     T setUrl(String url);
     
