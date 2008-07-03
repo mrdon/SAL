@@ -28,6 +28,7 @@ import org.apache.commons.httpclient.methods.OptionsMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.TraceMethod;
+import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.log4j.Logger;
 
 import com.atlassian.sal.api.component.ComponentLocator;
@@ -69,6 +70,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 		this.url = url;
 		return this;
 	}
+
 	// ------------------------ authenticators -------------------------------------------
 	public HttpClientRequest addAuthentication(Authenticator authenticator)
 	{
@@ -82,7 +84,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 	public HttpClientRequest addTrustedTokenAuthentication()
 	{
 		final UserManager userManager = ComponentLocator.getComponent(UserManager.class);
-		TrustedTokenAuthenticator trustedTokenAuthenticator = new TrustedTokenAuthenticator(userManager.getRemoteUsername());
+		final TrustedTokenAuthenticator trustedTokenAuthenticator = new TrustedTokenAuthenticator(userManager.getRemoteUsername());
 		this.authenticators.add(trustedTokenAuthenticator);
 		return this;
 	}
@@ -100,6 +102,14 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 	}
 	
 	// ------------------------ various setters -------------------------------------------
+
+	public HttpClientRequest setConnectionTimeout(int connectionTimeout)
+	{
+		final HttpConnectionManagerParams params = httpClient.getHttpConnectionManager().getParams();
+		params.setConnectionTimeout(connectionTimeout);
+		return this;
+	}
+	
 	public HttpClientRequest setRequestBody(String requestBody)
 	{
 		this.requestBody = requestBody;
@@ -130,8 +140,8 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 		
 		for (int i = 0; i < params.length; i+=2)
 		{
-			String name = params[i];
-			String value = params[i+1];
+			final String name = params[i];
+			final String value = params[i+1];
 			List<String> list = parameters.get(name);
 			if (list==null)
 			{
@@ -151,7 +161,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 		Throwable lastException = null;
 		for (int attempts = 0; attempts < MAX_ATTEMPTS; attempts++)
 		{
-			HttpMethod method = makeMethod();
+			final HttpMethod method = makeMethod();
 			processAuthenticator(method);
 			processParameters(method);
 			if (log.isDebugEnabled())
@@ -166,12 +176,12 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 				executeMethod(method, 0);
 				responseHandler.handle(new HttpClientResponse(method));
 				return;	// success lets get out of here
-			} catch (RetryAgainException e)
+			} catch (final RetryAgainException e)
 			{
 				// this exception occurs during executeMethod(). keep retrying.
 				lastException = e.getCause();
 				log.debug(e,e);
-			} catch (ResponseException e)
+			} catch (final ResponseException e)
 			{
 				// this exception occurs during responseHandler.handle(). throw it all the way out.
 				// this catch block is here only to improve readability of the code
@@ -200,7 +210,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
             {
             	return;
             }
-            byte[] buf = new byte[512];
+            final byte[] buf = new byte[512];
             @SuppressWarnings("unused")
 			int bytesRead = 0;
             while ((bytesRead = body.read(buf)) != -1)
@@ -208,7 +218,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
                 // throw the bytes away! :)
             }
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             // Ignore, we're already done with the response anyway.
         }
@@ -307,12 +317,12 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 				throw new IOException("Maximum number of redirects ("+MAX_REDIRECTS+") reached.");
 			
 			// execute the method.
-			int statusCode = httpClient.executeMethod(method);
+			final int statusCode = httpClient.executeMethod(method);
 			
 			if (statusCode >= 300 && statusCode <= 399)
 			{
 				String redirectLocation;
-				Header locationHeader = method.getResponseHeader("location");
+				final Header locationHeader = method.getResponseHeader("location");
 				if (locationHeader != null)
 				{
 					redirectLocation = locationHeader.getValue();
@@ -327,16 +337,16 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 					throw new IOException("HTTP response returned redirect code " + statusCode + " but did not provide a location header");
 				}
 			}
-		} catch (URIException e)
+		} catch (final URIException e)
 		{
 			throw new RetryAgainException(e);
-		} catch (HttpException e)
+		} catch (final HttpException e)
 		{
 			throw new RetryAgainException(e);
-		} catch (NullPointerException e)
+		} catch (final NullPointerException e)
 		{
 			throw new RetryAgainException(e);
-		} catch (IOException e)
+		} catch (final IOException e)
 		{
 			throw new RetryAgainException(e);
 		}
@@ -351,11 +361,11 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 		// Add post parameters
 		if ((method instanceof PostMethod) && !this.parameters.isEmpty())
 		{
-			PostMethod postMethod = (PostMethod) method;
+			final PostMethod postMethod = (PostMethod) method;
 			postMethod.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
-			for (String parameterName : this.parameters.keySet())
+			for (final String parameterName : this.parameters.keySet())
 			{
-				for (String parameterValue : this.parameters.get(parameterName))
+				for (final String parameterValue : this.parameters.get(parameterName))
 				{
 					postMethod.addParameter(parameterName, parameterValue);
 				}
@@ -366,13 +376,13 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 		// Set request body
 		if ((method instanceof EntityEnclosingMethod) && this.requestBody!=null)
 		{
-			EntityEnclosingMethod entityEnclosingMethod = (EntityEnclosingMethod) method;
+			final EntityEnclosingMethod entityEnclosingMethod = (EntityEnclosingMethod) method;
 			final String contentType = requestContentType + "; charset=UTF-8";
 			ByteArrayInputStream inputStream;
 			try
 			{
 				inputStream = new ByteArrayInputStream(requestBody.getBytes("UTF-8"));
-			} catch (UnsupportedEncodingException e)
+			} catch (final UnsupportedEncodingException e)
 			{
 				throw new RuntimeException(e);
 			}
@@ -383,9 +393,10 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 	
 	private void processAuthenticator(final HttpMethod method)
 	{
-		for (HttpClientAuthenticator authenticator : authenticators)
+		for (final HttpClientAuthenticator authenticator : authenticators)
 		{
 			authenticator.process(httpClient, method);
 		}
 	}
+
 }
