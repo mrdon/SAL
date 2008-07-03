@@ -19,12 +19,12 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
 	/**
      * The default time to wait without retrieving data from the remote connection
      */
-    public static final int DEFAULT_SOCKET_TIMEOUT=10000;
+    public static final int DEFAULT_SOCKET_TIMEOUT=Integer.parseInt(System.getProperty("http.socketTimeout", "10000"));
 
     /**
      * The default time allowed for establishing a connection
      */
-    public static final int DEFAULT_CONNECTION_TIMEOUT=10000;
+    public static final int DEFAULT_CONNECTION_TIMEOUT=Integer.parseInt(System.getProperty("http.connectionTimeout", "10000"));
 
 	/* (non-Javadoc)
 	 * @see com.atlassian.sal.api.net.RequestFactory#createMethod(com.atlassian.sal.api.net.Request.MethodType, java.lang.String)
@@ -56,7 +56,7 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
 	 */
 	protected void configureConnectionParameters(HttpClient httpClient)
 	{
-		HttpConnectionManagerParams params = httpClient.getHttpConnectionManager().getParams();
+		final HttpConnectionManagerParams params = httpClient.getHttpConnectionManager().getParams();
 		params.setSoTimeout(DEFAULT_SOCKET_TIMEOUT);
 		params.setConnectionTimeout(DEFAULT_CONNECTION_TIMEOUT);
 	}
@@ -67,13 +67,13 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
 	 */
 	protected void configureProxy(HttpClient client, String remoteUrl)
     {
-        String proxyHost = System.getProperty("http.proxyHost");
+        final String proxyHost = System.getProperty("http.proxyHost");
 
         URI uri;
 		try
 		{
 			uri = new URI(remoteUrl);
-		} catch (URISyntaxException e)
+		} catch (final URISyntaxException e)
 		{
 			log.warn("Invalid url: " + remoteUrl, e);
 			return;
@@ -85,7 +85,7 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
             {
                 port = Integer.parseInt(System.getProperty("http.proxyPort", "80"));
             }
-            catch (NumberFormatException e)
+            catch (final NumberFormatException e)
             {
                 log.warn("System property 'http.proxyPort' is not a number. Defaulting to 80.");
             }
@@ -113,7 +113,7 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
 
     private boolean isNonProxyHost(String host)
     {
-        String httpNonProxyHosts = System.getProperty("http.nonProxyHosts");
+        final String httpNonProxyHosts = System.getProperty("http.nonProxyHosts");
         if (StringUtils.isBlank(httpNonProxyHosts))
         {
             // checking if property was misspelt, notice there is no 's' at the end of this property
@@ -123,8 +123,8 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
             }
             return false;
         }
-        String[] nonProxyHosts = httpNonProxyHosts.split("\\|");
-        for (String nonProxyHost : nonProxyHosts) {
+        final String[] nonProxyHosts = httpNonProxyHosts.split("\\|");
+        for (final String nonProxyHost : nonProxyHosts) {
             if (nonProxyHost.startsWith("*")) {
                 if (host.endsWith(nonProxyHost.substring(1))) {
                     return true;
