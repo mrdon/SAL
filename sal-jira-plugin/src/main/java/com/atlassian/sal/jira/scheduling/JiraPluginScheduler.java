@@ -1,19 +1,13 @@
 package com.atlassian.sal.jira.scheduling;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.log4j.Logger;
-import org.quartz.JobExecutionException;
 
-import com.atlassian.configurable.ObjectConfiguration;
-import com.atlassian.configurable.ObjectConfigurationException;
-import com.atlassian.configurable.ObjectConfigurationImpl;
-import com.atlassian.configurable.StringObjectDescription;
+import com.atlassian.configurable.*;
 import com.atlassian.jira.service.AbstractService;
 import com.atlassian.jira.service.ServiceManager;
+import com.atlassian.jira.service.JiraServiceContainer;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.scheduling.PluginJob;
 import com.atlassian.sal.api.scheduling.PluginScheduler;
@@ -22,7 +16,7 @@ import com.opensymphony.module.propertyset.PropertySet;
 public class JiraPluginScheduler implements PluginScheduler
 {
     private static final Logger log = Logger.getLogger(JiraPluginScheduler.class);
-    private static final String STUDIO_JOB_NAME = "pluginJobName";
+    private static final String PLUGIN_JOB_NAME = "pluginJobName";
     private Map<String, JiraPluginSchedulerServiceDescriptor> serviceMap;
     private ServiceManager serviceManager;
 
@@ -37,7 +31,7 @@ public class JiraPluginScheduler implements PluginScheduler
     {
         // Create a map to hold the configuration for the job
         Map serviceDataMap = new HashMap();
-        serviceDataMap.put(STUDIO_JOB_NAME, new String[]{name});
+        serviceDataMap.put(PLUGIN_JOB_NAME, new String[]{name});
 
         // Put a service descriptor in the map
         JiraPluginSchedulerServiceDescriptor sd = new JiraPluginSchedulerServiceDescriptor();
@@ -48,6 +42,21 @@ public class JiraPluginScheduler implements PluginScheduler
         long repeatMinutes = repeatInterval / 60000L;
         try
         {
+            // Remove the service if it exists.  We use getServices() rather than getServiceWithName() because there was
+            // a bug where multiple services with the same name were being created.  getServiceWithName() will throw an
+            // exception in that circumstance, so we'll just iterate through them all and delete all the ones that have
+            // a matching name.
+            Collection<JiraServiceContainer> services = serviceManager.getServices();
+            // We have to copy the services into a second map, otherwise after deleting one, we get a
+            // ConcurrentModificationException
+            services = new HashSet(services);
+            for (JiraServiceContainer service : services)
+            {
+                if (name.equals(service.getName()))
+                {
+                    serviceManager.removeService(service.getId());
+                }
+            }
             serviceManager.addService(name,
                 "com.atlassian.sal.jira.scheduling.JiraPluginScheduler$JiraPluginSchedulerService",
                 repeatInterval,
@@ -104,7 +113,7 @@ public class JiraPluginScheduler implements PluginScheduler
 
         static
         {
-            params.put(STUDIO_JOB_NAME, null);
+            params.put(PLUGIN_JOB_NAME, new JiraPluginSchedulerServiceProperty());
         }
 
         public void run()
@@ -120,7 +129,7 @@ public class JiraPluginScheduler implements PluginScheduler
                 return;
             }
 
-            String jobName = props.getString(STUDIO_JOB_NAME);
+            String jobName = props.getString(PLUGIN_JOB_NAME);
 
             // Find the descriptor
             JiraPluginScheduler scheduler = (JiraPluginScheduler) ComponentLocator.getComponent(PluginScheduler.class);
@@ -153,5 +162,58 @@ public class JiraPluginScheduler implements PluginScheduler
             return oc;
         }
 
+    }
+
+    /**
+     * A hidden type, needed because you can't extend an ObjectConfigurationPropertyImpl
+     */
+    private static class JiraPluginSchedulerServiceProperty extends HashMap implements ObjectConfigurationProperty
+    {
+        public void init(Map map)
+        {
+        }
+
+        public String getName()
+        {
+            return null;
+        }
+
+        public String getDescription()
+        {
+            return null;
+        }
+
+        public String getDefault()
+        {
+            return null;
+        }
+
+        public int getType()
+        {
+            return ObjectConfigurationTypes.HIDDEN;
+        }
+
+        public boolean isI18nValues()
+        {
+            return false;
+        }
+
+        public void setI18nValues(boolean b)
+        {
+        }
+
+        public String getCascadeFrom()
+        {
+            return null;
+        }
+
+        public void setCascadeFrom(String s)
+        {
+        }
+
+        public boolean isEnabled()
+        {
+            return false;
+        }
     }
 }
