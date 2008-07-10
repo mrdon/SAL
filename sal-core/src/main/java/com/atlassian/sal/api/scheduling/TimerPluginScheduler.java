@@ -1,4 +1,4 @@
-package com.atlassian.sal.fisheye.scheduling;
+package com.atlassian.sal.api.scheduling;
 
 import java.util.Collections;
 import java.util.Date;
@@ -13,14 +13,14 @@ import com.atlassian.sal.api.scheduling.PluginJob;
 import com.atlassian.sal.api.scheduling.PluginScheduler;
 
 /**
- * Plugin scheduler for fisheye, that uses java.util.Timer
+ * Plugin scheduler that uses java.util.Timer
  */
-public class FisheyePluginScheduler implements PluginScheduler
+public class TimerPluginScheduler implements PluginScheduler
 {
 
     private Map<String, Timer> tasks;
 
-    public FisheyePluginScheduler()
+    public TimerPluginScheduler()
     {
         tasks = Collections.synchronizedMap(new HashMap<String, Timer>());
     }
@@ -30,14 +30,14 @@ public class FisheyePluginScheduler implements PluginScheduler
     {
         // Use one timer per task, this will allow us to remove them if that functionality is wanted in future
         Timer timer = tasks.get(name);
-        FisheyeStudioTimerTask task;
+        PluginTimerTask task;
         if (timer != null)
         {
             timer.cancel();
         }
-        timer = new Timer("FisheyeStudioSchedulerTask-" + name);
+        timer = new Timer("PluginSchedulerTask-" + name);
         tasks.put(name, timer);
-        task = new FisheyeStudioTimerTask();
+        task = new PluginTimerTask();
         task.setJobClass(job);
         task.setJobDataMap(jobDataMap);
         timer.scheduleAtFixedRate(task, startTime, repeatInterval);
@@ -46,11 +46,11 @@ public class FisheyePluginScheduler implements PluginScheduler
     /**
      * TimerTask that executes a PluginJob
      */
-    private static class FisheyeStudioTimerTask extends TimerTask
+    private static class PluginTimerTask extends TimerTask
     {
         private Class<? extends PluginJob> jobClass;
         private Map jobDataMap;
-        private static final Logger log = Logger.getLogger(FisheyeStudioTimerTask.class);
+        private static final Logger log = Logger.getLogger(PluginTimerTask.class);
 
         public void run()
         {

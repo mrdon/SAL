@@ -8,7 +8,23 @@
 
     <artifactId>sal-jira-plugin</artifactId>
     <name>Shared Application Access Layer JIRA Plugin</name>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                    <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
+                    <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>

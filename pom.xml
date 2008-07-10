@@ -24,6 +24,7 @@
         <module>sal-confluence-plugin</module>
         <module>sal-jira-plugin</module>
         <module>sal-fisheye-plugin</module>
+        <module>sal-refimpl-plugin</module>
   </modules>
 	
     <build>
@@ -43,7 +44,17 @@
                 </excludes>
             </resource>
         </resources>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <version>1.4.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
+
 
     <scm>
         <connection>scm:svn:https://studio.atlassian.com/svn/SAL/trunk</connection>
