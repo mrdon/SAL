@@ -18,6 +18,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                    <Import-Package>*,com.atlassian.plugin.predicate</Import-Package>
+                    <Export-Package>com.atlassian.sal.refimpl*</Export-Package>
                     <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                     <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
                     </instructions>

@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.atlassian.sal.api.component.ComponentLocator;
-import com.atlassian.sal.api.message.DefaultMessage;
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.search.SearchProvider;
 import com.atlassian.sal.api.search.SearchResults;
 import com.atlassian.sal.api.search.parameter.SearchParameter;
 import com.atlassian.sal.api.search.query.SearchQuery;
 import com.atlassian.sal.api.search.query.SearchQueryParser;
+import com.atlassian.sal.core.message.DefaultMessage;
 
 /**
  */

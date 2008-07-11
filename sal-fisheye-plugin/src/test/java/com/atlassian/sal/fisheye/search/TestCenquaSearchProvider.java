@@ -4,10 +4,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import junit.framework.TestCase;
 
-import com.atlassian.sal.api.component.MockComponentLocator;
 import com.atlassian.sal.api.search.SearchProvider;
 import com.atlassian.sal.api.search.SearchResults;
-import com.atlassian.sal.api.search.query.DefaultSearchQueryParser;
+import com.atlassian.sal.core.search.query.DefaultSearchQueryParser;
+import com.atlassian.sal.core.component.MockComponentLocator;
 
 /**
  *

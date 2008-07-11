@@ -9,7 +9,7 @@
 
 	<spring key="pluginSettingsFactory" class="com.atlassian.sal.fisheye.pluginsettings.FisheyePluginSettingsFactory"/>
     <spring key="componentLocator" class="com.atlassian.sal.spring.component.SpringComponentLocator"/>
-    <spring key="pluginUpgradeManager" class="com.atlassian.sal.api.upgrade.DefaultPluginUpgradeManager"/>
+    <spring key="pluginUpgradeManager" class="com.atlassian.sal.core.upgrade.DefaultPluginUpgradeManager"/>
     <spring key="certificateFactory" class="com.atlassian.sal.fisheye.trusted.FisheyeCertificateFactory"/>
     <spring key="userManager" class="com.atlassian.sal.fisheye.user.DefaultUserManager"/>
     <spring key="applicationProperties" class="com.atlassian.sal.fisheye.FisheyeApplicationProperties"/>
@@ -17,9 +17,9 @@
     <spring key="lifecycleManager" class="com.atlassian.sal.fisheye.lifecycle.FisheyeLifecycleManager" />
     <spring key="readWriteTransactionTemplate" class="com.atlassian.sal.spring.transaction.ReadWriteTransactionTemplate" />
     <spring key="cenquaSearchProvider" class="com.atlassian.sal.fisheye.search.CenquaSearchProvider" />
-    <spring key="searchQueryParser" class="com.atlassian.sal.api.search.query.DefaultSearchQueryParser" />
-    <spring key="pluginScheduler" class="com.atlassian.sal.api.scheduling.TimerPluginScheduler" />
-    <spring key="requestFactory" class="com.atlassian.sal.api.net.HttpClientRequestFactory"/>
+    <spring key="searchQueryParser" class="com.atlassian.sal.core.search.query.DefaultSearchQueryParser" />
+    <spring key="pluginScheduler" class="com.atlassian.sal.core.scheduling.TimerPluginScheduler" />
+    <spring key="requestFactory" class="com.atlassian.sal.core.net.HttpClientRequestFactory"/>
     <spring key="i18nResolver" class="com.atlassian.sal.fisheye.message.NoOpI18nResolver"/>
     <spring key="fisheyeProjectManager" class="com.atlassian.sal.fisheye.project.FisheyeProjectManager" />
 

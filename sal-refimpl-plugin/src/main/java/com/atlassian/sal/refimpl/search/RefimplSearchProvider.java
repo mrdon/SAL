@@ -6,6 +6,8 @@ import java.util.*;
 import org.apache.log4j.Logger;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.search.*;
+import com.atlassian.sal.core.search.BasicSearchMatch;
+import com.atlassian.sal.core.search.BasicResourceType;
 
 /**
  *

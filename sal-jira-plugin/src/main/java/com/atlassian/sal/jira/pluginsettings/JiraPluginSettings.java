@@ -1,7 +1,7 @@
 package com.atlassian.sal.jira.pluginsettings;
 
-import com.atlassian.sal.api.pluginsettings.AbstractStringPluginSettings;
 import com.opensymphony.module.propertyset.PropertySet;
+import com.atlassian.sal.core.pluginsettings.AbstractStringPluginSettings;
 
 public class JiraPluginSettings extends AbstractStringPluginSettings
 {

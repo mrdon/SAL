@@ -1,9 +1,9 @@
 package com.atlassian.sal.fisheye.pluginsettings;
 
-import com.atlassian.sal.api.pluginsettings.AbstractStringPluginSettings;
 import com.cenqua.fisheye.config.RootConfig;
 import com.cenqua.fisheye.config1.PropertiesType;
 import com.cenqua.fisheye.config1.PropertyType;
+import com.atlassian.sal.core.pluginsettings.AbstractStringPluginSettings;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

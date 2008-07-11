@@ -1,6 +1,7 @@
 package com.atlassian.sal.refimpl.message;
 
-import com.atlassian.sal.api.message.AbstractI18nResolver;
+
+import com.atlassian.sal.core.message.AbstractI18nResolver;
 
 import java.io.Serializable;
 import java.util.Arrays;

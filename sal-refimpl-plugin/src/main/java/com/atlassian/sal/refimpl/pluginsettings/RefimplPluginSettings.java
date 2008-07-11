@@ -1,7 +1,7 @@
 package com.atlassian.sal.refimpl.pluginsettings;
 
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
-import com.atlassian.sal.api.pluginsettings.AbstractStringPluginSettings;
+import com.atlassian.sal.core.pluginsettings.AbstractStringPluginSettings;
 
 import java.util.Map;
 

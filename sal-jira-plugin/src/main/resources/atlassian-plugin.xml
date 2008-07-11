@@ -22,7 +22,7 @@
         <interface>com.atlassian.sal.api.component.ComponentLocator</interface>
     </component>
     <component key="pluginUpgradeManager" name="pluginUpgradeManager"
-               class="com.atlassian.sal.api.upgrade.DefaultPluginUpgradeManager"
+               class="com.atlassian.sal.core.upgrade.DefaultPluginUpgradeManager"
                system="true">
         <interface>com.atlassian.sal.api.upgrade.PluginUpgradeManager</interface>
         <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
@@ -51,7 +51,7 @@
         <interface>com.atlassian.sal.api.lifecycle.LifecycleManager</interface>
     </component>
     <component name="NoOp Transaction Template" key="noopTransactionTemplate"
-               class="com.atlassian.sal.api.transaction.NoOpTransactionTemplate" system="true">
+               class="com.atlassian.sal.core.transaction.NoOpTransactionTemplate" system="true">
         <interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>
     </component>
     <component name="Jira Search Provider" key="jiraSearchProvider"
@@ -59,12 +59,12 @@
         <interface>com.atlassian.sal.api.search.SearchProvider</interface>
     </component>
     <component name="Search Query Parser" key="searchQueryParser" 
-            class="com.atlassian.sal.api.search.query.DefaultSearchQueryParser" system="true">
+            class="com.atlassian.sal.core.search.query.DefaultSearchQueryParser" system="true">
             <interface>com.atlassian.sal.api.search.query.SearchQueryParser</interface>
     </component>
     
     <component name="Request Factory" key="requestFactory" 
-               class="com.atlassian.sal.api.net.HttpClientRequestFactory" system="true">
+               class="com.atlassian.sal.core.net.HttpClientRequestFactory" system="true">
         <interface>com.atlassian.sal.api.net.RequestFactory</interface>
     </component>
 

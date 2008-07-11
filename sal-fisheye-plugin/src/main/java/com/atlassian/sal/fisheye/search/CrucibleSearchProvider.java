@@ -11,14 +11,14 @@ import org.apache.log4j.Logger;
 
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.component.ComponentLocator;
-import com.atlassian.sal.api.search.BasicResourceType;
-import com.atlassian.sal.api.search.BasicSearchMatch;
 import com.atlassian.sal.api.search.SearchMatch;
 import com.atlassian.sal.api.search.SearchProvider;
 import com.atlassian.sal.api.search.SearchResults;
 import com.atlassian.sal.api.search.parameter.SearchParameter;
 import com.atlassian.sal.api.search.query.SearchQuery;
 import com.atlassian.sal.api.search.query.SearchQueryParser;
+import com.atlassian.sal.core.search.BasicSearchMatch;
+import com.atlassian.sal.core.search.BasicResourceType;
 import com.cenqua.crucible.model.Principal;
 import com.cenqua.crucible.model.Review;
 import com.cenqua.crucible.model.managers.ReviewManager;

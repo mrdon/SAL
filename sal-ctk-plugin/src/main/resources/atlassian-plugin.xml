@@ -1,0 +1,16 @@
+<atlassian-plugin key="com.atlassian.sal.ctk" name="${project.name}" system="false" pluginsVersion="2">
+    <plugin-info>
+        <description>
+            A plugin that tests the implementation of SAL
+        </description>
+        <vendor name="Atlassian Software Systems" url="http://www.atlassian.com"/>
+        <version>${pom.version}</version>
+    </plugin-info>
+
+    <servlet key="ctk" class="com.atlassian.sal.ctk.CtkServlet">
+        <url-pattern>/ctk*</url-pattern>
+    </servlet>
+
+    <component-import key="loc" interface="com.atlassian.sal.api.license.LicenseHandler" />
+
+</atlassian-plugin>

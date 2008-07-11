@@ -15,10 +15,10 @@ import com.atlassian.confluence.search.actions.SearchBean;
 import com.atlassian.confluence.search.actions.SearchQueryBean;
 import com.atlassian.confluence.search.actions.SearchResultWithExcerpt;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.component.MockComponentLocator;
 import com.atlassian.sal.api.search.SearchResults;
-import com.atlassian.sal.api.search.query.DefaultSearchQueryParser;
 import com.atlassian.sal.api.search.query.SearchQuery;
+import com.atlassian.sal.core.search.query.DefaultSearchQueryParser;
+import com.atlassian.sal.core.component.MockComponentLocator;
 import com.atlassian.user.User;
 
 /**

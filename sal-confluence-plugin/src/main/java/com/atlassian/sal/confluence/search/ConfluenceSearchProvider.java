@@ -20,10 +20,7 @@ import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.component.ComponentLocator;
-import com.atlassian.sal.api.message.DefaultMessage;
 import com.atlassian.sal.api.message.Message;
-import com.atlassian.sal.api.search.BasicResourceType;
-import com.atlassian.sal.api.search.BasicSearchMatch;
 import com.atlassian.sal.api.search.ResourceType;
 import com.atlassian.sal.api.search.SearchMatch;
 import com.atlassian.sal.api.search.SearchProvider;
@@ -31,6 +28,9 @@ import com.atlassian.sal.api.search.SearchResults;
 import com.atlassian.sal.api.search.parameter.SearchParameter;
 import com.atlassian.sal.api.search.query.SearchQuery;
 import com.atlassian.sal.api.search.query.SearchQueryParser;
+import com.atlassian.sal.core.message.DefaultMessage;
+import com.atlassian.sal.core.search.BasicResourceType;
+import com.atlassian.sal.core.search.BasicSearchMatch;
 import com.atlassian.user.User;
 
 /**

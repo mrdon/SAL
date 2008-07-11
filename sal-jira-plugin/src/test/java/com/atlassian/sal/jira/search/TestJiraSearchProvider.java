@@ -25,10 +25,10 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.component.MockComponentLocator;
 import com.atlassian.sal.api.search.SearchMatch;
-import com.atlassian.sal.api.search.query.DefaultSearchQueryParser;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.core.search.query.DefaultSearchQueryParser;
+import com.atlassian.sal.core.component.MockComponentLocator;
 import com.opensymphony.user.User;
 
 /**

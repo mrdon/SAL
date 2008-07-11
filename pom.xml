@@ -25,6 +25,7 @@
         <module>sal-jira-plugin</module>
         <module>sal-fisheye-plugin</module>
         <module>sal-refimpl-plugin</module>
+        <module>sal-ctk-plugin</module>
   </modules>
 	
     <build>

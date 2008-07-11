@@ -1,9 +1,9 @@
 package com.atlassian.sal.fisheye.lifecycle;
 
-import com.atlassian.sal.api.lifecycle.DefaultLifecycleManager;
 import com.cenqua.fisheye.AppConfig;
 import com.cenqua.fisheye.config.AdminConfig;
 import com.cenqua.fisheye.config.RootConfig;
+import com.atlassian.sal.core.lifecycle.DefaultLifecycleManager;
 
 public class FisheyeLifecycleManager extends DefaultLifecycleManager
 {

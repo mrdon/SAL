@@ -4,7 +4,7 @@ import com.atlassian.confluence.languages.LocaleManager;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.util.i18n.I18NBean;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
-import com.atlassian.sal.api.message.AbstractI18nResolver;
+import com.atlassian.sal.core.message.AbstractI18nResolver;
 
 import java.io.Serializable;
 import java.util.Locale;

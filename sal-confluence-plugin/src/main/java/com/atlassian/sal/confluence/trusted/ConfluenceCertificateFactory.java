@@ -3,7 +3,7 @@ package com.atlassian.sal.confluence.trusted;
 import com.atlassian.confluence.security.trust.TrustedToken;
 import com.atlassian.confluence.security.trust.TrustedTokenFactory;
 import com.atlassian.sal.api.component.ComponentLocator;
-import com.atlassian.sal.api.trusted.CertificateFactory;
+import com.atlassian.sal.core.trusted.CertificateFactory;
 import com.atlassian.security.auth.trustedapps.DefaultEncryptedCertificate;
 import com.atlassian.security.auth.trustedapps.EncryptedCertificate;
 
