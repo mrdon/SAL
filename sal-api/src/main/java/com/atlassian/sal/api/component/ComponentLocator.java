@@ -20,6 +20,14 @@ public abstract class ComponentLocator
     }
 
     /**
+     * @return True if intialized with a locator subclass
+     */
+    public static boolean isInitialized()
+    {
+        return ComponentLocator.componentLocator != null;
+    }
+
+    /**
      * Gets a component by its interface.  Applications that don't support interface-based components will need to
      * covert the interface name into a String
      * @param iface The interface to find an implementation for

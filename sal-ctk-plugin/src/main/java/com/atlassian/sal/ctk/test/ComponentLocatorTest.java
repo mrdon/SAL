@@ -17,13 +17,13 @@ public class ComponentLocatorTest implements CtkTest
         try
         {
             PluginManager mgr = ComponentLocator.getComponent(PluginManager.class);
-            results.assertTrue("PluginManager not found", mgr != null);
+            results.assertTrue("PluginManager accessible in ComponentLocator", mgr != null);
 
             Collection c = ComponentLocator.getComponents(PluginManager.class);
             results.assertTrue("Should be one PluginManager found", c != null && c.size() == 1);
         } catch (UnsupportedOperationException ex)
         {
-            results.fail("ComponentLocator operations not supported");
+            results.fail("ComponentLocator operations should be supported");
         }
     }
 }

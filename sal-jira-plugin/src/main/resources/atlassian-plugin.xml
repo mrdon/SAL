@@ -17,7 +17,7 @@
         <interface>com.atlassian.sal.api.pluginsettings.PluginSettingsFactory</interface>
     </component>
     <component key="componentLocator" name="component locator"
-               class="com.atlassian.sal.jira.component.RefimplComponentLocator"
+               class="com.atlassian.sal.jira.component.JiraComponentLocator"
                system="true">
         <interface>com.atlassian.sal.api.component.ComponentLocator</interface>
     </component>

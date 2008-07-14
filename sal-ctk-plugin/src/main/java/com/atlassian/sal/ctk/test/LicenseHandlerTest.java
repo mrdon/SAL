@@ -24,7 +24,7 @@ public class LicenseHandlerTest implements CtkTest
 
     public void execute(CtkTestResults results)
     {
-        results.assertTrue("No license handler found", handler != null);
+        results.assertTrue("License handler should be injectable", handler != null);
         try
         {
             handler.setLicense("somecrap");
