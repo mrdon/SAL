@@ -12,6 +12,7 @@
     </servlet>
 
     <component-import key="loc" interface="com.atlassian.sal.api.license.LicenseHandler" />
+    <component-import key="lifecycleManager" interface="com.atlassian.sal.api.lifecycle.LifecycleManager" />
 
     <component key="lifecycleTest" class="com.atlassian.sal.ctk.test.LifecycleAwareTest" public="true">
         <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>

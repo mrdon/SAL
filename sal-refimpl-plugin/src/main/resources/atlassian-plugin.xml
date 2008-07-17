@@ -17,16 +17,11 @@
         <interface>com.atlassian.sal.api.pluginsettings.PluginSettingsFactory</interface>
     </component>
     <component key="componentLocator" name="component locator"
-               class="com.atlassian.sal.refimpl.component.RefimplComponentLocator"
+               class="com.atlassian.sal.spring.component.SpringComponentLocator"
                system="true" public="true">
         <interface>com.atlassian.sal.api.component.ComponentLocator</interface>
     </component>
-    <component key="pluginUpgradeManager" name="pluginUpgradeManager"
-               class="com.atlassian.sal.core.upgrade.DefaultPluginUpgradeManager"
-               system="true" public="true">
-        <interface>com.atlassian.sal.api.upgrade.PluginUpgradeManager</interface>
-        <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
-    </component>
+    
     <component name="Application Properties" key="applicationProperties" class="com.atlassian.sal.refimpl.RefimplApplicationProperties"
                system="true" public="true">
         <interface>com.atlassian.sal.api.ApplicationProperties</interface>
@@ -48,11 +43,11 @@
                class="com.atlassian.sal.refimpl.lifecycle.RefimplLifecycleManager" system="true" public="true">
         <interface>com.atlassian.sal.api.lifecycle.LifecycleManager</interface>
     </component>
-    <component name="NoOp Transaction Template" key="noopTransactionTemplate"
+    <component name="NoOp Transaction Template" key="transactionTemplate"
                class="com.atlassian.sal.core.transaction.NoOpTransactionTemplate" system="true" public="true">
         <interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>
     </component>
-    <component name="Refimpl Search Provider" key="RefimplSearchProvider"
+    <component name="Refimpl Search Provider" key="searchProvider"
                class="com.atlassian.sal.refimpl.search.RefimplSearchProvider" system="true" public="true">
         <interface>com.atlassian.sal.api.search.SearchProvider</interface>
     </component>
@@ -66,7 +61,7 @@
         <interface>com.atlassian.sal.api.net.RequestFactory</interface>
     </component>
 
-    <component name="Refimpl Project Manager" key="RefimplProjectManager"
+    <component name="Refimpl Project Manager" key="projectManager"
                class="com.atlassian.sal.refimpl.project.RefimplProjectManager" system="true" public="true">
         <interface>com.atlassian.sal.api.project.ProjectManager</interface>
     </component>

@@ -3,15 +3,21 @@ package com.atlassian.sal.ctk.test;
 import com.atlassian.sal.ctk.CtkTest;
 import com.atlassian.sal.ctk.CtkTestResults;
 import com.atlassian.sal.api.component.ComponentLocator;
+import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import com.atlassian.plugin.PluginManager;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 
 @Component
 public class ComponentLocatorTest implements CtkTest
 {
+    private final List<LifecycleAware> lifecycleAware;
+
+    public ComponentLocatorTest(List<LifecycleAware> lifecycleAware) {this.lifecycleAware = lifecycleAware;}
+
     public void execute(CtkTestResults results)
     {
         try

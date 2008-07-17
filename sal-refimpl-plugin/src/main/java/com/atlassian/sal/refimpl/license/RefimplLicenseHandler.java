@@ -11,6 +11,10 @@ public class RefimplLicenseHandler implements LicenseHandler
 {
     private static final Log log = LogFactory.getLog(RefimplLicenseHandler.class);
 
+    public RefimplLicenseHandler()
+    {
+        System.out.println("constructor called");
+    }
     /**
      * Sets the license, going through the regular validation steps as if you used the web UI
      *

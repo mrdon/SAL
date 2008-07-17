@@ -19,9 +19,10 @@
                 <configuration>
                     <instructions>
                     <Import-Package>*,com.atlassian.plugin.predicate</Import-Package>
-                    <Export-Package>com.atlassian.sal.refimpl*</Export-Package>
+                    <Private-Package>com.atlassian.sal.refimpl*</Private-Package>
                     <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                     <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
+                    <Spring-Context>classpath:/META-INF/spring/*.xml;create-asynchronously:=false</Spring-Context> 
                     </instructions>
                 </configuration>
             </plugin>
@@ -44,6 +45,11 @@
         <dependency>
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-core</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-spring</artifactId>
             <version>${pom.version}</version>
         </dependency>
         <dependency>
