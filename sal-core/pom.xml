@@ -39,7 +39,7 @@
         <dependency>
             <groupId>com.atlassian.seraph</groupId>
             <artifactId>atlassian-seraph</artifactId>
-            <version>0.36</version>
+            <version>0.38</version>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
