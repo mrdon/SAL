@@ -31,7 +31,7 @@ public class LicenseHandlerTest implements CtkTest
             results.fail("Should throw IllegalArgumentException for invalid licenses");
         } catch (IllegalArgumentException ex)
         {
-            // do nothing
+            results.pass("Should throw IllegalArgumentException for invalid licenses");
         }
 
         try

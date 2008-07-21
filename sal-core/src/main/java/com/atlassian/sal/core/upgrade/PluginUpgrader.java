@@ -143,7 +143,7 @@ public class PluginUpgrader
      */
     protected int getDataBuildNumber()
     {
-        String val = (String) pluginSettings.get(plugin.getKey() + BUILD);
+        String val = (String) pluginSettings.get(getDataBuildKey(plugin.getKey()));
         if (val != null)
         {
             return Integer.parseInt(val);
@@ -154,9 +154,14 @@ public class PluginUpgrader
         }
     }
 
+    public static String getDataBuildKey(String key)
+    {
+        return key + BUILD;
+    }
+
     protected void setDataBuildNumber(int buildNumber)
     {
-        pluginSettings.put(plugin.getKey() + BUILD, String.valueOf(buildNumber));
+        pluginSettings.put(getDataBuildKey(plugin.getKey()), String.valueOf(buildNumber));
     }
 
     protected void postUpgrade()

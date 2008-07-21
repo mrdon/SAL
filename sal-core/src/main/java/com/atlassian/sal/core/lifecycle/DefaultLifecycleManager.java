@@ -2,6 +2,7 @@ package com.atlassian.sal.core.lifecycle;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -17,10 +18,14 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
     private static final Logger log = Logger.getLogger(DefaultLifecycleManager.class);
     private List<LifecycleAware> listeners;
 
-    public DefaultLifecycleManager(PluginEventManager eventManager, List<LifecycleAware> listeners)
+    public DefaultLifecycleManager(PluginEventManager eventManager)
     {
         if (eventManager != null)
             eventManager.register(this);
+    }
+
+    public void setInitialListeners(List<LifecycleAware> listeners)
+    {
         this.listeners = listeners;
     }
 
@@ -28,6 +33,17 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
     public void channel(PluginFrameworkStartedEvent event)
     {
         start();
+    }
+
+    public void onUnbind(LifecycleAware service, Map properties)
+    {
+        // do nothing
+    }
+
+    public synchronized void onBind(LifecycleAware service, Map properties)
+    {
+        if (started)
+            notifyLifecycleAwareOfStart(service);
     }
 
     public synchronized void start()
@@ -47,13 +63,18 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
     {
         for (LifecycleAware entry : listeners)
         {
-            try
+            notifyLifecycleAwareOfStart(entry);
+        }
+    }
+
+    private void notifyLifecycleAwareOfStart(LifecycleAware entry)
+    {
+        try
             {
                 entry.onStart();
             } catch (RuntimeException ex)
-            {
-                log.error("Unable to start component: "+ entry.getClass().getName(), ex);
-            }
+        {
+            log.error("Unable to start component: "+ entry.getClass().getName(), ex);
         }
     }
 }

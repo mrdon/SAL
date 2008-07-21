@@ -27,14 +27,17 @@ public class ConfluencePluginScheduler implements PluginScheduler
     private static final String JOB_DATA_MAP_KEY = "pluginJobDataMap";
     private static final Logger log = Logger.getLogger(ConfluencePluginScheduler.class);
 
+    private final Scheduler scheduler;
+    private static final String PLUGIN_SCHEDULER_JOB_GROUP = "pluginSchedulerJobGroup";
+
+    public ConfluencePluginScheduler(Scheduler scheduler) {this.scheduler = scheduler;}
+
     public void scheduleJob(String name, Class<? extends PluginJob> job, Map<String, Object> jobDataMap, Date startTime,
         long repeatInterval)
     {
-        // Get the scheduler
-        Scheduler scheduler = ComponentLocator.getComponent(Scheduler.class);
         // Create a new job detail
         JobDetail jobDetail = new JobDetail();
-        jobDetail.setGroup("pluginSchedulerJobGroup");
+        jobDetail.setGroup(PLUGIN_SCHEDULER_JOB_GROUP);
         jobDetail.setName(name);
         jobDetail.setJobClass(ConfluencePluginJob.class);
         JobDataMap jobDetailMap = new JobDataMap();
@@ -46,7 +49,7 @@ public class ConfluencePluginScheduler implements PluginScheduler
         // Create a new trigger
         SimpleTrigger trigger = new SimpleTrigger();
         trigger.setGroup("pluginSchedulerTriggerGroup");
-        trigger.setName(name + "Trigger");
+        trigger.setName(getJobTriggerName(name));
         if (startTime != null)
         {
             trigger.setStartTime(startTime);
@@ -69,6 +72,21 @@ public class ConfluencePluginScheduler implements PluginScheduler
         catch (SchedulerException se)
         {
             log.error("Error scheduling job", se);
+        }
+    }
+
+    private String getJobTriggerName(String name) {return name + "Trigger";}
+
+    public void unscheduleJob(String name)
+    {
+        try
+        {
+            if (scheduler.getTrigger(getJobTriggerName(name), PLUGIN_SCHEDULER_JOB_GROUP) == null)
+                throw new IllegalArgumentException("Invalid job: "+name);
+            scheduler.unscheduleJob(getJobTriggerName(name), PLUGIN_SCHEDULER_JOB_GROUP);
+        } catch (SchedulerException e)
+        {
+            log.error("Unable to unschedule job", e);
         }
     }
 

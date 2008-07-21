@@ -2,13 +2,22 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:osgi="http://www.springframework.org/schema/osgi"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
            http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/osgi
+           http://www.springframework.org/schema/osgi/spring-osgi.xsd"
         default-autowire="autodetect">
 
     <context:component-scan base-package="com.atlassian.sal.ctk"/>
 
+    <bean id="upgradeTest" class="com.atlassian.sal.ctk.test.PluginUpgradeManagerTest">
+        <constructor-arg ref="pluginUpgradeManager" />
+    </bean>
 
+    <osgi:reference id="pluginUpgradeManager" interface="com.atlassian.sal.api.upgrade.PluginUpgradeManager" />
+
+    <osgi:service id="upgradeTask_service" interface="com.atlassian.sal.api.upgrade.PluginUpgradeTask" ref="upgradeTest" />
 </beans>

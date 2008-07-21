@@ -9,13 +9,15 @@
         default-autowire="autodetect">
 
     <bean name="pluginUpgradeManager" class="com.atlassian.sal.core.upgrade.DefaultPluginUpgradeManager">
-        <constructor-arg>
-            <osgi:list id="upgradeTasks" interface="com.atlassian.sal.api.upgrade.PluginUpgradeTask" cardinality="0..N"/>
-        </constructor-arg>
+        <constructor-arg ref="upgradeTasks" />
         <constructor-arg ref="transactionTemplate" />
         <constructor-arg ref="pluginManager" />
         <constructor-arg ref="pluginSettingsFactory" />
     </bean>
+
+    <osgi:list id="upgradeTasks" interface="com.atlassian.sal.api.upgrade.PluginUpgradeTask" cardinality="0..N">
+        <osgi:listener bind-method="onBind" ref="pluginUpgradeManager" />
+    </osgi:list>
 
     <osgi:service id="pluginUpgradeManager_osgiService" ref="pluginUpgradeManager">
         <osgi:interfaces>
@@ -23,8 +25,20 @@
             <value>com.atlassian.sal.api.lifecycle.LifecycleAware</value>
         </osgi:interfaces>
     </osgi:service>
-    
 
-    <osgi:list id="lifecycleAwareImpls" interface="com.atlassian.sal.api.lifecycle.LifecycleAware" cardinality="0..N"/>
+    <bean name="lifecycleManager" class="com.atlassian.sal.refimpl.lifecycle.RefimplLifecycleManager">
+        <constructor-arg ref="pluginEventManager" />
+        <property name="initialListeners"><ref bean="lifecycleAwareImpls" /></property>
+    </bean>
+
+    <osgi:list id="lifecycleAwareImpls" interface="com.atlassian.sal.api.lifecycle.LifecycleAware" cardinality="0..N">
+        <osgi:listener bind-method="onBind" unbind-method="onUnbind" ref="lifecycleManager" />
+    </osgi:list>
+
+    <osgi:service id="lifecycleManager_osgiService" ref="lifecycleManager">
+        <osgi:interfaces>
+            <value>com.atlassian.sal.api.lifecycle.LifecycleManager</value>
+        </osgi:interfaces>
+    </osgi:service>
 
 </beans>

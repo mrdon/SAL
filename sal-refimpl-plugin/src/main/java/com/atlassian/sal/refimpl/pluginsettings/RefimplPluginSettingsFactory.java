@@ -16,8 +16,11 @@ public class RefimplPluginSettingsFactory implements PluginSettingsFactory
     public PluginSettings createSettingsForKey(String key)
     {
         Map<String,String> map = settings.get(key);
-        if (key == null)
+        if (map == null)
+        {
             map = new HashMap<String,String>();
+            settings.put(key, map);
+        }
 
         return new RefimplPluginSettings(map);
     }

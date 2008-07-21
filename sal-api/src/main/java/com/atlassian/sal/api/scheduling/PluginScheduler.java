@@ -20,4 +20,12 @@ public interface PluginScheduler
      */
     void scheduleJob(String name, Class<? extends PluginJob> job, Map<String, Object> jobDataMap, Date startTime,
         long repeatInterval);
+
+    /**
+     * Unschedule a job
+     *
+     * @param name A unique name of the job
+     * @throws IllegalArgumentException If the job hasn't previously been scheduled
+     */
+    void unscheduleJob(String name) throws IllegalArgumentException;
 }

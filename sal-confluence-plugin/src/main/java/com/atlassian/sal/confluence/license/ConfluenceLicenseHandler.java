@@ -11,6 +11,7 @@ import com.atlassian.license.*;
 import com.atlassian.license.decoder.LicenseDecoder;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.license.LicenseHandler;
+import com.atlassian.sal.core.license.AbstractLicenseHandler;
 import com.atlassian.spring.container.ContainerManager;
 import com.opensymphony.util.TextUtils;
 
@@ -19,7 +20,7 @@ import java.util.Date;
 /**
  * Sets the license for Confluence
  */
-public class ConfluenceLicenseHandler implements LicenseHandler
+public class ConfluenceLicenseHandler extends AbstractLicenseHandler implements LicenseHandler
 {
     /**
      * Sets the license, going through the validation used for the web UI (copy/pasted unfortunately).  Errors are ignored
@@ -27,7 +28,7 @@ public class ConfluenceLicenseHandler implements LicenseHandler
      *
      * @param licenseString The license String
      */
-    public void setLicense(String licenseString)
+    protected void setValidatedLicense(String licenseString)
     {
         EventManager eventManager = ComponentLocator.getComponent(EventManager.class);
         UserChecker userChecker = ComponentLocator.getComponent(UserChecker.class);

@@ -39,10 +39,6 @@
         class="com.atlassian.sal.core.scheduling.TimerPluginScheduler" system="true" public="true">
         <interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
     </component>
-    <component name="Plugin Lifecycle Manager" key="lifecycleManager"
-               class="com.atlassian.sal.refimpl.lifecycle.RefimplLifecycleManager" system="true" public="true">
-        <interface>com.atlassian.sal.api.lifecycle.LifecycleManager</interface>
-    </component>
     <component name="NoOp Transaction Template" key="transactionTemplate"
                class="com.atlassian.sal.core.transaction.NoOpTransactionTemplate" system="true" public="true">
         <interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>

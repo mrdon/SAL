@@ -1,6 +1,7 @@
 package com.atlassian.sal.fisheye.license;
 
 import com.atlassian.sal.api.license.LicenseHandler;
+import com.atlassian.sal.core.license.AbstractLicenseHandler;
 import com.cenqua.fisheye.AppConfig;
 import com.cenqua.fisheye.license.LicenseException;
 import com.cenqua.fisheye.config.RootConfig;
@@ -13,11 +14,11 @@ import org.apache.log4j.Logger;
 /**
  * License handler for fisheye
  */
-public class FisheyeLicenseHandler implements LicenseHandler
+public class FisheyeLicenseHandler extends AbstractLicenseHandler implements LicenseHandler
 {
     private static Logger log = Logger.getLogger(FisheyeLicenseHandler.class);
 
-    public void setLicense(String license)
+    protected void setValidatedLicense(String license)
     {
         RootConfig rootConfig = AppConfig.getsConfig();
         LicenseType licenses = AppConfig.getsConfig().getConfig().getLicense();

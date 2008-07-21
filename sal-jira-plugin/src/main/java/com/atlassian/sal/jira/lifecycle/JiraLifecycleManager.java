@@ -10,10 +10,10 @@ import java.util.List;
 
 public class JiraLifecycleManager extends DefaultLifecycleManager implements Startable
 {
-    public JiraLifecycleManager(PluginEventManager eventManager, List<LifecycleAware> listeners)
+    public JiraLifecycleManager(PluginEventManager eventManager)
     {
         // don't register self with event manager
-        super(null, listeners);
+        super(null);
     }
 
     public boolean isApplicationSetUp()

@@ -43,6 +43,17 @@ public class TimerPluginScheduler implements PluginScheduler
         timer.scheduleAtFixedRate(task, startTime, repeatInterval);
     }
 
+    public void unscheduleJob(String name)
+    {
+        Timer timer = tasks.get(name);
+        if (timer != null)
+        {
+            timer.cancel();
+            tasks.remove(name);
+        } else
+            throw new IllegalArgumentException("Invalid job: "+ name);
+    }
+
     /**
      * TimerTask that executes a PluginJob
      */

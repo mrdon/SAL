@@ -68,6 +68,20 @@ public class JiraPluginScheduler implements PluginScheduler
         }
     }
 
+    public void unscheduleJob(String name)
+    {
+        try
+        {
+            if (serviceManager.getServiceWithName(name) == null)
+                throw new IllegalArgumentException("Invalid job: "+ name);
+            
+            serviceManager.removeServiceByName(name);
+        } catch (Exception e)
+        {
+            log.error("Unable to remove service", e);
+        }
+    }
+
     private JiraPluginSchedulerServiceDescriptor getServiceDescriptor(String name)
     {
         return serviceMap.get(name);

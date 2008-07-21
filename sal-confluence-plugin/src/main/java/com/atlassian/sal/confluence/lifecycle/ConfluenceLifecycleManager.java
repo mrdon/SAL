@@ -9,9 +9,9 @@ import java.util.List;
 
 public class ConfluenceLifecycleManager extends DefaultLifecycleManager
 {
-    public ConfluenceLifecycleManager(PluginEventManager eventManager, List<LifecycleAware> listeners)
+    public ConfluenceLifecycleManager(PluginEventManager eventManager)
     {
-        super(eventManager, listeners);
+        super(eventManager);
     }
 
     public boolean isApplicationSetUp()
