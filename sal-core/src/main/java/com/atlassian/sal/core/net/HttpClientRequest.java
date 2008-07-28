@@ -282,7 +282,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 			super(e);
 		}
 	}
-	
+
 	protected HttpMethod makeMethod()
 	{
 		final HttpMethod method;
