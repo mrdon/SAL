@@ -32,16 +32,16 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.log4j.Logger;
 
 import com.atlassian.sal.api.component.ComponentLocator;
-import com.atlassian.sal.api.net.auth.Authenticator;
 import com.atlassian.sal.api.net.Request;
-import com.atlassian.sal.api.net.ResponseHandler;
-import com.atlassian.sal.api.net.ResponseException;
 import com.atlassian.sal.api.net.Response;
+import com.atlassian.sal.api.net.ResponseException;
+import com.atlassian.sal.api.net.ResponseHandler;
+import com.atlassian.sal.api.net.auth.Authenticator;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.core.net.auth.BaseAuthenticator;
 import com.atlassian.sal.core.net.auth.HttpClientAuthenticator;
 import com.atlassian.sal.core.net.auth.SeraphAuthenticator;
 import com.atlassian.sal.core.net.auth.TrustedTokenAuthenticator;
-import com.atlassian.sal.core.net.auth.BaseAuthenticator;
 
 /**
  *	HttpClient implementation of Request interface
@@ -111,6 +111,13 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 	{
 		final HttpConnectionManagerParams params = httpClient.getHttpConnectionManager().getParams();
 		params.setConnectionTimeout(connectionTimeout);
+		return this;
+	}
+	
+	public HttpClientRequest setSoTimeout(int soTimeout)
+	{
+		final HttpConnectionManagerParams params = httpClient.getHttpConnectionManager().getParams();
+		params.setSoTimeout(soTimeout);
 		return this;
 	}
 	
