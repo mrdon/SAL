@@ -42,7 +42,7 @@
         <dependency>
             <groupId>com.atlassian.fisheye</groupId>
             <artifactId>fisheye-jar</artifactId>
-            <version>1.5.1b</version>
+            <version>1.5.5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
