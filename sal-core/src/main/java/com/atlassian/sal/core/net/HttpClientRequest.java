@@ -29,6 +29,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.TraceMethod;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.atlassian.sal.api.component.ComponentLocator;
@@ -410,4 +411,10 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 		}
 	}
 
+	
+	@Override
+	public String toString()
+	{
+		return methodType + " " + url+", Parameters: " + parameters + (StringUtils.isBlank(requestBody)?"":"\nRequest body:\n" + requestBody);
+	}
 }
