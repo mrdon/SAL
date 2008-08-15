@@ -134,8 +134,9 @@ public class PluginUpgrader
     protected boolean needUpgrade()
     {
     	final PluginUpgradeTask lastUpgradeTask = this.upgradeTasks.get(this.upgradeTasks.size()-1);
-    	log.info("Plugin: " +plugin.getKey() + ", current version: " + getDataBuildNumber() + ", highest upgrade task found: " + lastUpgradeTask.getBuildNumber() + ".");
-    	return lastUpgradeTask.getBuildNumber() > getDataBuildNumber();
+    	int dataBuildNumber = getDataBuildNumber();
+		log.info("Plugin: " +plugin.getKey() + ", current version: " + dataBuildNumber + ", highest upgrade task found: " + lastUpgradeTask.getBuildNumber() + ".");
+    	return lastUpgradeTask.getBuildNumber() > dataBuildNumber;
     }
 
 
