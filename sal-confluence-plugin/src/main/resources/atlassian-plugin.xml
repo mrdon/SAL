@@ -8,7 +8,7 @@
     </plugin-info>
 
     <component name="I18n Resolver" key="i18nResolver" class="com.atlassian.sal.confluence.message.ConfluenceI18nResolver" system="true"/>
-    <component name="Component Locator" key="componentLocator" class="com.atlassian.sal.spring.component.SpringComponentLocator" system="true"/>
+    <component name="Component Locator" key="componentLocator" class="com.atlassian.sal.core.component.DefaultComponentLocator" system="true"/>
     <component name="Plugin Settings Factory" key="pluginSettingsFactory" class="com.atlassian.sal.confluence.pluginsettings.ConfluencePluginSettingsFactory" system="true"/>
     <component name="Plugin Upgrade Manager" key="pluginUpgradeManager" class="com.atlassian.sal.core.upgrade.DefaultPluginUpgradeManager" system="true"/>
     <component name="Certificate Factory" key="certificateFactory" class="com.atlassian.sal.confluence.trusted.ConfluenceCertificateFactory" system="true"/>
@@ -16,7 +16,7 @@
     <component name="User Manager" key="pluginUserManager" class="com.atlassian.sal.confluence.user.DefaultUserManager" system="true"/>
     <component name="License Handler" key="licenseHandler" class="com.atlassian.sal.confluence.license.ConfluenceLicenseHandler" system="true"/>
     <component name="Plugin Lifecycle Manager" key="pluginLifecycleManager" class="com.atlassian.sal.confluence.lifecycle.ConfluenceLifecycleManager" system="true"/>
-    <component name="Read Write Transaction Template" key="readWriteTransactionTemplate" class="com.atlassian.sal.spring.transaction.ReadWriteTransactionTemplate" system="true"/>
+    <component name="Read Write Transaction Template" key="readWriteTransactionTemplate" class="com.atlassian.sal.core.transaction.DefaultTransactionTemplate" system="true"/>
     <component name="Confluence search provider" key="confluenceSearchProvider" class="com.atlassian.sal.confluence.search.ConfluenceSearchProvider" system="true"/>
     <component name="Search Query Parser" key="searchQueryParser" class="com.atlassian.sal.core.search.query.DefaultSearchQueryParser" system="true"/>
     <component name="Plugin Scheduler" key="pluginScheduler" class="com.atlassian.sal.confluence.scheduling.ConfluencePluginScheduler" system="true"/>

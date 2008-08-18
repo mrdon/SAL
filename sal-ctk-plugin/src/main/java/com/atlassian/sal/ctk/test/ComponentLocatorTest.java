@@ -4,6 +4,7 @@ import com.atlassian.sal.ctk.CtkTest;
 import com.atlassian.sal.ctk.CtkTestResults;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
+import com.atlassian.sal.spi.HostContextAccessor;
 import com.atlassian.plugin.PluginManager;
 
 import java.util.Collection;
@@ -14,9 +15,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class ComponentLocatorTest implements CtkTest
 {
-    private final List<LifecycleAware> lifecycleAware;
-
-    public ComponentLocatorTest(List<LifecycleAware> lifecycleAware) {this.lifecycleAware = lifecycleAware;}
 
     public void execute(CtkTestResults results)
     {
@@ -27,6 +25,8 @@ public class ComponentLocatorTest implements CtkTest
 
             Collection c = ComponentLocator.getComponents(PluginManager.class);
             results.assertTrue("Should be one PluginManager found", c != null && c.size() == 1);
+            
+            results.assertTrue("HostContextAccessor accessible in ComponentLocator", ComponentLocator.getComponent(HostContextAccessor.class) != null);
         } catch (UnsupportedOperationException ex)
         {
             results.fail("ComponentLocator operations should be supported");

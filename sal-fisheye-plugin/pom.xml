@@ -31,11 +31,6 @@
     <dependencies>
         <dependency>
             <groupId>com.atlassian.sal</groupId>
-            <artifactId>sal-spring</artifactId>
-            <version>${pom.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-core</artifactId>
             <version>${pom.version}</version>
         </dependency>

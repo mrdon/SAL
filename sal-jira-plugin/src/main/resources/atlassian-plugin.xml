@@ -51,7 +51,7 @@
         <interface>com.atlassian.sal.api.lifecycle.LifecycleManager</interface>
     </component>
     <component name="NoOp Transaction Template" key="noopTransactionTemplate"
-               class="com.atlassian.sal.core.transaction.NoOpTransactionTemplate" system="true">
+               class="com.atlassian.sal.core.transaction.DefaultTransactionTemplate" system="true">
         <interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>
     </component>
     <component name="Jira Search Provider" key="jiraSearchProvider"

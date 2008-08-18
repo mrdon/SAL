@@ -6,11 +6,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.atlassian.sal.api.component.ComponentLocator;
+import com.atlassian.sal.spi.HostContextAccessor;
 
 public class RefimplComponentLocator extends ComponentLocator
 {
-    public RefimplComponentLocator()
+    private final HostContextAccessor hostContextAccessor;
+    public RefimplComponentLocator(HostContextAccessor accessor)
     {
+        this.hostContextAccessor = accessor;
         ComponentLocator.setComponentLocator(this);
     }
 
