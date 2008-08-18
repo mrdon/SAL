@@ -8,7 +8,6 @@ import com.atlassian.configurable.*;
 import com.atlassian.jira.service.AbstractService;
 import com.atlassian.jira.service.ServiceManager;
 import com.atlassian.jira.service.JiraServiceContainer;
-import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.scheduling.PluginJob;
 import com.atlassian.sal.api.scheduling.PluginScheduler;
 import com.opensymphony.module.propertyset.PropertySet;
@@ -20,10 +19,19 @@ public class JiraPluginScheduler implements PluginScheduler
     private Map<String, JiraPluginSchedulerServiceDescriptor> serviceMap;
     private ServiceManager serviceManager;
 
+    // Lame way to allow the JIRA service to access the scheduler
+    private static JiraPluginScheduler SELF;
+
     public JiraPluginScheduler(ServiceManager serviceManager)
     {
         serviceMap = Collections.synchronizedMap(new HashMap<String, JiraPluginSchedulerServiceDescriptor>());
         this.serviceManager = serviceManager;
+        synchronized(JiraPluginScheduler.class)
+        {
+            if (SELF != null)
+                throw new IllegalStateException("There shouldn't be two schedulers");
+            SELF = this;
+        }
     }
 
     public void scheduleJob(String name, Class<? extends PluginJob> job, Map<String, Object> jobDataMap, Date startTime,
@@ -146,7 +154,7 @@ public class JiraPluginScheduler implements PluginScheduler
             String jobName = props.getString(PLUGIN_JOB_NAME);
 
             // Find the descriptor
-            JiraPluginScheduler scheduler = (JiraPluginScheduler) ComponentLocator.getComponent(PluginScheduler.class);
+            JiraPluginScheduler scheduler = SELF;
             JiraPluginSchedulerServiceDescriptor sd = scheduler.getServiceDescriptor(jobName);
 
             Class<? extends PluginJob> jobClass = sd.getJob();

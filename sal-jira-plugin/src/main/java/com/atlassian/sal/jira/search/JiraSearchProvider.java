@@ -61,11 +61,13 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
     private final UserManager userManager;
     private final ProjectManager projectManager;
     private IssueManager issueManager;
+    private final SearchQueryParser queryParser;
+    private final ApplicationProperties applicationProperties;
 
     public JiraSearchProvider(IssueSearcherManager issueSearcherManager,
-        QueryCreator queryCreator, SearchRequestManager searchRequestManager,
-        com.atlassian.jira.issue.search.SearchProvider searchProvider,
-        UserManager userManager, ProjectManager projectManager, IssueManager issueManager)
+                              QueryCreator queryCreator, SearchRequestManager searchRequestManager,
+                              com.atlassian.jira.issue.search.SearchProvider searchProvider,
+                              UserManager userManager, ProjectManager projectManager, IssueManager issueManager, SearchQueryParser queryParser, ApplicationProperties applicationProperties)
     {
         this.issueSearcherManager = issueSearcherManager;
         this.queryCreator = queryCreator;
@@ -74,11 +76,12 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
         this.userManager = userManager;
         this.projectManager = projectManager;
         this.issueManager = issueManager;
+        this.queryParser = queryParser;
+        this.applicationProperties = applicationProperties;
     }
 
     public SearchResults search(String username, String searchString)
     {
-        SearchQueryParser queryParser = ComponentLocator.getComponent(SearchQueryParser.class);
         final SearchQuery searchQuery = queryParser.parse(searchString);
         int maxHits = searchQuery.getParameter(SearchParameter.MAXHITS, Integer.MAX_VALUE);
         
@@ -242,7 +245,7 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
 
     ApplicationProperties getWebProperties()
     {
-        return ComponentLocator.getComponent(ApplicationProperties.class);
+        return applicationProperties;
     }
 
     User getUser(String username)

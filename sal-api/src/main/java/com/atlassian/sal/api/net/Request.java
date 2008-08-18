@@ -25,6 +25,14 @@ public interface Request<T extends Request<?>>
      * @return a reference to this object.
      */
     T setConnectionTimeout(int connectionTimeout);
+    
+    /**
+     * Setting socket timeout in milliseconds.
+     * 
+     * @param soTimeout
+     * @return a reference to this object.
+     */
+    T setSoTimeout(int soTimeout);
     /**
      * @param url
      * @return a reference to this object.

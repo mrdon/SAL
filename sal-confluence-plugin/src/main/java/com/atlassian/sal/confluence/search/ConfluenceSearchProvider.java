@@ -19,7 +19,6 @@ import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.search.ResourceType;
 import com.atlassian.sal.api.search.SearchMatch;
@@ -45,10 +44,17 @@ public class ConfluenceSearchProvider implements SearchProvider
     private SpaceManager spaceManager;
     private LabelManager labelManager;
     private SettingsManager settingsManager;
+    private final SearchQueryParser queryParser;
+    private final ApplicationProperties applicationProperties;
+
+    public ConfluenceSearchProvider(SearchQueryParser queryParser, ApplicationProperties applicationProperties)
+    {
+        this.queryParser = queryParser;
+        this.applicationProperties = applicationProperties;
+    }
 
     public SearchResults search(String username, String stringQuery)
     {
-        SearchQueryParser queryParser = ComponentLocator.getComponent(SearchQueryParser.class);
         final SearchQuery searchQuery = queryParser.parse(stringQuery);
         SearchResults result;
         //set the user to be the user that was passed in
@@ -128,7 +134,7 @@ public class ConfluenceSearchProvider implements SearchProvider
 
     ApplicationProperties getApplicationProperties()
     {
-        return ComponentLocator.getComponent(ApplicationProperties.class);
+        return applicationProperties;
     }
 
     SearchQueryBean getWiredSearchQueryBean(SearchQuery query)

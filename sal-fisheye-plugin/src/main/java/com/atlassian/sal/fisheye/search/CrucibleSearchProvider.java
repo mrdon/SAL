@@ -10,7 +10,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.search.SearchMatch;
 import com.atlassian.sal.api.search.SearchProvider;
 import com.atlassian.sal.api.search.SearchResults;
@@ -38,10 +37,17 @@ import com.cenqua.fisheye.util.NaturalComparator;
 public class CrucibleSearchProvider implements SearchProvider
 {
     private static final Logger log = Logger.getLogger(CrucibleSearchProvider.class);
+    private final SearchQueryParser queryParser;
+    private final ApplicationProperties applicationProperties;
+
+    public CrucibleSearchProvider(SearchQueryParser queryParser, ApplicationProperties applicationProperties)
+    {
+        this.queryParser = queryParser;
+        this.applicationProperties = applicationProperties;
+    }
 
     public SearchResults search(String username, String searchString)
     {
-        SearchQueryParser queryParser = ComponentLocator.getComponent(SearchQueryParser.class);
         final SearchQuery searchQuery = queryParser.parse(searchString);
 
 		int maxHits = searchQuery.getParameter(SearchParameter.MAXHITS, Integer.MAX_VALUE);
@@ -58,7 +64,6 @@ public class CrucibleSearchProvider implements SearchProvider
     private List<SearchMatch> transformCrucibleResults(List<Integer> resultIds, int maxHits, String username)
     {
         final List<SearchMatch> matches = new ArrayList<SearchMatch>();
-        final ApplicationProperties applicationProperties = ComponentLocator.getComponent(ApplicationProperties.class);
         for (Integer resultId : resultIds)
         {
             if (matches.size() >= maxHits)

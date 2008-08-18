@@ -17,8 +17,8 @@ import com.atlassian.confluence.search.actions.SearchResultWithExcerpt;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.search.SearchResults;
 import com.atlassian.sal.api.search.query.SearchQuery;
+import com.atlassian.sal.api.search.query.SearchQueryParser;
 import com.atlassian.sal.core.search.query.DefaultSearchQueryParser;
-import com.atlassian.sal.core.component.MockComponentLocator;
 import com.atlassian.user.User;
 
 /**
@@ -26,11 +26,12 @@ import com.atlassian.user.User;
  */
 public class TestConfluenceSearchProvider extends TestCase
 {
-	@Override
+    private SearchQueryParser queryParser;
+    @Override
 	protected void setUp() throws Exception
 	{
 		super.setUp();
-		MockComponentLocator.create(new DefaultSearchQueryParser());
+		queryParser = new DefaultSearchQueryParser();
 	}
     public void testErrorResult()
     {
@@ -44,7 +45,7 @@ public class TestConfluenceSearchProvider extends TestCase
         mockSearchBeanControl.setDefaultThrowable(new IllegalArgumentException("Strange error"));
         mockSearchBeanControl.replay();
 
-        ConfluenceSearchProvider searchProvider = new ConfluenceSearchProvider()
+        ConfluenceSearchProvider searchProvider = new ConfluenceSearchProvider(queryParser, null)
         {
         	@Override
             SearchQueryBean getWiredSearchQueryBean(SearchQuery searchQuery)
@@ -86,7 +87,7 @@ public class TestConfluenceSearchProvider extends TestCase
         mockSearchBeanControl.setDefaultReturnValue(Collections.EMPTY_LIST);
         mockSearchBeanControl.replay();
 
-        ConfluenceSearchProvider searchProvider = new ConfluenceSearchProvider()
+        ConfluenceSearchProvider searchProvider = new ConfluenceSearchProvider(queryParser, null)
         {
 
         	@Override
@@ -148,7 +149,7 @@ public class TestConfluenceSearchProvider extends TestCase
         mockSearchBeanControl.setDefaultReturnValue(mockResults);
         mockSearchBeanControl.replay();
 
-        ConfluenceSearchProvider searchProvider = new ConfluenceSearchProvider()
+        ConfluenceSearchProvider searchProvider = new ConfluenceSearchProvider(queryParser, null)
         {
 
         	@Override

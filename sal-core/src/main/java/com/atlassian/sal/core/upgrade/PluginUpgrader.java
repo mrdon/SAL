@@ -59,10 +59,10 @@ public class PluginUpgrader
 
     protected List<Message> upgrade()
     {
-        if (needUpgrade())
+    	if (needUpgrade())
         {
-            doUpgrade();
-        }
+        	doUpgrade();
+        } 
         return errors;
     }
 
@@ -134,7 +134,9 @@ public class PluginUpgrader
     protected boolean needUpgrade()
     {
     	final PluginUpgradeTask lastUpgradeTask = this.upgradeTasks.get(this.upgradeTasks.size()-1);
-    	return lastUpgradeTask.getBuildNumber() > getDataBuildNumber();
+    	int dataBuildNumber = getDataBuildNumber();
+		log.info("Plugin: " +plugin.getKey() + ", current version: " + dataBuildNumber + ", highest upgrade task found: " + lastUpgradeTask.getBuildNumber() + ".");
+    	return lastUpgradeTask.getBuildNumber() > dataBuildNumber;
     }
 
 

@@ -9,7 +9,6 @@ import com.atlassian.confluence.util.UserChecker;
 import com.atlassian.event.EventManager;
 import com.atlassian.license.*;
 import com.atlassian.license.decoder.LicenseDecoder;
-import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.license.LicenseHandler;
 import com.atlassian.sal.core.license.AbstractLicenseHandler;
 import com.atlassian.spring.container.ContainerManager;
@@ -22,6 +21,18 @@ import java.util.Date;
  */
 public class ConfluenceLicenseHandler extends AbstractLicenseHandler implements LicenseHandler
 {
+
+    private final EventManager eventManager;
+    private final UserChecker userChecker;
+    private final ApplicationConfiguration applicationConfiguration;
+
+    public ConfluenceLicenseHandler(EventManager eventManager, UserChecker userChecker, ApplicationConfiguration applicationConfiguration)
+    {
+        this.eventManager = eventManager;
+        this.userChecker = userChecker;
+        this.applicationConfiguration = applicationConfiguration;
+    }
+
     /**
      * Sets the license, going through the validation used for the web UI (copy/pasted unfortunately).  Errors are ignored
      * as with the JIRA implementation, although this should be improved and made consistent.
@@ -30,11 +41,6 @@ public class ConfluenceLicenseHandler extends AbstractLicenseHandler implements 
      */
     protected void setValidatedLicense(String licenseString)
     {
-        EventManager eventManager = ComponentLocator.getComponent(EventManager.class);
-        UserChecker userChecker = ComponentLocator.getComponent(UserChecker.class);
-
-        // FIXME: cannot use ComponentLocator as it doesn't seem to search the bootstrap confluence context.
-        ApplicationConfiguration applicationConfig = (ApplicationConfiguration) ContainerManager.getInstance().getContainerContext().getComponent("applicationConfig");
         LicensePair pair;
         try
         {
@@ -79,7 +85,7 @@ public class ConfluenceLicenseHandler extends AbstractLicenseHandler implements 
         LicenseManager.getInstance().setLicense(licenseString, ConfluenceBootstrapConstants.DEFAULT_LICENSE_REGISTRY_KEY);
         try
         {
-            applicationConfig.save();
+            applicationConfiguration.save();
         } catch (ConfigurationException e)
         {
             // TODO: handle this better
