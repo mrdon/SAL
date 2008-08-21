@@ -23,8 +23,8 @@ import com.atlassian.sal.core.search.BasicResourceType;
 import com.cenqua.crucible.filters.CrucibleFilter;
 import com.cenqua.fisheye.AppConfig;
 import com.cenqua.fisheye.LicensePolicyException;
-import com.cenqua.fisheye.cvsrep.search.SearchManager;
-import com.cenqua.fisheye.cvsrep.search.query.FishQuery;
+import com.cenqua.fisheye.search.SearchManager;
+import com.cenqua.fisheye.search.query.FishQuery;
 import com.cenqua.fisheye.rep.DbException;
 import com.cenqua.fisheye.rep.FileRevision;
 import com.cenqua.fisheye.rep.RepositoryEngine;
@@ -158,7 +158,7 @@ public class FisheyeSearchProvider implements SearchProvider
         {
             long startTime = System.currentTimeMillis();
 
-            com.cenqua.fisheye.cvsrep.search.SearchResults collator = search.runQuery(q, true);
+            com.cenqua.fisheye.search.SearchResults collator = search.runQuery(q, true);
             SearchResultsExplorer results = getSearchResultsExplorer(repositoryName, collator);
             final List<SearchMatch> matches = transformFisheyeResults(maxHits, repositoryName, results);
 
@@ -298,7 +298,7 @@ public class FisheyeSearchProvider implements SearchProvider
     }
 
 
-    private SearchResultsExplorer getSearchResultsExplorer(String repositoryName, com.cenqua.fisheye.cvsrep.search.SearchResults collator)
+    private SearchResultsExplorer getSearchResultsExplorer(String repositoryName, com.cenqua.fisheye.search.SearchResults collator)
     {
         final ApplicationProperties applicationProperties = ComponentLocator.getComponent(ApplicationProperties.class);
         final String baseUrl = applicationProperties.getBaseUrl();

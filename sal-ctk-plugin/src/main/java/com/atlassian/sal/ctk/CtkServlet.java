@@ -16,37 +16,16 @@ import com.atlassian.plugin.PluginParseException;
 @Component
 public class CtkServlet extends HttpServlet
 {
-    ModuleDescriptorPredicate pred;
     private final CtkTestSuite suite;
-    private final PluginController controller;
 
-    public CtkServlet(CtkTestSuite suite, PluginController controller)
+    public CtkServlet(CtkTestSuite suite)
     {
         this.suite = suite;
-        this.controller = controller;
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
-        try
-        {
-            int num = controller.scanForNewPlugins();
-            if (num > 0)
-            {
-                resp.sendRedirect(req.getRequestURI());
-                return;
-            }
-        } catch (PluginParseException e)
-        {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IllegalStateException ex)
-        {
-            // unloaded current servlet, try again
-            resp.sendRedirect(req.getRequestURI());
-            return;
-        }
-
         List<CtkTestResult> results = suite.execute();
         PrintWriter out = resp.getWriter();
 
