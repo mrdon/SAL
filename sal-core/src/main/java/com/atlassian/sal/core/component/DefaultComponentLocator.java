@@ -23,9 +23,9 @@ public class DefaultComponentLocator extends ComponentLocator
     {
     	Map<String, T> beansOfType = hostContextAccessor.getComponentsOfType(iface);
 
-    	if (beansOfType.isEmpty())
+    	if (beansOfType == null || beansOfType.isEmpty())
         {
-            throw new RuntimeException("Could not retrieve " + iface.getName());
+            return null;
         } else if (beansOfType.size()>1)
         {
             // we have multiple implementations of this interface, choose one with name that looks like iface name
@@ -45,18 +45,13 @@ public class DefaultComponentLocator extends ComponentLocator
 	{
     	Map<String, T> beansOfType = hostContextAccessor.getComponentsOfType(iface);
 
-    	T implementation = (T) beansOfType.get(componentId);
-    	if (implementation == null)
-    	{
-    		throw new RuntimeException("Could not retrieve " + iface.getName() + " with componentId '"+componentId+"'");
-    	}
-    	return implementation;
+    	return (T) beansOfType.get(componentId);
 	}
     
 	@Override
 	protected <T> Collection<T> getComponentsInternal(Class<T> iface)
 	{
 		Map<String, T> beansOfType = hostContextAccessor.getComponentsOfType(iface);
-		return beansOfType.values();
+		return (beansOfType != null ? beansOfType.values() : null);
 	}
 }

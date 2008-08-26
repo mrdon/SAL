@@ -33,7 +33,7 @@ public class DefaultUserManager implements UserManager
 //        {
 //            return true;
 //        }
-        return true;
+        return false;
     }
 
     public boolean authenticate(String username, String password)

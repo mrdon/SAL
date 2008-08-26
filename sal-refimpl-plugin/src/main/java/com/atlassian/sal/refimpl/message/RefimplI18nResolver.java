@@ -13,9 +13,6 @@ public class RefimplI18nResolver extends AbstractI18nResolver
 {
     public String resolveText(String key, Serializable[] arguments)
     {
-        if ("test".equals(key))
-            return key + " args: "+ Arrays.asList(arguments);
-        else
-            return null;
+        return null;
     }
 }

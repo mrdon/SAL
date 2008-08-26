@@ -118,9 +118,12 @@ public class DefaultPluginUpgradeManager implements PluginUpgradeManager, Lifecy
 
         // TODO 1: should do something useful with the messages
     	// TODO 2: we don't know what upgrade tasks these messages came from
-        for(Message msg : messages)
+        if (messages != null)
         {
-            log.error("Upgrade error: "+msg);
+            for(Message msg : messages)
+            {
+                log.error("Upgrade error: "+msg);
+            }
         }
     }
 

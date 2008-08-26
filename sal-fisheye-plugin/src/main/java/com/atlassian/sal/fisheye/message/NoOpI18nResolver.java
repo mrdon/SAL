@@ -11,7 +11,7 @@ public class NoOpI18nResolver extends AbstractI18nResolver
 	@Override
 	public String resolveText(String key, Serializable[] arguments)
 	{
-		return "["+key+":"+Arrays.asList(arguments)+"]";
+        return null;
 	}
 
 }

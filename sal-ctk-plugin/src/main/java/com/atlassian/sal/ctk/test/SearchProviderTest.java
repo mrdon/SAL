@@ -31,6 +31,6 @@ public class SearchProviderTest implements CtkTest
         SearchResults sresults = searchProvider.search(null, "the");
         results.assertTrue("Should always return results", sresults != null);
 
-        results.assertTrue("Search time should be greater than zero", sresults.getSearchTime() > 0);
+        results.assertTrueOrWarn("Search time should be greater than zero", sresults.getSearchTime() > 0);
     }
 }
