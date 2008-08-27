@@ -7,11 +7,11 @@ import com.atlassian.sal.spi.HostContextAccessor;
 /**
  * This provides a default implementation that delegates to the underlying host context accessor
  */
-public class DefaultTransactionTemplate implements TransactionTemplate
+public class HostContextTransactionTemplate implements TransactionTemplate
 {
     private final HostContextAccessor hostContentAccessor;
 
-    public DefaultTransactionTemplate(HostContextAccessor hostContentAccessor)
+    public HostContextTransactionTemplate(HostContextAccessor hostContentAccessor)
     {
         this.hostContentAccessor = hostContentAccessor;
     }

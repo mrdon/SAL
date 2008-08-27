@@ -26,7 +26,7 @@
     <component key="licenseHandler" class="com.atlassian.sal.fisheye.license.FisheyeLicenseHandler" public="true" >
         <interface>com.atlassian.sal.api.license.LicenseHandler</interface>
     </component>
-    <component key="transactionTemplate" class="com.atlassian.sal.core.transaction.DefaultTransactionTemplate" public="true" >
+    <component key="transactionTemplate" class="com.atlassian.sal.core.transaction.HostContextTransactionTemplate" public="true" >
         <interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>
     </component>
     <component key="cenquaSearchProvider" class="com.atlassian.sal.fisheye.search.CenquaSearchProvider" public="true" >

@@ -41,4 +41,14 @@
         </osgi:interfaces>
     </osgi:service>
 
+    <bean name="componentLocator" class="com.atlassian.sal.refimpl.component.RefImplComponentLocator">
+        <constructor-arg ref="map" />
+    </bean>
+
+    <osgi:service id="componentLocator_osgiService" ref="componentLocator">
+        <osgi:interfaces>
+            <value>com.atlassian.sal.api.component.ComponentLocator</value>
+        </osgi:interfaces>
+    </osgi:service>
+
 </beans>

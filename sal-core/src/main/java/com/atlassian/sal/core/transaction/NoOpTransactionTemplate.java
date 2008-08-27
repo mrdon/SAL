@@ -1,4 +1,4 @@
-package com.atlassian.sal.jira.transaction;
+package com.atlassian.sal.core.transaction;
 
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.transaction.TransactionCallback;

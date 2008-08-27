@@ -16,11 +16,6 @@
                system="true" public="true">
         <interface>com.atlassian.sal.api.pluginsettings.PluginSettingsFactory</interface>
     </component>
-    <component key="componentLocator" name="component locator"
-               class="com.atlassian.sal.core.component.DefaultComponentLocator"
-               system="true" public="true">
-        <interface>com.atlassian.sal.api.component.ComponentLocator</interface>
-    </component>
     
     <component name="Application Properties" key="applicationProperties" class="com.atlassian.sal.refimpl.RefimplApplicationProperties"
                system="true" public="true">
@@ -40,7 +35,7 @@
         <interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
     </component>
     <component name="NoOp Transaction Template" key="transactionTemplate"
-               class="com.atlassian.sal.core.transaction.DefaultTransactionTemplate" system="true" public="true">
+               class="com.atlassian.sal.core.transaction.NoOpTransactionTemplate" system="true" public="true">
         <interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>
     </component>
     <component name="Refimpl Search Provider" key="searchProvider"
