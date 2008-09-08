@@ -25,5 +25,10 @@ public class DefaultUserManager implements UserManager
     {
         return true;
     }
+    
+    public boolean isUserInGroup(String username, String group)
+    {
+        return true;
+    }
 
 }

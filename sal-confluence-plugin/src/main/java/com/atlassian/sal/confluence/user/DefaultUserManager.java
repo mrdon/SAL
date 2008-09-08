@@ -34,6 +34,18 @@ public class DefaultUserManager implements UserManager
         return user != null && userAccessor.authenticate(user.getName(), password);
     }
 
+    /**
+     * Returns whether the user is in the specify group
+     *
+     * @param username The username to check
+     * @param group The group to check
+     * @return True if the user is in the specified group
+     */
+    public boolean isUserInGroup(String username, String group)
+    {
+        return userAccessor.hasMembership(group, username);
+    }
+
     public void setUserAccessor(UserAccessor userAccessor)
     {
         this.userAccessor = userAccessor;

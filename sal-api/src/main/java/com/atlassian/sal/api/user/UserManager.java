@@ -12,6 +12,14 @@ public interface UserManager
     String getRemoteUsername();
 
     /**
+     * Returns whether the user is in the specify group
+     * @param username The username to check
+     * @param group The group to check
+     * @return True if the user is in the specified group
+     */
+    boolean isUserInGroup(String username, String group);
+
+    /**
      * Returns true or false depending on if a user has been granted the system admin permission.
      * @param username The username of the user to check
      * @return true or false depending on if a user has been granted the system admin permission.
