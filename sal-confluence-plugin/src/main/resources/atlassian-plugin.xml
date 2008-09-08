@@ -22,5 +22,6 @@
     <component name="Plugin Scheduler" key="pluginScheduler" class="com.atlassian.sal.confluence.scheduling.ConfluencePluginScheduler" system="true"/>
     <component name="Request Factory" key="requestFactory" class="com.atlassian.sal.core.net.HttpClientRequestFactory" system="true"/>
     <component name="Confluence Project Manager" key="confluenceProjectManager" class="com.atlassian.sal.confluence.project.ConfluenceProjectManager" system="true"/>
+    <component name="Confluence Thread Local Context Manager" key="confluenceThreadLocalContextManager" class="com.atlassian.sal.confluence.threadlocal.ConfluenceThreadLocalContextManager" system="true"/>
 
 </atlassian-plugin>
