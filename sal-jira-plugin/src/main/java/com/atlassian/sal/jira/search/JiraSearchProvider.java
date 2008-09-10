@@ -2,8 +2,6 @@ package com.atlassian.sal.jira.search;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 import javax.servlet.http.HttpUtils;
 
@@ -12,12 +10,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
-import com.atlassian.jira.issue.search.SearchContext;
-import com.atlassian.jira.issue.search.SearchContextImpl;
-import com.atlassian.jira.issue.search.SearchException;
-import com.atlassian.jira.issue.search.SearchProvider;
-import com.atlassian.jira.issue.search.SearchRequest;
-import com.atlassian.jira.issue.search.SearchRequestManager;
+import com.atlassian.jira.issue.search.*;
 import com.atlassian.jira.issue.search.managers.IssueSearcherManager;
 import com.atlassian.jira.issue.search.searchers.IssueSearcher;
 import com.atlassian.jira.issue.search.util.QueryCreator;
@@ -54,18 +47,21 @@ import com.opensymphony.user.UserManager;
 public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchProvider
 {
     private static final Logger log = Logger.getLogger(JiraSearchProvider.class);
-    private IssueSearcherManager issueSearcherManager;
+    private final IssueSearcherManager issueSearcherManager;
     private final QueryCreator queryCreator;
     private final SearchRequestManager searchRequestManager;
     private final SearchProvider searchProvider;
     private final UserManager userManager;
     private final ProjectManager projectManager;
-    private IssueManager issueManager;
+    private final IssueManager issueManager;
+    private final SearchRequestFactory searchRequestFactory;
+
 
     public JiraSearchProvider(IssueSearcherManager issueSearcherManager,
         QueryCreator queryCreator, SearchRequestManager searchRequestManager,
         com.atlassian.jira.issue.search.SearchProvider searchProvider,
-        UserManager userManager, ProjectManager projectManager, IssueManager issueManager)
+        UserManager userManager, ProjectManager projectManager, IssueManager issueManager,
+        SearchRequestFactory searchRequestFactory)
     {
         this.issueSearcherManager = issueSearcherManager;
         this.queryCreator = queryCreator;
@@ -74,6 +70,7 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
         this.userManager = userManager;
         this.projectManager = projectManager;
         this.issueManager = issueManager;
+        this.searchRequestFactory = searchRequestFactory;
     }
 
     public SearchResults search(String username, String searchString)
@@ -177,7 +174,8 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
             return null;
         }
 
-        return searchRequestManager.create(null, remoteUser, holder, getSearchContext());
+        SearchRequest searchRequest = searchRequestFactory.create(null, remoteUser, holder, getSearchContext());
+        return searchRequestManager.create(searchRequest);
     }
 
     private Collection<Issue> getIssuesFromQuery(String query)
