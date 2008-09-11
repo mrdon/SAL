@@ -42,9 +42,9 @@
             <version>2.1</version>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.seraph</groupId>
-            <artifactId>atlassian-seraph</artifactId>
-            <version>0.36</version>
+            <groupId>com.atlassian.security.auth.trustedapps</groupId>
+            <artifactId>atlassian-trusted-apps-core</artifactId>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>com.atlassian.extras</groupId>
