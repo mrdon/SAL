@@ -49,7 +49,6 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
     private static final Logger log = Logger.getLogger(JiraSearchProvider.class);
     private final IssueSearcherManager issueSearcherManager;
     private final QueryCreator queryCreator;
-    private final SearchRequestManager searchRequestManager;
     private final SearchProvider searchProvider;
     private final UserManager userManager;
     private final ProjectManager projectManager;
@@ -58,14 +57,13 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
 
 
     public JiraSearchProvider(IssueSearcherManager issueSearcherManager,
-        QueryCreator queryCreator, SearchRequestManager searchRequestManager,
+        QueryCreator queryCreator,
         com.atlassian.jira.issue.search.SearchProvider searchProvider,
         UserManager userManager, ProjectManager projectManager, IssueManager issueManager,
         SearchRequestFactory searchRequestFactory)
     {
         this.issueSearcherManager = issueSearcherManager;
         this.queryCreator = queryCreator;
-        this.searchRequestManager = searchRequestManager;
         this.searchProvider = searchProvider;
         this.userManager = userManager;
         this.projectManager = projectManager;
@@ -174,8 +172,7 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
             return null;
         }
 
-        SearchRequest searchRequest = searchRequestFactory.create(null, remoteUser, holder, getSearchContext());
-        return searchRequestManager.create(searchRequest);
+        return searchRequestFactory.create(null, remoteUser, holder, getSearchContext());
     }
 
     private Collection<Issue> getIssuesFromQuery(String query)
