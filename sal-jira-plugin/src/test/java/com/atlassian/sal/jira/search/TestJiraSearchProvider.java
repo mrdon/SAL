@@ -12,7 +12,11 @@ import org.easymock.classextension.MockClassControl;
 
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.issuetype.IssueType;
-import com.atlassian.jira.issue.search.*;
+import com.atlassian.jira.issue.search.SearchContext;
+import com.atlassian.jira.issue.search.SearchException;
+import com.atlassian.jira.issue.search.SearchRequest;
+import com.atlassian.jira.issue.search.SearchRequestManager;
+import com.atlassian.jira.issue.search.SearchResults;
 import com.atlassian.jira.issue.search.util.QueryCreator;
 import com.atlassian.jira.issue.transport.FieldValuesHolder;
 import com.atlassian.jira.issue.transport.impl.FieldValuesHolderImpl;
@@ -65,19 +69,13 @@ public class TestJiraSearchProvider extends TestCase
         mockQueryCreatorControl.setDefaultReturnValue("?query=query&summary=true");
         mockQueryCreatorControl.replay();
 
-        MockControl mockSearchRequestFactoryControl = MockControl.createControl(SearchRequestFactory.class);
-        SearchRequestFactory mockSearchRequestFactory = (SearchRequestFactory) mockSearchRequestFactoryControl.getMock();
-        mockSearchRequestFactory.create(null, null, fieldValuesHolder, null);
-        mockSearchRequestFactoryControl.setDefaultReturnValue(mockSearchRequest);
-        mockSearchRequestFactoryControl.replay();
-
         MockControl mockSearchRequestManagerControl = MockControl.createControl(SearchRequestManager.class);
         SearchRequestManager mockSearchRequestManager = (SearchRequestManager) mockSearchRequestManagerControl.getMock();
-        mockSearchRequestManager.create(mockSearchRequest);
+        mockSearchRequestManager.create(null, null, fieldValuesHolder, null);
         mockSearchRequestManagerControl.setDefaultReturnValue(mockSearchRequest);
         mockSearchRequestManagerControl.replay();
 
-        JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchProvider, null, null, null, mockSearchRequestFactory)
+        JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchRequestManager, mockSearchProvider, null, null, null)
         {
             void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors, User remoteUser)
             {
@@ -208,19 +206,13 @@ public class TestJiraSearchProvider extends TestCase
         mockQueryCreatorControl.setDefaultReturnValue("?query=query&summary=true");
         mockQueryCreatorControl.replay();
 
-        MockControl mockSearchRequestFactoryControl = MockControl.createControl(SearchRequestFactory.class);
-        SearchRequestFactory mockSearchRequestFactory = (SearchRequestFactory) mockSearchRequestFactoryControl.getMock();
-        mockSearchRequestFactory.create(null, null, fieldValuesHolder, null);
-        mockSearchRequestFactoryControl.setDefaultReturnValue(mockSearchRequest);
-        mockSearchRequestFactoryControl.replay();
-
         MockControl mockSearchRequestManagerControl = MockControl.createControl(SearchRequestManager.class);
         SearchRequestManager mockSearchRequestManager = (SearchRequestManager) mockSearchRequestManagerControl.getMock();
-        mockSearchRequestManager.create(mockSearchRequest);
+        mockSearchRequestManager.create(null, null, fieldValuesHolder, null);
         mockSearchRequestManagerControl.setDefaultReturnValue(mockSearchRequest);
         mockSearchRequestManagerControl.replay();
 
-        JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchProvider, null, null, null, mockSearchRequestFactory)
+        JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchRequestManager, mockSearchProvider, null, null, null)
         {
             void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors, User user)
             {
