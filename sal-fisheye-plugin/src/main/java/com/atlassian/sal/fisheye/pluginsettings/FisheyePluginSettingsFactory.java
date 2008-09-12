@@ -13,7 +13,7 @@ public class FisheyePluginSettingsFactory implements PluginSettingsFactory
     public PluginSettings createSettingsForKey(String key)
     {
         PropertiesType props;
-        RootConfig rootConfig = AppConfig.getsConfig();
+        final RootConfig rootConfig = AppConfig.getsConfig();
 
         if (key == null || key.trim().length()==0)
         {
@@ -26,10 +26,10 @@ public class FisheyePluginSettingsFactory implements PluginSettingsFactory
         } else
         {
             // get per-repository config
-            RepositoryHandle handle = rootConfig.getRepositoryManager().getRepository(key);
+            final RepositoryHandle handle = rootConfig.getRepositoryManager().getRepository(key);
             if (handle != null)
             {
-                RepositoryType repositoryTypeConfig = handle.getCfg().getRepositoryTypeConfig();
+                final RepositoryType repositoryTypeConfig = handle.getCfg().getRepositoryTypeConfig();
                 props = repositoryTypeConfig.getProperties();
                 if (props==null)
                 {
@@ -47,4 +47,9 @@ public class FisheyePluginSettingsFactory implements PluginSettingsFactory
     {
         return createSettingsForKey(null);
     }
+
+	public PluginSettings createUserSettings(String username)
+	{
+		throw new UnsupportedOperationException("Not yet implemented in FishEye.");
+	}
 }

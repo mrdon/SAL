@@ -17,4 +17,12 @@ public interface PluginSettingsFactory
      * @return Global settings
      */
     PluginSettings createGlobalSettings();
+    
+    /**
+     * Gets settings for given user
+     * @param username
+     * @return
+     */
+    PluginSettings createUserSettings(String username);
+    
 }

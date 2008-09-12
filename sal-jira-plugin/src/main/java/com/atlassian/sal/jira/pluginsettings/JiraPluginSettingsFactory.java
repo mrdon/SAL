@@ -1,18 +1,22 @@
 package com.atlassian.sal.jira.pluginsettings;
 
+import org.apache.log4j.Logger;
+import org.ofbiz.core.entity.GenericValue;
+
 import com.atlassian.core.ofbiz.util.OFBizPropertyUtils;
+import com.atlassian.core.user.UserUtils;
 import com.atlassian.jira.config.properties.PropertiesManager;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.opensymphony.module.propertyset.PropertySet;
-import org.apache.log4j.Logger;
-import org.ofbiz.core.entity.GenericValue;
+import com.opensymphony.user.EntityNotFoundException;
+import com.opensymphony.user.User;
 
 public class JiraPluginSettingsFactory implements PluginSettingsFactory
 {
 
-    private ProjectManager projectManager;
+    private final ProjectManager projectManager;
 
     PropertiesManager pm;
     private boolean propsManagerInitialized = false;
@@ -34,7 +38,7 @@ public class JiraPluginSettingsFactory implements PluginSettingsFactory
                 {
                     pm = PropertiesManager.getInstance();
                 }
-                catch (UnsupportedOperationException e)
+                catch (final UnsupportedOperationException e)
                 {
                     // database can be locked
                     log.warn("unable to get a PropertiesManager!");
@@ -52,7 +56,7 @@ public class JiraPluginSettingsFactory implements PluginSettingsFactory
         PropertySet propertySet;
         if (key != null)
         {
-            GenericValue gv = projectManager.getProjectByKey(key);
+            final GenericValue gv = projectManager.getProjectByKey(key);
             if (gv == null)
                 throw new IllegalArgumentException("Cannot find project with key "+key);
 
@@ -69,4 +73,31 @@ public class JiraPluginSettingsFactory implements PluginSettingsFactory
     {
         return createSettingsForKey(null);
     }
+
+	public PluginSettings createUserSettings(String username)
+	{
+		try
+		{
+			final User user = UserUtils.getUser(username);
+			if (user==null)
+			{
+				log.warn("Creating user settings failed. User " + username + " not found.");
+				return null;
+			}
+			
+			final PropertySet propertySet = user.getPropertySet();
+			if (propertySet==null)
+			{
+				log.warn("Creating user settings failed. Property set for user " + username + " is null.");
+				return null;
+			}
+			
+			return new JiraPluginSettings(UnlimitedStringsPropertySet.create(propertySet));
+		} catch (final EntityNotFoundException e)
+		{
+			log.warn("Creating user settings failed: " + e,e);
+			return null;
+		}
+		
+	}
 }

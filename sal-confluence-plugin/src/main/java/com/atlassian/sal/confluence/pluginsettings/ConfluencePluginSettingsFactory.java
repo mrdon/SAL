@@ -24,4 +24,9 @@ public class ConfluencePluginSettingsFactory implements PluginSettingsFactory
     {
         this.bandanaManager = bandanaManager;
     }
+
+	public PluginSettings createUserSettings(String username)
+	{
+		throw new UnsupportedOperationException("Not yet implemented in Confluence.");
+	}
 }
