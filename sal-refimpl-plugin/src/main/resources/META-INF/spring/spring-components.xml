@@ -27,8 +27,8 @@
     </osgi:service>
 
     <bean name="lifecycleManager" class="com.atlassian.sal.refimpl.lifecycle.RefimplLifecycleManager">
-        <constructor-arg ref="pluginEventManager" />
-        <property name="initialListeners"><ref bean="lifecycleAwareImpls" /></property>
+        <constructor-arg index="0"><ref bean="pluginEventManager" /></constructor-arg>
+        <constructor-arg index="1"><ref bean="lifecycleAwareImpls" /></constructor-arg>
     </bean>
 
     <osgi:list id="lifecycleAwareImpls" interface="com.atlassian.sal.api.lifecycle.LifecycleAware" cardinality="0..N">

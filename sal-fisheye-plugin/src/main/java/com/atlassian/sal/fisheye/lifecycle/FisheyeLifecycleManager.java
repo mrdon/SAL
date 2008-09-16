@@ -11,9 +11,9 @@ import java.util.List;
 
 public class FisheyeLifecycleManager extends DefaultLifecycleManager
 {
-    public FisheyeLifecycleManager(PluginEventManager eventManager)
+    public FisheyeLifecycleManager(PluginEventManager eventManager, List<LifecycleAware> listeners)
     {
-        super(eventManager);
+        super(eventManager, listeners);
     }
 
     public boolean isApplicationSetUp()

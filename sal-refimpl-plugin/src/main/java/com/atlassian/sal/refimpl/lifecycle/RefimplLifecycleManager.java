@@ -9,9 +9,9 @@ import java.util.List;
 
 public class RefimplLifecycleManager extends DefaultLifecycleManager
 {
-    public RefimplLifecycleManager(PluginEventManager eventManager)
+    public RefimplLifecycleManager(PluginEventManager eventManager, List<LifecycleAware> listeners)
     {
-        super(eventManager);
+        super(eventManager, listeners);
     }
 
     public boolean isApplicationSetUp()

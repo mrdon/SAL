@@ -16,19 +16,14 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
 {
     private boolean started = false;
     private static final Logger log = Logger.getLogger(DefaultLifecycleManager.class);
-    private List<LifecycleAware> listeners;
+    private final List<LifecycleAware> listeners;
 
-    public DefaultLifecycleManager(PluginEventManager eventManager)
+    public DefaultLifecycleManager(PluginEventManager eventManager, List<LifecycleAware> listeners)
     {
         if (eventManager != null)
             eventManager.register(this);
-    }
-
-    public void setInitialListeners(List<LifecycleAware> listeners)
-    {
         this.listeners = listeners;
     }
-
 
     public void channel(PluginFrameworkStartedEvent event)
     {

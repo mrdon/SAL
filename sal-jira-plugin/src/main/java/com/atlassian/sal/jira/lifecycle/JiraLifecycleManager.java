@@ -7,13 +7,14 @@ import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import com.atlassian.plugin.event.PluginEventManager;
 
 import java.util.List;
+import java.util.Collections;
 
 public class JiraLifecycleManager extends DefaultLifecycleManager implements Startable
 {
     public JiraLifecycleManager(PluginEventManager eventManager)
     {
         // don't register self with event manager
-        super(null);
+        super(null, Collections.<LifecycleAware>emptyList());
     }
 
     public boolean isApplicationSetUp()
