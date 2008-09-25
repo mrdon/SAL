@@ -71,9 +71,11 @@
         <interface>com.atlassian.sal.api.project.ProjectManager</interface>
     </component>
 
+    <!-- This was moved to META-INF/spring/non-autowired.xml because autowiring fails on this class
     <component name="Refimpl Thread Local Context Manager" key="RefimplThreadLocalContextManager"
                class="com.atlassian.sal.refimpl.threadlocal.RefimplThreadLocalContextManager" system="true" public="true">
         <interface>com.atlassian.sal.api.threadlocal.ThreadLocalContextManager</interface>
     </component>
+    -->
 
 </atlassian-plugin>
