@@ -12,12 +12,14 @@ import org.apache.log4j.Logger;
 
 import com.atlassian.sal.api.net.Request.MethodType;
 import com.atlassian.sal.api.net.RequestFactory;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.core.trusted.CertificateFactory;
 
 public class HttpClientRequestFactory implements RequestFactory<HttpClientRequest>
 {
-	private static final Logger log = Logger.getLogger(HttpClientRequestFactory.class);
+    private static final Logger log = Logger.getLogger(HttpClientRequestFactory.class);
 
-	/**
+    /**
      * The default time to wait without retrieving data from the remote connection
      */
     public static final int DEFAULT_SOCKET_TIMEOUT=Integer.parseInt(System.getProperty("http.socketTimeout", "10000"));
@@ -27,59 +29,68 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
      */
     public static final int DEFAULT_CONNECTION_TIMEOUT=Integer.parseInt(System.getProperty("http.connectionTimeout", "10000"));
 
-	/* (non-Javadoc)
-	 * @see com.atlassian.sal.api.net.RequestFactory#createMethod(com.atlassian.sal.api.net.Request.MethodType, java.lang.String)
-	 */
-	public HttpClientRequest createRequest(MethodType methodType, String url)
-	{
-		final HttpClient httpClient = getHttpClient(url);
-		return new HttpClientRequest(httpClient, methodType, url);
-	}
+    private final UserManager userManager;
+    private final CertificateFactory certificateFactory;
 
-	/**
-	 * @param url
-	 * @return
-	 * @throws URISyntaxException
-	 */
-	protected HttpClient getHttpClient(String url)
-	{
-		final HttpClient httpClient = new HttpClient();
-		configureProxy(httpClient, url);
-		configureConnectionParameters(httpClient);
-		return httpClient;
-	}
+    public HttpClientRequestFactory(UserManager userManager, CertificateFactory certificateFactory)
+    {
+        this.userManager = userManager;
+        this.certificateFactory = certificateFactory;
+    }
+    
+    /* (non-Javadoc)
+     * @see com.atlassian.sal.api.net.RequestFactory#createMethod(com.atlassian.sal.api.net.Request.MethodType, java.lang.String)
+     */
+    public HttpClientRequest createRequest(MethodType methodType, String url)
+    {
+        final HttpClient httpClient = getHttpClient(url);
+        return new HttpClientRequest(httpClient, userManager, certificateFactory, methodType, url);
+    }
 
-	/**
-	 * Applies a set of parameters to a client
-	 *
-	 * @param client the client to which parameters are applied
-	 * @param connectionParameters the parameters which will be applied
-	 */
-	protected void configureConnectionParameters(HttpClient httpClient)
-	{
-		final HttpConnectionManagerParams params = httpClient.getHttpConnectionManager().getParams();
-		params.setSoTimeout(DEFAULT_SOCKET_TIMEOUT);
-		params.setConnectionTimeout(DEFAULT_CONNECTION_TIMEOUT);
-	}
+    /**
+     * @param url
+     * @return
+     * @throws URISyntaxException
+     */
+    protected HttpClient getHttpClient(String url)
+    {
+        final HttpClient httpClient = new HttpClient();
+        configureProxy(httpClient, url);
+        configureConnectionParameters(httpClient);
+        return httpClient;
+    }
 
-	/**
-	 * @param client
-	 * @param remoteUrl
-	 */
-	protected void configureProxy(HttpClient client, String remoteUrl)
+    /**
+     * Applies a set of parameters to a client
+     *
+     * @param client the client to which parameters are applied
+     * @param connectionParameters the parameters which will be applied
+     */
+    protected void configureConnectionParameters(HttpClient httpClient)
+    {
+        final HttpConnectionManagerParams params = httpClient.getHttpConnectionManager().getParams();
+        params.setSoTimeout(DEFAULT_SOCKET_TIMEOUT);
+        params.setConnectionTimeout(DEFAULT_CONNECTION_TIMEOUT);
+    }
+
+    /**
+     * @param client
+     * @param remoteUrl
+     */
+    protected void configureProxy(HttpClient client, String remoteUrl)
     {
         final String proxyHost = System.getProperty("http.proxyHost");
 
         URI uri;
-		try
-		{
-			uri = new URI(remoteUrl);
-		} catch (final URISyntaxException e)
-		{
-			log.warn("Invalid url: " + remoteUrl, e);
-			return;
-		}
-		if (proxyHost != null && !isNonProxyHost(uri.getHost()))
+        try
+        {
+            uri = new URI(remoteUrl);
+        } catch (final URISyntaxException e)
+        {
+            log.warn("Invalid url: " + remoteUrl, e);
+            return;
+        }
+        if (proxyHost != null && !isNonProxyHost(uri.getHost()))
         {
             int port = 80;
             try
@@ -100,7 +111,7 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
             }
         }
     }
-	
+
     /**
      * Discover whether or not proxy authentication is required; if we are behind a proxy then it is required,
      * otherwise it isn't
