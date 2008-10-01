@@ -77,5 +77,11 @@
         <interface>com.atlassian.sal.api.threadlocal.ThreadLocalContextManager</interface>
     </component>
     -->
+    
+    <component-import key="TrustedApplicationsManager" interface="com.atlassian.security.auth.trustedapps.TrustedApplicationsManager" />
+    <component name="Refimpl Certificate Factory" key="RefimplCertificateFactory"
+               class="com.atlassian.sal.refimpl.trusted.RefImplCertificateFactory" system="true">
+        <interface>com.atlassian.sal.core.trusted.CertificateFactory</interface>
+    </component>
 
 </atlassian-plugin>
