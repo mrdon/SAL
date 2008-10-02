@@ -17,10 +17,8 @@ import org.easymock.classextension.IMocksControl;
 import com.atlassian.sal.api.net.ResponseException;
 import com.atlassian.sal.api.net.ResponseHandler;
 import com.atlassian.sal.api.net.Request.MethodType;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.core.net.auth.HttpClientAuthenticator;
 import com.atlassian.sal.core.net.HttpClientRequest;
-import com.atlassian.sal.core.trusted.CertificateFactory;
 
 public class TestHttpClientRequest extends TestCase
 {
@@ -31,11 +29,12 @@ public class TestHttpClientRequest extends TestCase
         final HttpClient mockHttpClient = httpClientMockControl.createMock(HttpClient.class);
         httpClientMockControl.replay();
 
+
         // counter how many time was authentication called
         final AtomicInteger authenticatorCounter = new AtomicInteger(0);
 
         // lets create new GET request to http://url
-        HttpClientRequest request = new HttpClientRequest(mockHttpClient, EasyMock.createMock(UserManager.class), EasyMock.createMock(CertificateFactory.class), MethodType.GET, "http://url");
+        HttpClientRequest request = new HttpClientRequest(mockHttpClient, MethodType.GET, "http://url");
 
         // this is our authenticator
         final HttpClientAuthenticator authenticator = new HttpClientAuthenticator()
@@ -76,7 +75,7 @@ public class TestHttpClientRequest extends TestCase
         };
 
         // lets create new GET request to http://url
-        HttpClientRequest request = new HttpClientRequest(mockHttpClient, EasyMock.createMock(UserManager.class), EasyMock.createMock(CertificateFactory.class), MethodType.GET, "http://url");
+        HttpClientRequest request = new HttpClientRequest(mockHttpClient, MethodType.GET, "http://url");
         try
         {
             request.execute(EasyMock.createMock(ResponseHandler.class));
@@ -94,7 +93,7 @@ public class TestHttpClientRequest extends TestCase
         final PostMethod mockPostMethod = mockControl.createMock(PostMethod.class);
         mockPostMethod.getResponseHeader("location");
         mockControl.andReturn(new Header("location", "http://someRedirectionUrl"));
-        mockControl.times(HttpClientRequest.MAX_ATTEMPTS*HttpClientRequest.MAX_REDIRECTS);		// it should try to follow redirection MAX_REDIRECTS times and then retry MAX_ATTEMPTS times
+        mockControl.times(HttpClientRequest.MAX_ATTEMPTS*HttpClientRequest.MAX_REDIRECTS);        // it should try to follow redirection MAX_REDIRECTS times and then retry MAX_ATTEMPTS times
         mockControl.replay();
 
         // create HttpClient that will return 301 Moved Permanently
@@ -106,7 +105,7 @@ public class TestHttpClientRequest extends TestCase
         httpClientMockControl.replay();
 
         // create a request that will return mockPostMethod
-        HttpClientRequest request = new HttpClientRequest(httpClientMock, EasyMock.createMock(UserManager.class), EasyMock.createMock(CertificateFactory.class), MethodType.POST, "http://url")
+        HttpClientRequest request = new HttpClientRequest(httpClientMock, MethodType.POST, "http://url")
         {
             @Override
             protected HttpMethod makeMethod()
@@ -134,7 +133,7 @@ public class TestHttpClientRequest extends TestCase
         // Lets try to add parameters to GET method
         try
         {
-            HttpClientRequest request = new HttpClientRequest(EasyMock.createMock(HttpClient.class), EasyMock.createMock(UserManager.class), EasyMock.createMock(CertificateFactory.class), MethodType.GET, "http://url");
+            HttpClientRequest request = new HttpClientRequest(EasyMock.createMock(HttpClient.class), MethodType.GET, "http://url");
             request.addRequestParameters("doIt","quickly!");
             fail("Should throw exception that only POST and PUT methods can have parameters.");
         } catch (IllegalArgumentException e)
@@ -145,7 +144,7 @@ public class TestHttpClientRequest extends TestCase
         // Lets try to add uneven number of parameters
         try
         {
-            HttpClientRequest request = new HttpClientRequest(EasyMock.createMock(HttpClient.class), EasyMock.createMock(UserManager.class), EasyMock.createMock(CertificateFactory.class), MethodType.PUT, "http://url");
+            HttpClientRequest request = new HttpClientRequest(EasyMock.createMock(HttpClient.class), MethodType.PUT, "http://url");
             request.addRequestParameters("Isaid", "doIt","now");
             fail("Should throw exception about uneven number of parameters.");
         } catch (IllegalArgumentException e)
@@ -156,7 +155,7 @@ public class TestHttpClientRequest extends TestCase
 
     public void testAddRequestParameters() throws IOException, ResponseException
     {
-        // create mock PostMethod - someone should call addParamater() on it 
+        // create mock PostMethod - someone should call addParamater() on it
         final IMocksControl mockControl = EasyMock.createNiceControl();
         final PostMethod mockPostMethod = mockControl.createMock(PostMethod.class);
         mockPostMethod.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
@@ -173,7 +172,7 @@ public class TestHttpClientRequest extends TestCase
 
 
         // create a request that will return mockPostMethod
-        HttpClientRequest request = new HttpClientRequest(mockHttpClient, EasyMock.createMock(UserManager.class), EasyMock.createMock(CertificateFactory.class), MethodType.POST, "http://url")
+        HttpClientRequest request = new HttpClientRequest(mockHttpClient, MethodType.POST, "http://url")
         {
             @Override
             protected HttpMethod makeMethod()

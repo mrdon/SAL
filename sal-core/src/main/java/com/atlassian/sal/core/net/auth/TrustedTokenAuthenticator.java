@@ -4,6 +4,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 
 import com.atlassian.sal.core.trusted.CertificateFactory;
+import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.security.auth.trustedapps.EncryptedCertificate;
 import com.atlassian.security.auth.trustedapps.TrustedApplicationUtils;
 
@@ -11,8 +12,9 @@ public class TrustedTokenAuthenticator implements HttpClientAuthenticator
 {
     private final EncryptedCertificate userCertificate;
 
-    public TrustedTokenAuthenticator(CertificateFactory certificateFactory, String username)
+    public TrustedTokenAuthenticator(String username)
     {
+        final CertificateFactory certificateFactory = ComponentLocator.getComponent(CertificateFactory.class);
         if (username != null && !username.equals(""))
         {
             this.userCertificate = certificateFactory.createCertificate(username);

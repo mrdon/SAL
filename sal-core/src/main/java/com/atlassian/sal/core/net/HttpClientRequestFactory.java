@@ -12,8 +12,6 @@ import org.apache.log4j.Logger;
 
 import com.atlassian.sal.api.net.Request.MethodType;
 import com.atlassian.sal.api.net.RequestFactory;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.core.trusted.CertificateFactory;
 
 public class HttpClientRequestFactory implements RequestFactory<HttpClientRequest>
 {
@@ -28,15 +26,6 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
      * The default time allowed for establishing a connection
      */
     public static final int DEFAULT_CONNECTION_TIMEOUT=Integer.parseInt(System.getProperty("http.connectionTimeout", "10000"));
-
-    private final UserManager userManager;
-    private final CertificateFactory certificateFactory;
-
-    public HttpClientRequestFactory(UserManager userManager, CertificateFactory certificateFactory)
-    {
-        this.userManager = userManager;
-        this.certificateFactory = certificateFactory;
-    }
     
     /* (non-Javadoc)
      * @see com.atlassian.sal.api.net.RequestFactory#createMethod(com.atlassian.sal.api.net.Request.MethodType, java.lang.String)
@@ -44,7 +33,7 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
     public HttpClientRequest createRequest(MethodType methodType, String url)
     {
         final HttpClient httpClient = getHttpClient(url);
-        return new HttpClientRequest(httpClient, userManager, certificateFactory, methodType, url);
+        return new HttpClientRequest(httpClient, methodType, url);
     }
 
     /**

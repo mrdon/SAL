@@ -32,6 +32,7 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.net.Request;
 import com.atlassian.sal.api.net.Response;
 import com.atlassian.sal.api.net.ResponseException;
@@ -42,8 +43,6 @@ import com.atlassian.sal.core.net.auth.BaseAuthenticator;
 import com.atlassian.sal.core.net.auth.HttpClientAuthenticator;
 import com.atlassian.sal.core.net.auth.SeraphAuthenticator;
 import com.atlassian.sal.core.net.auth.TrustedTokenAuthenticator;
-import com.atlassian.sal.core.trusted.CertificateFactory;
-
 /**
  *	HttpClient implementation of Request interface
  */
@@ -63,14 +62,9 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     private String requestBody;
     private String requestContentType;
 
-    private final UserManager userManager;
-    private final CertificateFactory certificateFactory;
-
-    public HttpClientRequest(HttpClient httpClient, UserManager userManager, CertificateFactory certificateFactory, MethodType methodType, String url)
+    public HttpClientRequest(HttpClient httpClient, MethodType methodType, String url)
     {
         this.httpClient = httpClient;
-        this.userManager = userManager;
-        this.certificateFactory = certificateFactory;
         this.methodType = methodType;
         this.url = url;
     }
@@ -93,7 +87,9 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 
     public HttpClientRequest addTrustedTokenAuthentication()
     {
-        final TrustedTokenAuthenticator trustedTokenAuthenticator = new TrustedTokenAuthenticator(certificateFactory, userManager.getRemoteUsername());
+        final UserManager userManager = ComponentLocator.getComponent(UserManager.class);
+        final TrustedTokenAuthenticator trustedTokenAuthenticator = new TrustedTokenAuthenticator(userManager.getRemoteUsername());
+        
         this.authenticators.add(trustedTokenAuthenticator);
         return this;
     }
