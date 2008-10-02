@@ -1,32 +1,28 @@
 package com.atlassian.sal.refimpl.component;
 
-import com.atlassian.sal.api.component.ComponentLocator;
-
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+
+import com.atlassian.sal.api.component.ComponentLocator;
 
 public class RefImplComponentLocator extends ComponentLocator
 {
-    private Map<Class,Object> container;
-
-    public RefImplComponentLocator(Map<Class,Object> map) {
+    public RefImplComponentLocator()
+    {
         setComponentLocator(this);
-        this.container = map;
     }
+
     protected <T> T getComponentInternal(Class<T> iface)
     {
-        return (T) container.get(iface);
+        throw new UnsupportedOperationException("Use injection, not this service lookup.  What do you think this is, the 90's?");
     }
-
 
     protected <T> T getComponentInternal(Class<T> iface, String componentKey)
     {
-        return (T) container.get(iface);
+        throw new UnsupportedOperationException("Use injection, not this service lookup.  What do you think this is, the 90's?");
     }
 
     protected <T> Collection<T> getComponentsInternal(Class<T> iface)
     {
-        return (Collection<T>) Collections.singletonList(container.get(iface));
+        throw new UnsupportedOperationException("Use injection, not this service lookup.  What do you think this is, the 90's?");
     }
 }

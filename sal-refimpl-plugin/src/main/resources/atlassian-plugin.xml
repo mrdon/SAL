@@ -18,13 +18,13 @@
         <interface>com.atlassian.sal.api.pluginsettings.PluginSettingsFactory</interface>
     </component>
     <component key="componentLocator" name="component locator"
-               class="com.atlassian.sal.refimpl.component.RefimplComponentLocator"
+               class="com.atlassian.sal.refimpl.component.RefImplComponentLocator"
                system="true" public="true">
         <interface>com.atlassian.sal.api.component.ComponentLocator</interface>
 
     </component>
     <component key="pluginUpgradeManager" name="pluginUpgradeManager"
-               class="com.atlassian.sal.core.upgrade.DefaultPluginUpgradeManager"
+               class="com.atlassian.sal.refimpl.upgrade.RefImplPluginUpgradeManager"
                system="true" public="true">
         <interface>com.atlassian.sal.api.upgrade.PluginUpgradeManager</interface>
         <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
@@ -77,13 +77,6 @@
         <interface>com.atlassian.sal.api.project.ProjectManager</interface>
     </component>
 
-    <!-- This was moved to META-INF/spring/non-autowired.xml because autowiring fails on this class
-    <component name="Refimpl Thread Local Context Manager" key="RefimplThreadLocalContextManager"
-               class="com.atlassian.sal.refimpl.threadlocal.RefimplThreadLocalContextManager" system="true" public="true">
-        <interface>com.atlassian.sal.api.threadlocal.ThreadLocalContextManager</interface>
-    </component>
-    -->
-    
     <component-import key="TrustedApplicationsManager" interface="com.atlassian.security.auth.trustedapps.TrustedApplicationsManager" />
 
     <component name="Refimpl Certificate Factory" key="RefimplCertificateFactory"
