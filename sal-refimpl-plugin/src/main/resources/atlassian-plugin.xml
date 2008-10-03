@@ -5,11 +5,15 @@
         <vendor name="Atlassian Software Systems Pty Ltd" url="http://www.atlassian.com"/>
     </plugin-info>
 
+    <component-import key="authenticator" interface="com.atlassian.user.security.authentication.Authenticator" />
+    <component-import key="atlassianUserManager" interface="com.atlassian.user.UserManager" />
+    <component-import key="groupManager" interface="com.atlassian.user.GroupManager" />
+    <component-import key="authenticationContext" interface="com.atlassian.seraph.auth.AuthenticationContext" />
+    <component-import key="TrustedApplicationsManager" interface="com.atlassian.security.auth.trustedapps.TrustedApplicationsManager" />
 
     <component key="i18nResolver" name="I18n Resolver"
                class="com.atlassian.sal.refimpl.message.RefimplI18nResolver"
                system="true" public="true">
-
         <interface>com.atlassian.sal.api.message.I18nResolver</interface>
     </component>
     <component key="pluginSettingsFactory" name="Plugin settings factory"
@@ -21,7 +25,6 @@
                class="com.atlassian.sal.refimpl.component.RefImplComponentLocator"
                system="true" public="true">
         <interface>com.atlassian.sal.api.component.ComponentLocator</interface>
-
     </component>
     <component key="pluginUpgradeManager" name="pluginUpgradeManager"
                class="com.atlassian.sal.refimpl.upgrade.RefImplPluginUpgradeManager"
@@ -32,10 +35,9 @@
     <component name="Application Properties" key="applicationProperties" class="com.atlassian.sal.refimpl.RefimplApplicationProperties"
                system="true" public="true">
         <interface>com.atlassian.sal.api.ApplicationProperties</interface>
-
     </component>
     <component key="userManager" name="User Manager"
-               class="com.atlassian.sal.refimpl.user.DefaultUserManager"
+               class="com.atlassian.sal.refimpl.user.RefImplUserManager"
                system="true" public="true">
         <interface>com.atlassian.sal.api.user.UserManager</interface>
     </component>
@@ -45,7 +47,6 @@
     </component>
     <component name="Plugin Scheduler" key="pluginScheduler"
         class="com.atlassian.sal.core.scheduling.TimerPluginScheduler" system="true" public="true">
-
         <interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
     </component>
     <component name="Plugin Lifecycle Manager" key="lifecycleManager"
@@ -55,7 +56,6 @@
     <component name="NoOp Transaction Template" key="noopTransactionTemplate"
                class="com.atlassian.sal.core.transaction.NoOpTransactionTemplate" system="true" public="true">
         <interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>
-
     </component>
     <component name="Refimpl Search Provider" key="RefimplSearchProvider"
                class="com.atlassian.sal.refimpl.search.RefimplSearchProvider" system="true" public="true">
@@ -65,24 +65,17 @@
             class="com.atlassian.sal.core.search.query.DefaultSearchQueryParser" system="true" public="true">
             <interface>com.atlassian.sal.api.search.query.SearchQueryParser</interface>
     </component>
-    
     <component name="Request Factory" key="requestFactory" 
                class="com.atlassian.sal.core.net.HttpClientRequestFactory" system="true" public="true">
-
         <interface>com.atlassian.sal.api.net.RequestFactory</interface>
     </component>
-
     <component name="Refimpl Project Manager" key="RefimplProjectManager"
                class="com.atlassian.sal.refimpl.project.RefimplProjectManager" system="true" public="true">
         <interface>com.atlassian.sal.api.project.ProjectManager</interface>
     </component>
-
-    <component-import key="TrustedApplicationsManager" interface="com.atlassian.security.auth.trustedapps.TrustedApplicationsManager" />
-
     <component name="Refimpl Certificate Factory" key="RefimplCertificateFactory"
                class="com.atlassian.sal.refimpl.trusted.RefImplCertificateFactory" system="true">
         <interface>com.atlassian.sal.core.trusted.CertificateFactory</interface>
     </component>
-
 </atlassian-plugin>
 
