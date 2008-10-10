@@ -13,6 +13,6 @@ public class RefimplI18nResolver extends AbstractI18nResolver
 {
     public String resolveText(String key, Serializable[] arguments)
     {
-        return null;
+        return key;
     }
 }
