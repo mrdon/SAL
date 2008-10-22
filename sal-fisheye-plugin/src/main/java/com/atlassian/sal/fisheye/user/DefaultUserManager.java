@@ -12,6 +12,7 @@ import com.cenqua.fisheye.rep.DbException;
 import com.cenqua.fisheye.user.UserLogin;
 
 /**
+ * FishEye implementation of the UserManager
  */
 public class DefaultUserManager implements UserManager
 {
@@ -41,14 +42,15 @@ public class DefaultUserManager implements UserManager
         {
             return false;
         }
-        final String sysadmins = (String) ComponentLocator.getComponent(PluginSettingsFactory.class).createGlobalSettings().get("sysadmins");
-        if (sysadmins == null)
+        String sysadminGroups = (String)
+            ComponentLocator.getComponent(PluginSettingsFactory.class).createGlobalSettings().get("sysadmin-groups");
+        if (sysadminGroups == null)
         {
             return false;
         }
-        for (final String sysadmin : sysadmins.split(","))
+        for (String sysadminGroup : sysadminGroups.split(","))
         {
-            if (username.equals(sysadmin))
+            if (isUserInGroup(username, sysadminGroup))
             {
                 return true;
             }
