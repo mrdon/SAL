@@ -72,10 +72,4 @@
                class="com.atlassian.sal.jira.project.JiraProjectManager" system="true">
         <interface>com.atlassian.sal.api.project.ProjectManager</interface>
     </component>
-
-    <component name="JIRA Thread Local Context Manager" key="jiraThreadLocalContextManager"
-               class="com.atlassian.sal.jira.threadlocal.JiraThreadLocalContextManager" system="true">
-        <interface>com.atlassian.sal.api.threadlocal.ThreadLocalContextManager</interface>
-    </component>
-
 </atlassian-plugin>
