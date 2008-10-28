@@ -1,23 +1,46 @@
-package com.atlassian.sal.fisheye.threadlocal;
+package com.atlassian.sal.fisheye.executor;
 
-import com.atlassian.sal.api.threadlocal.ThreadLocalContextManager;
 import com.cenqua.crucible.filters.CrucibleFilter;
 
+import java.util.concurrent.Executor;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * FishEye thread local context manager.  This transfers Crucible's CrucibleFilter.Context object to the current thread,
- * which is not threadsafe.  Anything depending on this should only rely on getting the current user.
+ * Creates a delegating executor that ensures the context is passed to the executing thread
  */
-public class FishEyeThreadLocalContextManager implements ThreadLocalContextManager
+class FishEyeThreadLocalDelegateExecutor implements Executor
 {
+    private final Executor delegate;
+    private final Object context;
+
+    FishEyeThreadLocalDelegateExecutor(Executor delegate)
+    {
+        this.delegate = delegate;
+        this.context = getThreadLocalContext();
+    }
+
+    public void execute(Runnable runnable)
+    {
+        setThreadLocalContext(context);
+        try
+        {
+            delegate.execute(runnable);
+        }
+        finally
+        {
+            clearThreadLocalContext();
+        }
+    }
+
+
+
     /**
      * Get the thread local context of the current thread
      *
      * @return The thread local context
      */
-    public Object getThreadLocalContext()
+    private Object getThreadLocalContext()
     {
         // Basically, FishEye sucks.  This is bad, but it will work.  Let me say again... FishEye sucks.
         // Returning this much context probably also isn't thread safe... but as long as it's used to only get users :) :)
@@ -54,7 +77,7 @@ public class FishEyeThreadLocalContextManager implements ThreadLocalContextManag
      *
      * @param context The context to set
      */
-    public void setThreadLocalContext(Object context)
+    private void setThreadLocalContext(Object context)
     {
         // How nice of them to provide such a convenient method for setting it, but not getting it.
         CrucibleFilter.setContext((CrucibleFilter.Context) context);
@@ -63,7 +86,7 @@ public class FishEyeThreadLocalContextManager implements ThreadLocalContextManag
     /**
      * Remove the given context from the current thread
      */
-    public void clearThreadLocalContext(Object context)
+    private void clearThreadLocalContext()
     {
         CrucibleFilter.setContext(null);
     }

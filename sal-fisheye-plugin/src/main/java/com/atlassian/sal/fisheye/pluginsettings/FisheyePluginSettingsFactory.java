@@ -47,9 +47,4 @@ public class FisheyePluginSettingsFactory implements PluginSettingsFactory
     {
         return createSettingsForKey(null);
     }
-
-	public PluginSettings createUserSettings(String username)
-	{
-		throw new UnsupportedOperationException("Not yet implemented in FishEye.");
-	}
 }

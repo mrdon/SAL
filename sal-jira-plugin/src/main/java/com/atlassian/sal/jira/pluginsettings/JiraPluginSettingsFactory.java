@@ -73,31 +73,4 @@ public class JiraPluginSettingsFactory implements PluginSettingsFactory
     {
         return createSettingsForKey(null);
     }
-
-	public PluginSettings createUserSettings(String username)
-	{
-		try
-		{
-			final User user = UserUtils.getUser(username);
-			if (user==null)
-			{
-				log.warn("Creating user settings failed. User " + username + " not found.");
-				return null;
-			}
-			
-			final PropertySet propertySet = user.getPropertySet();
-			if (propertySet==null)
-			{
-				log.warn("Creating user settings failed. Property set for user " + username + " is null.");
-				return null;
-			}
-			
-			return new JiraPluginSettings(UnlimitedStringsPropertySet.create(propertySet));
-		} catch (final EntityNotFoundException e)
-		{
-			log.warn("Creating user settings failed: " + e,e);
-			return null;
-		}
-		
-	}
 }
