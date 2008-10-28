@@ -22,6 +22,5 @@
     <spring key="requestFactory" class="com.atlassian.sal.core.net.HttpClientRequestFactory"/>
     <spring key="i18nResolver" class="com.atlassian.sal.fisheye.message.NoOpI18nResolver"/>
     <spring key="fisheyeProjectManager" class="com.atlassian.sal.fisheye.project.FisheyeProjectManager" />
-    <spring key="fishEyeThreadLocalContextManager" class="com.atlassian.sal.fisheye.threadlocal.FishEyeThreadLocalContextManager" />
 
 </atlassian-plugin>
