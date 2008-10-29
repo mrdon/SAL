@@ -53,7 +53,8 @@ public class HttpClientResponse implements Response
 
 	public boolean isSuccessful()
 	{
-        return method.getStatusCode()==HttpServletResponse.SC_OK;
-	}
+        int codeOrder = method.getStatusCode() / 100;
+        return codeOrder == 2 || codeOrder ==  3;
+    }
 
 }

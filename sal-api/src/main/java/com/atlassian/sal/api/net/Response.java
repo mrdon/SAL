@@ -30,7 +30,7 @@ public interface Response
 	String getStatusText();
 
 	/**
-	 * @return true if network returned OK
+	 * @return true if network returned a status code in the 200 range or 300 range
 	 */
 	boolean isSuccessful();
 }
