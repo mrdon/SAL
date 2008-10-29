@@ -72,4 +72,9 @@
                class="com.atlassian.sal.jira.project.JiraProjectManager" system="true">
         <interface>com.atlassian.sal.api.project.ProjectManager</interface>
     </component>
+
+    <component name="JIRA Thread Local Delegate Executor Factory" key="jiraThreadLocalDelegateExecutorFactory"
+               class="com.atlassian.sal.jira.executor.JiraThreadLocalDelegateExecutorFactory" system="true">
+        <interface>com.atlassian.sal.api.executor.ThreadLocalDelegateExecutorFactory</interface>
+    </component>
 </atlassian-plugin>

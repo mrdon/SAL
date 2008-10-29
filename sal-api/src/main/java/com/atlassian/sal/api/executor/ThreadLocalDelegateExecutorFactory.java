@@ -1,6 +1,8 @@
 package com.atlassian.sal.api.executor;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Callable;
 
 /**
  * Factory to create {@link Executor} instances that delegate to a specific Executor and
@@ -15,5 +17,9 @@ public interface ThreadLocalDelegateExecutorFactory
      * @param delegate The Executor instance to delegate to
      * @return The wrapping executor that manages thread local state transfer
      */
-    Executor createThreadLocalDelegateExector(Executor delegate);
+    Executor createExecutor(Executor delegate);
+
+    Runnable createRunnable(Runnable delegate);
+
+    <T> Callable<T> createCallable(Callable<T> delegate);
 }

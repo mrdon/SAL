@@ -1,16 +1,14 @@
 package com.atlassian.sal.confluence.executor;
 
-import com.atlassian.sal.api.executor.ThreadLocalDelegateExecutorFactory;
-
-import java.util.concurrent.Executor;
+import com.atlassian.sal.core.executor.DefaultThreadLocalDelegateExecutorFactory;
 
 /**
- * Creates a delegating executor that copies Confluence thread local state
+ * Instance of the executor factory tailored to Confluence
  */
-public class ConfluenceThreadLocalDelegateExecutorFactory implements ThreadLocalDelegateExecutorFactory
+public class ConfluenceThreadLocalDelegateExecutorFactory extends DefaultThreadLocalDelegateExecutorFactory
 {
-    public Executor createThreadLocalDelegateExector(Executor delegate)
+    public ConfluenceThreadLocalDelegateExecutorFactory()
     {
-        return new ConfluenceThreadLocalDelegateExecutor(delegate);
+        super(new ConfluenceThreadLocalContextManager());
     }
 }

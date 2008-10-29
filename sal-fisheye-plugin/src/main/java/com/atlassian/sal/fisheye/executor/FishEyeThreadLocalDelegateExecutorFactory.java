@@ -1,17 +1,14 @@
 package com.atlassian.sal.fisheye.executor;
 
-import com.atlassian.sal.api.executor.ThreadLocalDelegateExecutorFactory;
-
-import java.util.concurrent.Executor;
+import com.atlassian.sal.core.executor.DefaultThreadLocalDelegateExecutorFactory;
 
 /**
- * Constructs a delegating executor that passes FishEye context information to the executing
- * thread correctly.
+ * Instance of the executor factory tailored to FishEye
  */
-public class FishEyeThreadLocalDelegateExecutorFactory implements ThreadLocalDelegateExecutorFactory
+public class FishEyeThreadLocalDelegateExecutorFactory extends DefaultThreadLocalDelegateExecutorFactory
 {
-    public Executor createThreadLocalDelegateExector(Executor delegate)
+    public FishEyeThreadLocalDelegateExecutorFactory()
     {
-        return new FishEyeThreadLocalDelegateExecutor(delegate);
+        super(new FishEyeThreadLocalContextManager());
     }
 }

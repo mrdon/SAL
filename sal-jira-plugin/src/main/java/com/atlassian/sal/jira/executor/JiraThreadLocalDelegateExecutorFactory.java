@@ -1,24 +1,15 @@
 package com.atlassian.sal.jira.executor;
 
-import com.atlassian.sal.api.executor.ThreadLocalDelegateExecutorFactory;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-
-import java.util.concurrent.Executor;
+import com.atlassian.sal.core.executor.DefaultThreadLocalDelegateExecutorFactory;
 
 /**
- * Creates a delegating executor that transfers all JIRA thread local state
+ * Instance of the delegate executor factory tailored to JIRA
  */
-public class JiraThreadLocalDelegateExecutorFactory implements ThreadLocalDelegateExecutorFactory
+public class JiraThreadLocalDelegateExecutorFactory extends DefaultThreadLocalDelegateExecutorFactory
 {
-    private final JiraAuthenticationContext jiraAuthenticationContext;
-
-    public JiraThreadLocalDelegateExecutorFactory(JiraAuthenticationContext jiraAuthenticationContext)
+    public JiraThreadLocalDelegateExecutorFactory(JiraAuthenticationContext authenticationContext)
     {
-        this.jiraAuthenticationContext = jiraAuthenticationContext;
-    }
-
-    public Executor createThreadLocalDelegateExector(Executor delegate)
-    {
-        return new JiraThreadLocalDelegateExecutor(jiraAuthenticationContext, delegate);
+        super(new JiraThreadLocalContextManager(authenticationContext));
     }
 }
