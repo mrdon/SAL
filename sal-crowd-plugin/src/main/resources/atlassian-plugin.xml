@@ -1,0 +1,12 @@
+<atlassian-plugin key="com.atlassian.sal.crowd" name="${project.name}" system="true">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${pom.version}</version>
+        <vendor name="Atlassian Software Systems Pty Ltd" url="http://www.atlassian.com"/>
+    </plugin-info>
+
+    <servlet key="ctk" class="com.atlassian.sal.crowd.TestServlet">
+        <url-pattern>/testservlet*</url-pattern>
+    </servlet>
+
+</atlassian-plugin>
