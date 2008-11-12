@@ -5,6 +5,10 @@
         <vendor name="Atlassian Software Systems Pty Ltd" url="http://www.atlassian.com"/>
     </plugin-info>
 
+	<spring key="pluginSettingsFactory" class="com.atlassian.sal.crowd.pluginsettings.CrowdPluginSettingsFactory" />
+    <spring key="componentLocator" class="com.atlassian.sal.spring.component.SpringComponentLocator" />
+    <spring key="userManager" class="com.atlassian.sal.crowd.user.DefaultUserManager" />
+
     <servlet key="ctk" class="com.atlassian.sal.crowd.TestServlet">
         <url-pattern>/testservlet*</url-pattern>
     </servlet>
