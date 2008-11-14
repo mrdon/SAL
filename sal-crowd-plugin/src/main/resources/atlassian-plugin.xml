@@ -15,8 +15,4 @@
 	<spring key="pluginSettingsFactory" class="com.atlassian.sal.crowd.pluginsettings.CrowdPluginSettingsFactory" />
     <spring key="userManager" class="com.atlassian.sal.crowd.user.DefaultUserManager" />
 
-    <servlet key="ctk" class="com.atlassian.sal.crowd.TestServlet">
-        <url-pattern>/testservlet*</url-pattern>
-    </servlet>
-
 </atlassian-plugin>
