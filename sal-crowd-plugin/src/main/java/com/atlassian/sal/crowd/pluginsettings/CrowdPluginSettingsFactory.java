@@ -13,7 +13,7 @@ public class CrowdPluginSettingsFactory implements PluginSettingsFactory
 	
 	public PluginSettings createGlobalSettings()
 	{
-		return new CrowdPluginSettings(GLOBAL_SETTINGS, salPropertyDAO);
+		return new CrowdPluginSettings(GLOBAL_SETTINGS, getSALPropertyDAO());
 	}
 
 	public PluginSettings createSettingsForKey(String key)
