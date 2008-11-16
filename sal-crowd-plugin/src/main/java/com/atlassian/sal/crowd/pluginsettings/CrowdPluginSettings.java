@@ -11,13 +11,15 @@ import com.atlassian.sal.core.pluginsettings.AbstractStringPluginSettings;
 public class CrowdPluginSettings extends AbstractStringPluginSettings
 {
 	private static final Logger log = Logger.getLogger(CrowdPluginSettings.class);
-	
+
+	private static final String NULL_STRING = "null";
+
 	private final String key;
 	private final SALPropertyDAO salPropertyDAO;
 
 	public CrowdPluginSettings(String key, SALPropertyDAO salPropertyDAO)
 	{
-		this.key = key;
+		this.key = key == null ? NULL_STRING : key;
 		this.salPropertyDAO = salPropertyDAO;
 	}
 
@@ -27,11 +29,11 @@ public class CrowdPluginSettings extends AbstractStringPluginSettings
 		SALProperty salProperty;
 		try
 		{
-			salProperty = salPropertyDAO.find(key, propertyName);
+			salProperty = salPropertyDAO.find(key, propertyName == null ? NULL_STRING : propertyName);
 			return salProperty.getStringValue();
 		} catch (final DataAccessException e)
 		{
-			log.warn(e,e);
+			log.warn(e, e);
 		} catch (final ObjectNotFoundException e)
 		{
 			// return null
@@ -42,13 +44,15 @@ public class CrowdPluginSettings extends AbstractStringPluginSettings
 	@Override
 	protected void putActual(String propertyName, String val)
 	{
-		salPropertyDAO.saveOrUpdate(new SALProperty(key, propertyName, val));
+		final String notNullPropertyName = propertyName == null ? NULL_STRING : propertyName;
+		salPropertyDAO.saveOrUpdate(new SALProperty(key, notNullPropertyName, val));
 	}
 
 	@Override
 	protected Object removeActual(String propertyName)
 	{
-		salPropertyDAO.remove(key, propertyName);
+		final String notNullPropertyName = propertyName == null ? NULL_STRING : propertyName;
+		salPropertyDAO.remove(key, notNullPropertyName);
 		return propertyName;
 	}
 }

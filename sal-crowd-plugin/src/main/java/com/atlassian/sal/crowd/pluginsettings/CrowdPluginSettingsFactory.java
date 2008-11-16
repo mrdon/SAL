@@ -7,13 +7,11 @@ import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 
 public class CrowdPluginSettingsFactory implements PluginSettingsFactory
 {
-	private static final String GLOBAL_SETTINGS = "";
-
 	private SALPropertyDAO salPropertyDAO;
 	
 	public PluginSettings createGlobalSettings()
 	{
-		return new CrowdPluginSettings(GLOBAL_SETTINGS, getSALPropertyDAO());
+		return new CrowdPluginSettings(null, getSALPropertyDAO());
 	}
 
 	public PluginSettings createSettingsForKey(String key)
