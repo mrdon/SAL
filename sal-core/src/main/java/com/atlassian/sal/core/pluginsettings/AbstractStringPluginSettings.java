@@ -1,7 +1,5 @@
 package com.atlassian.sal.core.pluginsettings;
 
-import com.atlassian.sal.api.pluginsettings.PluginSettings;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -9,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
+import com.atlassian.sal.api.pluginsettings.PluginSettings;
 
 /**
  * PluginSettings implementation for datastores that only support Strings.  Handles converting Strings into Lists and
@@ -20,21 +20,22 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     private static final String PROPERTIES_IDENTIFIER = "java.util.Properties";
     private static final String LIST_IDENTIFIER = "java.util.List";
 
-    public Object put(String key, Object val)
+    @SuppressWarnings("unchecked")
+	public Object put(String key, Object val)
     {
         if (val == null)
             return removeActual(key);
 
         if (val instanceof Properties)
         {
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            final ByteArrayOutputStream bout = new ByteArrayOutputStream();
             try
             {
 
-                Properties properties = (Properties) val;
+                final Properties properties = (Properties) val;
                 properties.store(bout, PROPERTIES_IDENTIFIER);
                 putActual(key, new String(bout.toByteArray(), PROPERTIES_ENCODING));
-            } catch (IOException e)
+            } catch (final IOException e)
             {
                 throw new IllegalArgumentException("Unable to serialize properties", e);
             }
@@ -43,9 +44,9 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
             putActual(key, (String)val);
         else if (val instanceof List)
         {
-            StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder();
             sb.append("#java.util.List\n");
-            for (Iterator i = ((List)val).iterator(); i.hasNext(); )
+            for (final Iterator i = ((List)val).iterator(); i.hasNext(); )
             {
                 sb.append(i.next().toString());
                 if (i.hasNext())
@@ -62,22 +63,22 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     public Object get(String key)
     {
 
-        String val = getActual(key.toString());
+        final String val = getActual(key);
         if (val != null && val.startsWith("#"+PROPERTIES_IDENTIFIER))
         {
-            Properties p = new Properties();
+            final Properties p = new Properties();
             try
             {
                 p.load(new ByteArrayInputStream(val.getBytes(PROPERTIES_ENCODING)));
-            } catch (IOException e)
+            } catch (final IOException e)
             {
                 throw new IllegalArgumentException("Unable to deserialize properties", e);
             }
             return p;
         } else if (val != null && val.startsWith("#"+LIST_IDENTIFIER))
         {
-            ArrayList<String> list = new ArrayList<String>();
-            String[] items = val.split("\n");
+            final ArrayList<String> list = new ArrayList<String>();
+            final String[] items = val.split("\n");
             for (int x=1; x<items.length; x++)
                 list.add(items[x]);
 
