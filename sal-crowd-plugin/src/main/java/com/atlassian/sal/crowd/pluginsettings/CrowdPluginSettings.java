@@ -8,6 +8,12 @@ import com.atlassian.crowd.model.salproperty.SALProperty;
 import com.atlassian.crowd.model.salproperty.SALPropertyDAO;
 import com.atlassian.sal.core.pluginsettings.AbstractStringPluginSettings;
 
+/**
+ * Crowd implementation of PluginSettings interface. It stores properties using crowd's salPropertyDAO.
+ * There is a problem with hibernate that can't store (AFAIK) null values for a primary key fields.
+ * That's why we need to translate null <code>key</code> and null <code>propertyName</code> values to String value "null".
+ *
+ */
 public class CrowdPluginSettings extends AbstractStringPluginSettings
 {
 	private static final Logger log = Logger.getLogger(CrowdPluginSettings.class);
