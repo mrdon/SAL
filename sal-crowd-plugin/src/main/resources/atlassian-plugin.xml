@@ -10,6 +10,7 @@
     <spring key="readWriteTransactionTemplate" class="com.atlassian.sal.spring.transaction.ReadWriteTransactionTemplate" />
     <spring key="pluginUpgradeManager" class="com.atlassian.sal.core.upgrade.DefaultPluginUpgradeManager"/>
     <spring key="lifecycleManager" class="com.atlassian.sal.crowd.lifecycle.CrowdLifecycleManager" />
+    <listener key="applicationReadyListener" class="com.atlassian.sal.crowd.lifecycle.ApplicationReadyListener" />
 
     <spring key="requestFactory" class="com.atlassian.sal.core.net.HttpClientRequestFactory" />
 	<spring key="pluginSettingsFactory" class="com.atlassian.sal.crowd.pluginsettings.CrowdPluginSettingsFactory" />
