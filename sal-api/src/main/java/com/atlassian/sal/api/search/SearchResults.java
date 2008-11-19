@@ -14,12 +14,14 @@ public class SearchResults
 {
     private final List<Message> errors = new ArrayList<Message>();
     private final List<SearchMatch> matches = new ArrayList<SearchMatch>();
-    private long searchTime = 0;
-    private int totalResults = 0;
+    private final long searchTime;
+    private final int totalResults;
 
     public SearchResults(List<Message> errors)
     {
         this.errors.addAll(errors);
+        searchTime = 0L;
+        totalResults = 0;
     }
 
     public SearchResults(List<SearchMatch> matches, int totalResults, long searchTime)
