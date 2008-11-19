@@ -5,8 +5,8 @@ import java.util.Collection;
 import org.apache.log4j.Logger;
 
 import com.atlassian.sal.api.component.ComponentLocator;
-import com.atlassian.sal.api.lifecycle.LifecycleManager;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
+import com.atlassian.sal.api.lifecycle.LifecycleManager;
 
 public abstract class DefaultLifecycleManager implements LifecycleManager
 {
@@ -15,7 +15,7 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
 
     public synchronized void start()
     {
-        if (!started && isApplicationSetUp())
+        if (!isStarted() && isApplicationSetUp())
         {
             try
             {
@@ -26,15 +26,21 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
 
         }
     }
-    protected void notifyOnStart()
+    
+    protected boolean isStarted()
+	{
+		return started;
+	}
+    
+	protected void notifyOnStart()
     {
-        Collection<LifecycleAware> listeners = ComponentLocator.getComponents(LifecycleAware.class);
-        for (LifecycleAware entry : listeners)
+        final Collection<LifecycleAware> listeners = ComponentLocator.getComponents(LifecycleAware.class);
+        for (final LifecycleAware entry : listeners)
         {
             try
             {
                 entry.onStart();
-            } catch (RuntimeException ex)
+            } catch (final RuntimeException ex)
             {
                 log.error("Unable to start component: "+ entry.getClass().getName(), ex);
             }
