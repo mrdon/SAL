@@ -19,6 +19,8 @@
                     <instructions>
                     <Private-Package>com.atlassian.sal.confluence*</Private-Package>
                     <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
+                    <Embed-Transitive>true</Embed-Transitive>
+					<Embed-Directory>META-INF/lib</Embed-Directory>
                     <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
                     </instructions>
                 </configuration>
@@ -26,7 +28,34 @@
         </plugins>
     </build>
 
+	<dependencyManagement>
+		<dependencies>
+	        <dependency>
+	            <groupId>commons-httpclient</groupId>
+	            <artifactId>commons-httpclient</artifactId>
+	            <version>3.0</version>
+	            <scope>provided</scope>
+	        </dependency>
+	        <dependency>
+				  <groupId>commons-lang</groupId>
+				  <artifactId>commons-lang</artifactId>
+				  <version>2.1</version>
+	            <scope>provided</scope>
+	        </dependency>
+		</dependencies>
+	</dependencyManagement>	
     <dependencies>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.7</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-api</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-spring</artifactId>
