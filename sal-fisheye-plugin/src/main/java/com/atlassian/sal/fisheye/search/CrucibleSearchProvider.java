@@ -93,11 +93,10 @@ public class CrucibleSearchProvider implements SearchProvider
         final ReviewSearchTerms terms = new ReviewSearchTerms(searchQuery);
         final List<Integer> resultIds = new LinkedList<Integer>();
         boolean first = true;
-        for (Iterator iterator = terms.getAllTerms().iterator(); iterator.hasNext();)
+        for(String term : terms.getAllTerms())
         {
-            String term = (String) iterator.next();
             final Set resultSet = ReviewManager.searchReviewForTerm(term, "review.id", "review.id");
-            if (first)
+            if(first)
             {
                 resultIds.addAll(resultSet);
                 first = false;
