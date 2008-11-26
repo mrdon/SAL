@@ -49,7 +49,7 @@ public class CrucibleSearchProvider implements SearchProvider
 
         long startTime = System.currentTimeMillis();
 
-        final List<Integer> resultIds = getReviewIds(searchQuery.getSearchString(), projectKey);
+        final List<Integer> resultIds = getReviewIds(searchQuery.getSearchString(), projectKey, username);
         final List<SearchMatch> matches = transformCrucibleResults(resultIds, maxHits, username);
 
         return new SearchResults(matches, resultIds.size(), System.currentTimeMillis() - startTime);
@@ -65,14 +65,11 @@ public class CrucibleSearchProvider implements SearchProvider
             {
                 break;
             }
-            final Review review = ReviewManager.getReviewById(resultId);
-            if (hasPermissionToView(username, review))
-            {
-                final BasicSearchMatch searchMatch =
-                        new BasicSearchMatch(review.getLink(), review.getName(), review.getDescription(),
-                                new BasicResourceType(applicationProperties, "review"));
-                matches.add(searchMatch);
-            }
+	        final Review review = ReviewManager.getReviewById(resultId);
+            final BasicSearchMatch searchMatch =
+                    new BasicSearchMatch(review.getLink(), review.getName(), review.getDescription(),
+                            new BasicResourceType(applicationProperties, "review"));
+            matches.add(searchMatch);
         }
         return matches;
     }
@@ -88,7 +85,7 @@ public class CrucibleSearchProvider implements SearchProvider
         return projectKey.equals(review.getProject().getKey());
     }
 
-    private List<Integer> getReviewIds(String searchQuery, String projectKey)
+    private List<Integer> getReviewIds(String searchQuery, String projectKey, String username)
     {
         final ReviewSearchTerms terms = new ReviewSearchTerms(searchQuery);
         final List<Integer> resultIds = new LinkedList<Integer>();
@@ -113,7 +110,7 @@ public class CrucibleSearchProvider implements SearchProvider
         {
             Integer resultId = resultIterator.next();
             Review review = ReviewManager.getReviewById(resultId);
-            if (!isInProject(review, projectKey))
+            if (!hasPermissionToView(username, review) || !isInProject(review, projectKey))
             {
                 resultIterator.remove();
             }
