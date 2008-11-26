@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.atlassian.sal</groupId>
         <artifactId>sal-parent</artifactId>
-        <version>0.12</version>
+        <version>0.13-SNAPSHOT</version>
     </parent>
     <artifactId>sal-ctk-plugin</artifactId>
     <name>Shared Application Access Layer Compatibility Testing Kit Plugin</name>
