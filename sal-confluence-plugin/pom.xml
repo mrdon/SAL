@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.atlassian.sal</groupId>
         <artifactId>sal-parent</artifactId>
-        <version>0.13-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
     <artifactId>sal-confluence-plugin</artifactId>
     <name>Shared Application Access Layer Confluence Plugin</name>

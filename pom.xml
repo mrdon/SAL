@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.sal</groupId>
     <artifactId>sal-parent</artifactId>
-    <version>0.13-SNAPSHOT</version>
+    <version>1.0</version>
 
 	<name>Shared Access Layer POM</name>
     <packaging>pom</packaging>
@@ -58,8 +58,8 @@
 
 
     <scm>
-        <connection>scm:svn:https://studio.atlassian.com/svn/SAL/branches/sal-1.0</connection>
-		<developerConnection>scm:svn:https://studio.atlassian.com/svn/SAL/branches/sal-1.0</developerConnection>
-        <url>https://studio.atlassian.com/svn/SAL/branches/sal-1.0</url>
+        <connection>scm:svn:https://studio.atlassian.com/svn/SAL/tags/sal-parent-1.0</connection>
+		<developerConnection>scm:svn:https://studio.atlassian.com/svn/SAL/tags/sal-parent-1.0</developerConnection>
+        <url>https://studio.atlassian.com/svn/SAL/tags/sal-parent-1.0</url>
     </scm>
 </project>
