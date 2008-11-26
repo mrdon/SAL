@@ -19,6 +19,8 @@
 
     <modules>
         <module>sal-api</module>
+        <module>sal-spi</module>
+        <module>sal-confluence-spi</module>
         <module>sal-core</module>
         <module>sal-spring</module>
         <module>sal-confluence-plugin</module>

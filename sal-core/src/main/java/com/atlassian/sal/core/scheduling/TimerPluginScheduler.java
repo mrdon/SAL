@@ -18,15 +18,14 @@ import com.atlassian.sal.api.scheduling.PluginScheduler;
 public class TimerPluginScheduler implements PluginScheduler
 {
 
-    private Map<String, Timer> tasks;
+    private final Map<String, Timer> tasks;
 
     public TimerPluginScheduler()
     {
         tasks = Collections.synchronizedMap(new HashMap<String, Timer>());
     }
 
-    public synchronized void scheduleJob(String name, Class<? extends PluginJob> job, Map<String, Object> jobDataMap, Date startTime,
-        long repeatInterval)
+    public synchronized void scheduleJob(final String name, final Class<? extends PluginJob> job, final Map<String, Object> jobDataMap, final Date startTime, final long repeatInterval)
     {
         // Use one timer per task, this will allow us to remove them if that functionality is wanted in future
         Timer timer = tasks.get(name);
@@ -49,22 +48,23 @@ public class TimerPluginScheduler implements PluginScheduler
     private static class PluginTimerTask extends TimerTask
     {
         private Class<? extends PluginJob> jobClass;
-        private Map jobDataMap;
+        private Map<String, Object> jobDataMap;
         private static final Logger log = Logger.getLogger(PluginTimerTask.class);
 
-        public void run()
+        @Override
+		public void run()
         {
             PluginJob job;
             try
             {
                 job = jobClass.newInstance();
             }
-            catch (InstantiationException ie)
+            catch (final InstantiationException ie)
             {
                 log.error("Error instantiating job", ie);
                 return;
             }
-            catch (IllegalAccessException iae)
+            catch (final IllegalAccessException iae)
             {
                 log.error("Cannot access job class", iae);
                 return;
@@ -77,19 +77,28 @@ public class TimerPluginScheduler implements PluginScheduler
             return jobClass;
         }
 
-        public void setJobClass(Class<? extends PluginJob> jobClass)
+        public void setJobClass(final Class<? extends PluginJob> jobClass)
         {
             this.jobClass = jobClass;
         }
 
-        public Map getJobDataMap()
+        public Map<String, Object> getJobDataMap()
         {
             return jobDataMap;
         }
 
-        public void setJobDataMap(Map jobDataMap)
+        public void setJobDataMap(final Map<String, Object> jobDataMap)
         {
             this.jobDataMap = jobDataMap;
         }
     }
+
+	public void unscheduleJob(final String name)
+	{
+        final Timer timer = tasks.remove(name);
+        if (timer != null)
+        {
+            timer.cancel();
+        }
+	}
 }

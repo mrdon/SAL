@@ -1,9 +1,10 @@
 package com.atlassian.sal.ctk.test;
 
+import org.springframework.stereotype.Component;
+
+import com.atlassian.sal.api.license.LicenseHandler;
 import com.atlassian.sal.ctk.CtkTest;
 import com.atlassian.sal.ctk.CtkTestResults;
-import com.atlassian.sal.api.license.LicenseHandler;
-import org.springframework.stereotype.Component;
 
 @Component
 public class LicenseHandlerTest implements CtkTest
@@ -20,24 +21,27 @@ public class LicenseHandlerTest implements CtkTest
             "qriHP9sBxWOyjLbkOiwfo3LKjukG/L3Uh6fnsngYsvHp3f1+LHy/hMesYtzj8BvfuQs3DAsAhQk2\n" +
             "2xkBLtW8VW42BXyyBpENLE4iQIUNrBQJqb3pmuxooZ9ycz3ikK96ns=X01nr";
 
-    public LicenseHandlerTest(LicenseHandler handler) {this.handler = handler;}
+    public LicenseHandlerTest(final LicenseHandler handler)
+	{
+		this.handler = handler;
+	}
 
-    public void execute(CtkTestResults results)
+    public void execute(final CtkTestResults results)
     {
         results.assertTrue("License handler should be injectable", handler != null);
         try
-        {
-            handler.setLicense("somecrap");
-            results.fail("Should throw IllegalArgumentException for invalid licenses");
-        } catch (IllegalArgumentException ex)
-        {
-            // do nothing
-        }
+		{
+			handler.setLicense("somecrap");
+			results.fail("Should throw IllegalArgumentException for invalid licenses");
+		} catch (final IllegalArgumentException ex)
+		{
+			results.pass("Should throw IllegalArgumentException for invalid licenses");
+		}
 
         try
         {
             handler.setLicense(VALID_LICENSE);
-        } catch (Exception ex)
+        } catch (final Exception ex)
         {
             results.fail("Should accept a valid license");
         }

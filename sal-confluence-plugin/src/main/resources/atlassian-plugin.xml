@@ -1,4 +1,4 @@
-<atlassian-plugin key="com.atlassian.sal.confluence" name="${project.name}" system="false">
+<atlassian-plugin key="com.atlassian.sal.confluence" name="${project.name}" system="false" pluginsVersion="2">
     <plugin-info>
         <description>
             A plugin that provides an access layer for the underlying application.
@@ -7,21 +7,69 @@
         <version>${pom.version}</version>
     </plugin-info>
 
-    <component name="I18n Resolver" key="i18nResolver" class="com.atlassian.sal.confluence.message.ConfluenceI18nResolver" system="true"/>
-    <component name="Component Locator" key="componentLocator" class="com.atlassian.sal.spring.component.SpringComponentLocator" system="true"/>
-    <component name="Plugin Settings Factory" key="pluginSettingsFactory" class="com.atlassian.sal.confluence.pluginsettings.ConfluencePluginSettingsFactory" system="true"/>
-    <component name="Plugin Upgrade Manager" key="pluginUpgradeManager" class="com.atlassian.sal.core.upgrade.DefaultPluginUpgradeManager" system="true"/>
-    <component name="Certificate Factory" key="certificateFactory" class="com.atlassian.sal.confluence.trusted.ConfluenceCertificateFactory" system="true"/>
-    <component name="Application Properties" key="applicationProperties" class="com.atlassian.sal.confluence.ConfluenceApplicationProperties" system="true"/>
-    <component name="User Manager" key="pluginUserManager" class="com.atlassian.sal.confluence.user.DefaultUserManager" system="true"/>
-    <component name="License Handler" key="licenseHandler" class="com.atlassian.sal.confluence.license.ConfluenceLicenseHandler" system="true"/>
-    <component name="Plugin Lifecycle Manager" key="pluginLifecycleManager" class="com.atlassian.sal.confluence.lifecycle.ConfluenceLifecycleManager" system="true"/>
-    <component name="Read Write Transaction Template" key="readWriteTransactionTemplate" class="com.atlassian.sal.spring.transaction.ReadWriteTransactionTemplate" system="true"/>
-    <component name="Confluence search provider" key="confluenceSearchProvider" class="com.atlassian.sal.confluence.search.ConfluenceSearchProvider" system="true"/>
-    <component name="Search Query Parser" key="searchQueryParser" class="com.atlassian.sal.core.search.query.DefaultSearchQueryParser" system="true"/>
-    <component name="Plugin Scheduler" key="pluginScheduler" class="com.atlassian.sal.confluence.scheduling.ConfluencePluginScheduler" system="true"/>
-    <component name="Request Factory" key="requestFactory" class="com.atlassian.sal.core.net.HttpClientRequestFactory" system="true"/>
-    <component name="Confluence Project Manager" key="confluenceProjectManager" class="com.atlassian.sal.confluence.project.ConfluenceProjectManager" system="true"/>
-    <component name="Confluence Thread Local Delegate Executor Factory" key="confluenceThreadLocalDelegateExecutorFactory" class="com.atlassian.sal.confluence.executor.ConfluenceThreadLocalDelegateExecutorFactory" system="true"/>
+    <component name="User Manager" key="pluginUserManager" class="com.atlassian.sal.confluence.user.DefaultUserManager" public="true">
+        <interface>com.atlassian.sal.api.user.UserManager</interface>
+    </component>
 
-</atlassian-plugin>
+    <component name="I18n Resolver" key="i18nResolver" class="com.atlassian.sal.confluence.message.ConfluenceI18nResolver" public="true" >
+        <interface>com.atlassian.sal.api.message.I18nResolver</interface>
+	</component>
+
+    <component key="componentLocator" class="com.atlassian.sal.core.component.DefaultComponentLocator" public="true">
+        <interface>com.atlassian.sal.api.component.ComponentLocator</interface>
+    </component>
+
+    <component name="Plugin Settings Factory" key="pluginSettingsFactory" class="com.atlassian.sal.confluence.pluginsettings.ConfluencePluginSettingsFactory" public="true">
+        <interface>com.atlassian.sal.api.pluginsettings.PluginSettingsFactory</interface>
+	</component>
+	
+    <component name="Plugin Upgrade Manager" key="pluginUpgradeManager" class="com.atlassian.sal.core.upgrade.DefaultPluginUpgradeManager" public="true">
+    	<interface>com.atlassian.sal.api.upgrade.PluginUpgradeManager</interface>
+	</component>
+	
+    <component name="Certificate Factory" key="certificateFactory" class="com.atlassian.sal.confluence.trusted.ConfluenceCertificateFactory" public="true">
+    	<interface>com.atlassian.sal.core.trusted.CertificateFactory</interface>
+	</component>
+	
+    <component name="Application Properties" key="applicationProperties" class="com.atlassian.sal.confluence.ConfluenceApplicationProperties" public="true">
+    	<interface>com.atlassian.sal.api.ApplicationProperties</interface>
+	</component>
+
+    <component name="License Handler" key="licenseHandler" class="com.atlassian.sal.confluence.license.ConfluenceLicenseHandler" public="true">
+    	<interface>com.atlassian.sal.api.license.LicenseHandler</interface>
+	</component>
+
+    <component name="Plugin Lifecycle Manager" key="pluginLifecycleManager" class="com.atlassian.sal.confluence.lifecycle.ConfluenceLifecycleManager" public="true">
+    	<interface>com.atlassian.sal.api.lifecycle.LifecycleManager</interface>
+	</component>
+
+    <component name="Read Write Transaction Template" key="readWriteTransactionTemplate" class="com.atlassian.sal.spring.transaction.ReadWriteTransactionTemplate" public="true">
+    	<interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>
+	</component>
+
+    <component name="Confluence search provider" key="confluenceSearchProvider" class="com.atlassian.sal.confluence.search.ConfluenceSearchProvider" public="true">
+    	<interface>com.atlassian.sal.api.search.SearchProvider</interface>
+	</component>
+
+    <component name="Search Query Parser" key="searchQueryParser" class="com.atlassian.sal.core.search.query.DefaultSearchQueryParser" public="true">
+    	<interface>com.atlassian.sal.api.search.query.SearchQueryParser</interface>
+	</component>
+
+    <component name="Plugin Scheduler" key="pluginScheduler" class="com.atlassian.sal.confluence.scheduling.ConfluencePluginScheduler" public="true">
+    	<interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
+	</component>
+
+    <component name="Request Factory" key="requestFactory" class="com.atlassian.sal.core.net.HttpClientRequestFactory" public="true">
+    	<interface>com.atlassian.sal.api.net.RequestFactory</interface>
+	</component>
+
+    <component name="Confluence Project Manager" key="confluenceProjectManager" class="com.atlassian.sal.confluence.project.ConfluenceProjectManager" public="true">
+    	<interface>com.atlassian.sal.api.project.ProjectManager</interface>
+	</component>
+
+    <component name="Confluence Thread Local Delegate Executor Factory" key="confluenceThreadLocalDelegateExecutorFactory" class="com.atlassian.sal.confluence.executor.ConfluenceThreadLocalDelegateExecutorFactory" public="true">
+    	<interface>com.atlassian.sal.api.executor.ThreadLocalDelegateExecutorFactory</interface>
+	</component>
+
+
+	</atlassian-plugin>

@@ -1,13 +1,23 @@
 package com.atlassian.sal.jira.scheduling;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.atlassian.configurable.*;
+import com.atlassian.configurable.ObjectConfiguration;
+import com.atlassian.configurable.ObjectConfigurationException;
+import com.atlassian.configurable.ObjectConfigurationImpl;
+import com.atlassian.configurable.ObjectConfigurationProperty;
+import com.atlassian.configurable.ObjectConfigurationTypes;
+import com.atlassian.configurable.StringObjectDescription;
 import com.atlassian.jira.service.AbstractService;
-import com.atlassian.jira.service.ServiceManager;
 import com.atlassian.jira.service.JiraServiceContainer;
+import com.atlassian.jira.service.ServiceManager;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.scheduling.PluginJob;
 import com.atlassian.sal.api.scheduling.PluginScheduler;
@@ -17,29 +27,28 @@ public class JiraPluginScheduler implements PluginScheduler
 {
     private static final Logger log = Logger.getLogger(JiraPluginScheduler.class);
     private static final String PLUGIN_JOB_NAME = "pluginJobName";
-    private Map<String, JiraPluginSchedulerServiceDescriptor> serviceMap;
-    private ServiceManager serviceManager;
+    private final Map<String, JiraPluginSchedulerServiceDescriptor> serviceMap;
+    private final ServiceManager serviceManager;
 
-    public JiraPluginScheduler(ServiceManager serviceManager)
+    public JiraPluginScheduler(final ServiceManager serviceManager)
     {
         serviceMap = Collections.synchronizedMap(new HashMap<String, JiraPluginSchedulerServiceDescriptor>());
         this.serviceManager = serviceManager;
     }
 
-    public void scheduleJob(String name, Class<? extends PluginJob> job, Map<String, Object> jobDataMap, Date startTime,
-        long repeatInterval)
+    public void scheduleJob(final String name, final Class<? extends PluginJob> job, final Map<String, Object> jobDataMap, final Date startTime,
+        final long repeatInterval)
     {
         // Create a map to hold the configuration for the job
-        Map serviceDataMap = new HashMap();
+        final Map<String, String[]> serviceDataMap = new HashMap<String, String[]>();
         serviceDataMap.put(PLUGIN_JOB_NAME, new String[]{name});
 
         // Put a service descriptor in the map
-        JiraPluginSchedulerServiceDescriptor sd = new JiraPluginSchedulerServiceDescriptor();
+        final JiraPluginSchedulerServiceDescriptor sd = new JiraPluginSchedulerServiceDescriptor();
         sd.setJob(job);
         sd.setJobDataMap(jobDataMap);
         serviceMap.put(name, sd);
 
-        long repeatMinutes = repeatInterval / 60000L;
         try
         {
             // Remove the service if it exists.  We use getServices() rather than getServiceWithName() because there was
@@ -49,8 +58,8 @@ public class JiraPluginScheduler implements PluginScheduler
             Collection<JiraServiceContainer> services = serviceManager.getServices();
             // We have to copy the services into a second map, otherwise after deleting one, we get a
             // ConcurrentModificationException
-            services = new HashSet(services);
-            for (JiraServiceContainer service : services)
+            services = new HashSet<JiraServiceContainer>(services);
+            for (final JiraServiceContainer service : services)
             {
                 if (name.equals(service.getName()))
                 {
@@ -62,13 +71,13 @@ public class JiraPluginScheduler implements PluginScheduler
                 repeatInterval,
                 serviceDataMap);
         }
-        catch (Exception e)
+        catch (final Exception e)
         {
             log.error("Error adding service to jira", e);
         }
     }
 
-    private JiraPluginSchedulerServiceDescriptor getServiceDescriptor(String name)
+    private JiraPluginSchedulerServiceDescriptor getServiceDescriptor(final String name)
     {
         return serviceMap.get(name);
     }
@@ -87,7 +96,7 @@ public class JiraPluginScheduler implements PluginScheduler
             return job;
         }
 
-        public void setJob(Class<? extends PluginJob> job)
+        public void setJob(final Class<? extends PluginJob> job)
         {
             this.job = job;
         }
@@ -97,7 +106,7 @@ public class JiraPluginScheduler implements PluginScheduler
             return jobDataMap;
         }
 
-        public void setJobDataMap(Map jobDataMap)
+        public void setJobDataMap(final Map jobDataMap)
         {
             this.jobDataMap = jobDataMap;
         }
@@ -109,45 +118,46 @@ public class JiraPluginScheduler implements PluginScheduler
     public static class JiraPluginSchedulerService extends AbstractService
     {
         private static final Logger log = Logger.getLogger(JiraPluginSchedulerService.class);
-        private static final Map params = new HashMap();
+        private static final Map<String, Object> params = new HashMap<String, Object>();
 
         static
         {
             params.put(PLUGIN_JOB_NAME, new JiraPluginSchedulerServiceProperty());
         }
 
-        public void run()
+        @Override
+		public void run()
         {
             PropertySet props;
             try
             {
                 props = getProperties();
             }
-            catch (ObjectConfigurationException oce)
+            catch (final ObjectConfigurationException oce)
             {
                 log.error("Error getting properties", oce);
                 return;
             }
 
-            String jobName = props.getString(PLUGIN_JOB_NAME);
+            final String jobName = props.getString(PLUGIN_JOB_NAME);
 
             // Find the descriptor
-            JiraPluginScheduler scheduler = (JiraPluginScheduler) ComponentLocator.getComponent(PluginScheduler.class);
-            JiraPluginSchedulerServiceDescriptor sd = scheduler.getServiceDescriptor(jobName);
+            final JiraPluginScheduler scheduler = (JiraPluginScheduler) ComponentLocator.getComponent(PluginScheduler.class);
+            final JiraPluginSchedulerServiceDescriptor sd = scheduler.getServiceDescriptor(jobName);
 
-            Class<? extends PluginJob> jobClass = sd.getJob();
-            Map jobMap = sd.getJobDataMap();
+            final Class<? extends PluginJob> jobClass = sd.getJob();
+            final Map jobMap = sd.getJobDataMap();
             PluginJob job;
             try
             {
                 job = jobClass.newInstance();
             }
-            catch (InstantiationException ie)
+            catch (final InstantiationException ie)
             {
                 log.error("Error instantiating job", ie);
                 return;
             }
-            catch (IllegalAccessException iae)
+            catch (final IllegalAccessException iae)
             {
                 log.error("Cannot access job class", iae);
                 return;
@@ -157,7 +167,7 @@ public class JiraPluginScheduler implements PluginScheduler
 
         public ObjectConfiguration getObjectConfiguration() throws ObjectConfigurationException
         {
-            ObjectConfiguration oc = new ObjectConfigurationImpl(params, new StringObjectDescription(
+            final ObjectConfiguration oc = new ObjectConfigurationImpl(params, new StringObjectDescription(
                 "Plugin Scheduler Service"));
             return oc;
         }
@@ -169,7 +179,7 @@ public class JiraPluginScheduler implements PluginScheduler
      */
     private static class JiraPluginSchedulerServiceProperty extends HashMap implements ObjectConfigurationProperty
     {
-        public void init(Map map)
+        public void init(final Map map)
         {
         }
 
@@ -198,7 +208,7 @@ public class JiraPluginScheduler implements PluginScheduler
             return false;
         }
 
-        public void setI18nValues(boolean b)
+        public void setI18nValues(final boolean b)
         {
         }
 
@@ -207,7 +217,7 @@ public class JiraPluginScheduler implements PluginScheduler
             return null;
         }
 
-        public void setCascadeFrom(String s)
+        public void setCascadeFrom(final String s)
         {
         }
 
@@ -216,4 +226,34 @@ public class JiraPluginScheduler implements PluginScheduler
             return false;
         }
     }
+
+	public void unscheduleJob(final String name)
+	{
+		// Remove the service if it exists. We use getServices() rather than
+		// getServiceWithName() because there was
+		// a bug where multiple services with the same name were being
+		// created. getServiceWithName() will throw an
+		// exception in that circumstance, so we'll just iterate through
+		// them all and delete all the ones that have
+		// a matching name.
+		Collection<JiraServiceContainer> services = serviceManager.getServices();
+		// We have to copy the services into a second map, otherwise after
+		// deleting one, we get a
+		// ConcurrentModificationException
+		services = new HashSet<JiraServiceContainer>(services);
+		for (final JiraServiceContainer service : services)
+		{
+			if (name.equals(service.getName()))
+			{
+				try
+				{
+					serviceManager.removeService(service.getId());
+				} catch (final Exception e)
+				{
+					log.error("Error removing service to jira", e);
+				}
+			}
+		}
+	}
+
 }

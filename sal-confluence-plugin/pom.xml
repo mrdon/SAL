@@ -9,24 +9,24 @@
     <name>Shared Application Access Layer Confluence Plugin</name>
     <packaging>bundle</packaging>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                    <Private-Package>com.atlassian.sal.confluence*</Private-Package>
-                    <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
-                    <Embed-Transitive>true</Embed-Transitive>
-					<Embed-Directory>META-INF/lib</Embed-Directory>
-                    <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Private-Package>com.atlassian.sal.confluence*</Private-Package>
+						<Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
+						<Embed-Transitive>true</Embed-Transitive>
+						<Embed-Directory>META-INF/lib</Embed-Directory>
+						<Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 	<dependencyManagement>
 		<dependencies>
@@ -55,6 +55,7 @@
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-api</artifactId>
             <version>${pom.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.sal</groupId>
