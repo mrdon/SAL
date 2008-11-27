@@ -16,21 +16,21 @@ public class CtkServlet extends HttpServlet
 {
     private final CtkTestSuite suite;
 
-    public CtkServlet(CtkTestSuite suite)
+    public CtkServlet(final CtkTestSuite suite)
     {
         this.suite = suite;
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException
     {
-        List<CtkTestResult> results = suite.execute();
-        PrintWriter out = resp.getWriter();
+        final List<CtkTestResult> results = suite.execute();
+        final PrintWriter out = resp.getWriter();
 
-        out.print("<html><head><style>.PASS{background-color: green;} .FAIL{background-color: red;}.WARN{background-color: yellow;}</style></head>");
+        out.print("<html><head><title>CTK Test Results</title><style>.PASS{background-color: green;} .FAIL{background-color: red;}.WARN{background-color: yellow;}</style></head>");
         out.print("<body><h1>CTK Results</h1>");
         out.print("<table><tr><th>Result</th><th>Test Group</th><th>Message</th></tr>");
-        for (CtkTestResult result : results)
+        for (final CtkTestResult result : results)
         {
             out.print(result.toHtml());
         }
