@@ -43,9 +43,9 @@
     	<interface>com.atlassian.sal.api.lifecycle.LifecycleManager</interface>
 	</component>
 
-    <component name="Read Write Transaction Template" key="readWriteTransactionTemplate" class="com.atlassian.sal.spring.transaction.ReadWriteTransactionTemplate" public="true">
-    	<interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>
-	</component>
+    <component key="transactionTemplate" class="com.atlassian.sal.core.transaction.HostContextTransactionTemplate" public="true" >
+        <interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>
+    </component>
 
     <component name="Confluence search provider" key="confluenceSearchProvider" class="com.atlassian.sal.confluence.search.ConfluenceSearchProvider" public="true">
     	<interface>com.atlassian.sal.api.search.SearchProvider</interface>
