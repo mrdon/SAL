@@ -1,36 +1,33 @@
 package com.atlassian.sal.confluence.executor;
 
-import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
-import com.atlassian.sal.confluence.executor.ConfluenceThreadLocalContextManager;
-import com.atlassian.user.User;
-import com.mockobjects.dynamic.Mock;
+import static org.mockito.Mockito.mock;
 import junit.framework.TestCase;
 
-import java.util.concurrent.ExecutionException;
+import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
+import com.atlassian.user.User;
 
 public class TestConfluenceThreadLocalContextManager extends TestCase
 {
-    private ConfluenceThreadLocalContextManager manager = new ConfluenceThreadLocalContextManager();
+    private final ConfluenceThreadLocalContextManager manager = new ConfluenceThreadLocalContextManager();
 
-    public void testGetThreadLocalContext() throws InterruptedException
+    public void testGetThreadLocalContext()
     {
-        Mock mockUser = new Mock(User.class);
-        AuthenticatedUserThreadLocal.setUser((User) mockUser.proxy());
-        assertEquals(mockUser.proxy(), manager.getThreadLocalContext());
+        final User mockUser = mock(User.class);
+		AuthenticatedUserThreadLocal.setUser(mockUser);
+        assertEquals(mockUser, manager.getThreadLocalContext());
     }
 
-    public void testSetThreadLocalContext() throws InterruptedException, ExecutionException
+    public void testSetThreadLocalContext()
     {
-
-        Mock mockUser = new Mock(User.class);
-        manager.setThreadLocalContext(mockUser.proxy());
-        assertEquals(mockUser.proxy(), AuthenticatedUserThreadLocal.getUser());
+    	final User mockUser = mock(User.class);
+        manager.setThreadLocalContext(mockUser);
+        assertEquals(mockUser, AuthenticatedUserThreadLocal.getUser());
     }
 
-    public void testClearThreadLocalContext() throws InterruptedException, ExecutionException
+    public void testClearThreadLocalContext()
     {
-        Mock mockUser = new Mock(User.class);
-        AuthenticatedUserThreadLocal.setUser((User) mockUser.proxy());
+    	final User mockUser = mock(User.class);
+        AuthenticatedUserThreadLocal.setUser(mockUser);
         manager.clearThreadLocalContext();
         assertNull(AuthenticatedUserThreadLocal.getUser());
     }
