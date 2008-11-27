@@ -23,6 +23,7 @@ public class ComponentLocatorTest implements CtkTest
 
             final Collection<PluginController> c = ComponentLocator.getComponents(PluginController.class);
             results.assertTrue("Should be one PluginController found", c != null && !c.isEmpty());
+            results.assertTrueOrWarn("There should be only one PluginController", c.size()==1);
 
             results.assertTrueOrWarn("HostContextAccessor should be accessible in ComponentLocator unless the application provides its own ComponentLocator and ", ComponentLocator.getComponent(HostContextAccessor.class) != null);
         } catch (final UnsupportedOperationException ex)
