@@ -58,12 +58,6 @@
             <artifactId>sal-spring</artifactId>
             <version>${pom.version}</version>
         </dependency>
-        <!-- Needed because refapp doesn't provide it -->
-        <dependency>
-            <groupId>com.atlassian.sal</groupId>
-            <artifactId>sal-spi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <groupId>com.atlassian.user</groupId>
             <artifactId>atlassian-user</artifactId>
