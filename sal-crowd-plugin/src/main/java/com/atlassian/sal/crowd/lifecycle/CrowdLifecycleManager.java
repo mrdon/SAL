@@ -2,19 +2,20 @@ package com.atlassian.sal.crowd.lifecycle;
 
 import com.atlassian.config.util.BootstrapUtils;
 import com.atlassian.sal.core.lifecycle.DefaultLifecycleManager;
+import com.atlassian.sal.api.lifecycle.LifecycleAware;
+import com.atlassian.plugin.event.PluginEventManager;
+
+import java.util.List;
 
 public class CrowdLifecycleManager extends DefaultLifecycleManager
 {
-	public boolean isApplicationSetUp()
+    public CrowdLifecycleManager(PluginEventManager eventManager, List<LifecycleAware> listeners)
+    {
+        super(eventManager, listeners);
+    }
+
+    public boolean isApplicationSetUp()
 	{
 		return BootstrapUtils.getBootstrapManager().isSetupComplete();
-	}
-	
-	@Override
-	protected boolean isStarted()
-	{
-		// Always return false for Crowd, because Crowd doesn't re-instantiate LifecycleManager after config import
-		// TODO It sounds like a hack and we should think of a better solution.
-		return false;
-	}
+	}	
 }
