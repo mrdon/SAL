@@ -2,10 +2,11 @@ package com.atlassian.sal.core.net;
 
 import java.io.IOException;
 import java.io.InputStream;
-
-import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.Header;
 import com.atlassian.sal.api.net.ResponseException;
 import com.atlassian.sal.api.net.Response;
 
@@ -57,4 +58,18 @@ public class HttpClientResponse implements Response
         return codeOrder == 2 || codeOrder ==  3;
     }
 
+    public String getHeader(String name)
+    {
+        return method.getResponseHeader(name).getValue();
+    }
+
+    public Map<String, String> getHeaders()
+    {
+        Map<String, String> map = new HashMap<String, String>();
+        for (Header header : method.getResponseHeaders())
+        {
+            map.put(header.getName(), header.getValue());
+        }
+        return map;
+    }
 }
