@@ -49,8 +49,8 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
-            <artifactId>atlassian-plugins</artifactId>
-            <version>0.16</version>
+            <artifactId>atlassian-plugins-core</artifactId>
+            <version>${plugins.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

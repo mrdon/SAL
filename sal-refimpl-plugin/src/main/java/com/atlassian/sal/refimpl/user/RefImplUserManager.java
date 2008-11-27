@@ -24,14 +24,15 @@ public class RefImplUserManager implements com.atlassian.sal.api.user.UserManage
     private final UserManager userManager;
     private final Authenticator authenticator;
 
-    public RefImplUserManager(AuthenticationContext authenticationContext, UserManager userManager, GroupManager groupManager, Authenticator authenticator)
+    public RefImplUserManager(AuthenticationContext authenticationContext, UserManager userManager,
+        GroupManager groupManager, Authenticator authenticator)
     {
         this.authenticationContext = authenticationContext;
         this.userManager = userManager;
         this.groupManager = groupManager;
         this.authenticator = authenticator;
     }
-    
+
     public String getRemoteUsername()
     {
         Principal user = authenticationContext.getUser();
@@ -42,15 +43,7 @@ public class RefImplUserManager implements com.atlassian.sal.api.user.UserManage
 
     public boolean isSystemAdmin(String username)
     {
-        try
-        {
-            User user = userManager.getUser(username);
-            Group adminGroup = groupManager.getGroup("administrators");
-            return groupManager.hasMembership(adminGroup, user);
-        } catch (EntityException e)
-        {
-            return false;
-        }
+        return isUserInGroup(username, "administrators");
     }
 
     public boolean authenticate(String username, String password)
@@ -63,9 +56,24 @@ public class RefImplUserManager implements com.atlassian.sal.api.user.UserManage
                 log.info("Cannot login user '" + username + "' as they used an incorrect password");
             }
             return authenticated;
-        } catch (EntityException e)
+        }
+        catch (EntityException e)
         {
             log.info("Cannot login user '" + username + "' as they do not exist.");
+            return false;
+        }
+    }
+
+    public boolean isUserInGroup(String username, String group)
+    {
+        try
+        {
+            User user = userManager.getUser(username);
+            Group adminGroup = groupManager.getGroup(group);
+            return groupManager.hasMembership(adminGroup, user);
+        }
+        catch (EntityException e)
+        {
             return false;
         }
     }

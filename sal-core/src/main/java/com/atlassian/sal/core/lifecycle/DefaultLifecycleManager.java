@@ -1,21 +1,47 @@
 package com.atlassian.sal.core.lifecycle;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.atlassian.sal.api.component.ComponentLocator;
-import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import com.atlassian.sal.api.lifecycle.LifecycleManager;
+import com.atlassian.sal.api.lifecycle.LifecycleAware;
+import com.atlassian.plugin.event.PluginEventManager;
+import com.atlassian.plugin.event.events.PluginFrameworkStartedEvent;
 
 public abstract class DefaultLifecycleManager implements LifecycleManager
 {
     private boolean started = false;
     private static final Logger log = Logger.getLogger(DefaultLifecycleManager.class);
+    private final List<LifecycleAware> listeners;
+
+    public DefaultLifecycleManager(PluginEventManager eventManager, List<LifecycleAware> listeners)
+    {
+        if (eventManager != null)
+            eventManager.register(this);
+        this.listeners = listeners;
+    }
+
+    public void channel(PluginFrameworkStartedEvent event)
+    {
+        start();
+    }
+
+    public void onUnbind(LifecycleAware service, Map properties)
+    {
+        // do nothing
+    }
+
+    public synchronized void onBind(LifecycleAware service, Map properties)
+    {
+        if (started)
+            notifyLifecycleAwareOfStart(service);
+    }
 
     public synchronized void start()
     {
-        if (!isStarted() && isApplicationSetUp())
+        if (!started && isApplicationSetUp())
         {
             try
             {
@@ -26,24 +52,22 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
 
         }
     }
-    
-    protected boolean isStarted()
-	{
-		return started;
-	}
-    
-	protected void notifyOnStart()
+    protected void notifyOnStart()
     {
-        final Collection<LifecycleAware> listeners = ComponentLocator.getComponents(LifecycleAware.class);
-        for (final LifecycleAware entry : listeners)
+        for (LifecycleAware entry : listeners)
         {
-            try
+            notifyLifecycleAwareOfStart(entry);
+        }
+    }
+
+    private void notifyLifecycleAwareOfStart(LifecycleAware entry)
+    {
+        try
             {
                 entry.onStart();
-            } catch (final RuntimeException ex)
-            {
-                log.error("Unable to start component: "+ entry.getClass().getName(), ex);
-            }
+            } catch (RuntimeException ex)
+        {
+            log.error("Unable to start component: "+ entry.getClass().getName(), ex);
         }
     }
 }

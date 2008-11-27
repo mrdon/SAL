@@ -1,14 +1,13 @@
 package com.atlassian.sal.refimpl.license;
 
 import com.atlassian.sal.api.license.LicenseHandler;
-import com.atlassian.sal.core.license.AbstractLicenseHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * Simple implementation of license handler
  */
-public class RefimplLicenseHandler extends AbstractLicenseHandler implements LicenseHandler
+public class RefimplLicenseHandler implements LicenseHandler
 {
     private static final Log log = LogFactory.getLog(RefimplLicenseHandler.class);
 
@@ -17,7 +16,7 @@ public class RefimplLicenseHandler extends AbstractLicenseHandler implements Lic
      *
      * @param license The license string
      */
-    public void setValidatedLicense(String license)
+    public void setLicense(String license)
     {
         log.info("Setting license "+license);
     }
