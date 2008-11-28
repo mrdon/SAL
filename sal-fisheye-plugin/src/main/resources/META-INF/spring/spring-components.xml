@@ -15,10 +15,6 @@
         <constructor-arg ref="pluginSettingsFactory" />
     </bean>
 
-    <osgi:list id="upgradeTasks" interface="com.atlassian.sal.api.upgrade.PluginUpgradeTask" cardinality="0..N">
-        <osgi:listener bind-method="onBind" ref="pluginUpgradeManager" />
-    </osgi:list>
-
     <osgi:service id="pluginUpgradeManager_osgiService" ref="pluginUpgradeManager">
         <osgi:interfaces>
             <value>com.atlassian.sal.api.upgrade.PluginUpgradeManager</value>
@@ -26,19 +22,23 @@
         </osgi:interfaces>
     </osgi:service>
 
-    <bean name="lifecycleManager" class="com.atlassian.sal.fisheye.lifecycle.FisheyeLifecycleManager">
-        <constructor-arg index="0"><ref bean="pluginEventManager" /></constructor-arg>
-        <constructor-arg index="1"><ref bean="lifecycleAwareImpls" /></constructor-arg>
-    </bean>
-
-    <osgi:list id="lifecycleAwareImpls" interface="com.atlassian.sal.api.lifecycle.LifecycleAware" cardinality="0..N">
-        <osgi:listener bind-method="onBind" unbind-method="onUnbind" ref="lifecycleManager" />
+    <osgi:list id="upgradeTasks" interface="com.atlassian.sal.api.upgrade.PluginUpgradeTask" cardinality="0..N">
+        <osgi:listener bind-method="onBind" ref="pluginUpgradeManager" />
     </osgi:list>
 
-    <osgi:service id="lifecycleManager_osgiService" ref="lifecycleManager">
+    <bean name="salLifecycleManager" class="com.atlassian.sal.confluence.lifecycle.ConfluenceLifecycleManager">
+        <property name="pluginEventManager" ref="pluginEventManager"/>
+        <property name="listeners" ref="lifecycleAwareImpls"/>
+    </bean>
+
+    <osgi:service id="salLifecycleManager_osgiService" ref="salLifecycleManager">
         <osgi:interfaces>
             <value>com.atlassian.sal.api.lifecycle.LifecycleManager</value>
         </osgi:interfaces>
     </osgi:service>
+
+    <osgi:list id="lifecycleAwareImpls" interface="com.atlassian.sal.api.lifecycle.LifecycleAware" cardinality="0..N">
+        <osgi:listener bind-method="onBind" ref="salLifecycleManager" />
+    </osgi:list>
 
 </beans>
