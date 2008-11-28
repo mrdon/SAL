@@ -21,8 +21,8 @@ public class ApplicationReadyListener implements EventListener
 	{
 		if (event instanceof ApplicationStartedEvent)
 		{
-			//final LifecycleManager lifecycleManager = ComponentLocator.getComponent(LifecycleManager.class);
-			//lifecycleManager.start();
+			final LifecycleManager lifecycleManager = ComponentLocator.getComponent(LifecycleManager.class);
+			lifecycleManager.start();
 		}
 		
 	}
