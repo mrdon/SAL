@@ -38,10 +38,10 @@ public class PluginSchedulerTest implements CtkTest
         try
         {
             scheduler.unscheduleJob("jobname");
-            results.fail("Should throw IllegalArgumentException when scheduling unknown job");
+            results.fail("Should throw IllegalArgumentException when unscheduling unknown job");
         } catch (final IllegalArgumentException ex)
         {
-            results.pass("Should throw IllegalArgumentException when scheduling unknown job");
+            results.pass("Should throw IllegalArgumentException when unscheduling unknown job");
         }
     }
 

@@ -20,10 +20,11 @@ public class UserManagerTest implements CtkTest
     {
         results.assertTrue("UserManager should be injectable", userManager != null);
 
-        results.assertTrueOrWarn("Should return null for username when not logged in", userManager.getRemoteUsername() == null);
+        final String remoteUsername = userManager.getRemoteUsername();
+		results.assertTrueOrWarn("Should return null for username when not logged in. Currently logged user: " + remoteUsername, remoteUsername == null);
         results.assertTrueOrWarn("Should be able to login with admin/admin", userManager.authenticate("admin", "admin"));
 
-        results.assertTrueOrWarn("Should have username of admin", "admin".equals(userManager.getRemoteUsername()));
+        results.assertTrueOrWarn("Should have username of admin", "admin".equals(remoteUsername));
 
         results.assertTrueOrWarn("admin user should be sysadmin", userManager.isSystemAdmin("admin"));
 

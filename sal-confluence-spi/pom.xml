@@ -16,6 +16,11 @@
             <artifactId>sal-spi</artifactId>
             <version>${pom.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-spring</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring</artifactId>

@@ -1,5 +1,6 @@
 package com.atlassian.sal.confluence.scheduling;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
@@ -22,16 +23,13 @@ import com.atlassian.sal.api.scheduling.PluginScheduler;
  */
 public class ConfluencePluginScheduler implements PluginScheduler
 {
-
     private static final String JOB_CLASS_KEY = "pluginJobClass";
     private static final String JOB_DATA_MAP_KEY = "pluginJobDataMap";
     private static final Logger log = Logger.getLogger(ConfluencePluginScheduler.class);
-	private static final String DEFAULT_GROUP = "pluginSchedulerJobGroup";
+    private static final String DEFAULT_GROUP = "pluginSchedulerJobGroup";
 
     public void scheduleJob(final String name, final Class<? extends PluginJob> job, final Map<String, Object> jobDataMap, final Date startTime, final long repeatInterval)
     {
-        // Get the scheduler
-        final Scheduler scheduler = ComponentLocator.getComponent(Scheduler.class);
         // Create a new job detail
         final JobDetail jobDetail = new JobDetail();
         jobDetail.setGroup(DEFAULT_GROUP);
@@ -64,6 +62,7 @@ public class ConfluencePluginScheduler implements PluginScheduler
         // Schedule job
         try
         {
+            final Scheduler scheduler = ComponentLocator.getComponent(Scheduler.class);
             scheduler.scheduleJob(jobDetail, trigger);
         }
         catch (final SchedulerException se)
@@ -72,13 +71,13 @@ public class ConfluencePluginScheduler implements PluginScheduler
         }
     }
 
-	/**
+    /**
      * A Quartz job that executes a PluginJob
      */
     public static class ConfluencePluginJob implements Job
     {
         @SuppressWarnings("unchecked")
-		public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException
+        public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException
         {
             final JobDataMap map = jobExecutionContext.getJobDetail().getJobDataMap();
             final Class<? extends PluginJob> jobClass = (Class<? extends PluginJob>) map.get(JOB_CLASS_KEY);
@@ -101,17 +100,20 @@ public class ConfluencePluginScheduler implements PluginScheduler
         }
     }
 
-	public void unscheduleJob(final String name)
-	{
-        // Get the scheduler
-        final Scheduler scheduler = ComponentLocator.getComponent(Scheduler.class);
+    public void unscheduleJob(final String name)
+    {
         try
-		{
-			scheduler.deleteJob(name, DEFAULT_GROUP);
-		} catch (final SchedulerException e)
-		{
-			log.error("Error unscheduling job " + name, e);
-		}
-	}
+        {
+            final Scheduler scheduler = ComponentLocator.getComponent(Scheduler.class);
+            if (!Arrays.asList(scheduler.getJobNames(DEFAULT_GROUP)).contains(name))
+            {
+                throw new IllegalArgumentException("Error unscheduling job. Job '" + name + "' is not scheduled ");
+            }
+            scheduler.deleteJob(name, DEFAULT_GROUP);
+        } catch (final SchedulerException e)
+        {
+            throw new IllegalArgumentException("Error unscheduling job " + name, e);
+        }
+    }
 
 }
