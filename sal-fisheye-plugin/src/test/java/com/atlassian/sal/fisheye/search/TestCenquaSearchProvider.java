@@ -6,26 +6,28 @@ import junit.framework.TestCase;
 
 import com.atlassian.sal.api.search.SearchProvider;
 import com.atlassian.sal.api.search.SearchResults;
+import com.atlassian.sal.api.search.query.SearchQueryParser;
 import com.atlassian.sal.core.search.query.DefaultSearchQueryParser;
-import com.atlassian.sal.core.component.MockComponentLocator;
 
 /**
  *
  */
 public class TestCenquaSearchProvider extends TestCase
 {
-	@Override
+	private SearchQueryParser queryParser;
+
+    @Override
 	protected void setUp() throws Exception
 	{
 		super.setUp();
-		MockComponentLocator.create(new DefaultSearchQueryParser());
+		queryParser = new DefaultSearchQueryParser();
 	}
 
     public void testValidation()
     {
         final AtomicBoolean fisheyeProviderCalled = new AtomicBoolean(false);
         final AtomicBoolean crucibleProviderCalled = new AtomicBoolean(false);
-        CenquaSearchProvider searchProvider = new CenquaSearchProvider()
+        CenquaSearchProvider searchProvider = new CenquaSearchProvider(queryParser, null)
         {
             SearchProvider getFisheyeSearchProvider()
             {

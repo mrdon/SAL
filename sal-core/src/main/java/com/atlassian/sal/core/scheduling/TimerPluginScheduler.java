@@ -100,5 +100,9 @@ public class TimerPluginScheduler implements PluginScheduler
         {
             timer.cancel();
         }
-	}
+        else
+        {
+            throw new IllegalArgumentException("Attempted to unschedule unknown job: " + name);
+        }
+    }
 }

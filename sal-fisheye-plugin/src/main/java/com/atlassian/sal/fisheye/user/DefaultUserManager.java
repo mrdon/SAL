@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.user.UserManager;
 import com.cenqua.crucible.filters.CrucibleFilter;
 import com.cenqua.fisheye.AppConfig;
@@ -17,21 +18,26 @@ import com.cenqua.fisheye.user.UserLogin;
 public class DefaultUserManager implements UserManager
 {
     private static final Logger log = Logger.getLogger(DefaultUserManager.class);
+    private PluginSettingsFactory pluginSettingsFactory;
+
+    DefaultUserManager(PluginSettingsFactory pluginSettingsfactory)
+    {
+        this.pluginSettingsFactory = pluginSettingsfactory;
+    }
 
     public String getRemoteUsername()
     {
-        UserLogin user;
         try
         {
-            user = AppConfig.getsConfig().getUserManager().getCurrentUser(CrucibleFilter.getRequest());
+            UserLogin user = AppConfig.getsConfig().getUserManager().getCurrentUser(CrucibleFilter.getRequest());
+            if (user != null)
+            {
+                return user.getUserName();
+            }
         }
         catch (final IllegalStateException ise)
         {
-            return null;
-        }
-        if (user != null)
-        {
-            return user.getUserName();
+            log.error("Illegal State Exception while trying to get the remote user's name: ",ise);
         }
         return null;
     }
@@ -42,8 +48,9 @@ public class DefaultUserManager implements UserManager
         {
             return false;
         }
-        String sysadminGroups = (String)
-            ComponentLocator.getComponent(PluginSettingsFactory.class).createGlobalSettings().get("sysadmin-groups");
+        
+        final PluginSettings pluginSettings = pluginSettingsFactory.createGlobalSettings();
+        String sysadminGroups = (String) pluginSettings.get("sysadmin-groups");
         if (sysadminGroups == null)
         {
             return false;
