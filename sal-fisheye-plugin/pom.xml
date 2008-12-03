@@ -43,6 +43,11 @@
 	</dependencyManagement>
 
     <dependencies>
+         <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-api</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-core</artifactId>
