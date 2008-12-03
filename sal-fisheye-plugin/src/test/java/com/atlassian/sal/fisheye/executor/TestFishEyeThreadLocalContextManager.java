@@ -1,17 +1,18 @@
 package com.atlassian.sal.fisheye.executor;
 
-import com.cenqua.crucible.filters.CrucibleFilter;
+import java.util.concurrent.ExecutionException;
+
 import junit.framework.TestCase;
 
-import java.util.concurrent.ExecutionException;
+import com.cenqua.crucible.filters.CrucibleFilter;
 
 public class TestFishEyeThreadLocalContextManager extends TestCase
 {
-    private FishEyeThreadLocalContextManager manager = new FishEyeThreadLocalContextManager();
+    private final FishEyeThreadLocalContextManager manager = new FishEyeThreadLocalContextManager();
 
     public void testGetThreadLocalContext() throws InterruptedException
     {
-        CrucibleFilter.Context context = new CrucibleFilter.Context(null, null, null, null);
+        final CrucibleFilter.Context context = new CrucibleFilter.Context(null, null);
         CrucibleFilter.setContext(context);
         assertEquals(context, manager.getThreadLocalContext());
     }
@@ -19,14 +20,14 @@ public class TestFishEyeThreadLocalContextManager extends TestCase
     public void testSetThreadLocalContext() throws InterruptedException, ExecutionException
     {
 
-        CrucibleFilter.Context context = new CrucibleFilter.Context(null, null, null, null);
+        final CrucibleFilter.Context context = new CrucibleFilter.Context(null, null);
         manager.setThreadLocalContext(context);
         assertEquals(context, manager.getThreadLocalContext());
     }
 
     public void testClearThreadLocalContext() throws InterruptedException, ExecutionException
     {
-        CrucibleFilter.Context context = new CrucibleFilter.Context(null, null, null, null);
+        final CrucibleFilter.Context context = new CrucibleFilter.Context(null, null);
         CrucibleFilter.setContext(context);
         manager.clearThreadLocalContext();
         assertFalse(CrucibleFilter.hasContext());
