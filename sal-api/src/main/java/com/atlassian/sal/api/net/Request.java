@@ -4,7 +4,7 @@ import com.atlassian.sal.api.net.auth.Authenticator;
 
 
 /**
- * Interface Request represents a request to retrieve data. To execute a request call {@link Request#execute(ResponseHandler)}. 
+ * Interface Request represents a request to retrieve data. To execute a request call {@link Request#execute(ResponseHandler)}.
  *
  * @param <T>
  */
@@ -20,15 +20,15 @@ public interface Request<T extends Request<?>>
 
     /**
      * Setting connection timeout in milliseconds.
-     * 
+     *
      * @param connectionTimeout
      * @return a reference to this object.
      */
     T setConnectionTimeout(int connectionTimeout);
-    
+
     /**
      * Setting socket timeout in milliseconds.
-     * 
+     *
      * @param soTimeout
      * @return a reference to this object.
      */
@@ -38,7 +38,7 @@ public interface Request<T extends Request<?>>
      * @return a reference to this object.
      */
     T setUrl(String url);
-    
+
     /**
      * Sets the body of the request. In default implementation only requests of type {@link MethodType#POST} and {@link MethodType#POST} can have request body.
      *
@@ -48,20 +48,20 @@ public interface Request<T extends Request<?>>
     T setRequestBody(String requestBody);
     /**
      * Sets Content-Type of the body of the request. In default implementation only requests of type {@link MethodType#POST} and {@link MethodType#POST} can have request body.
-     * 
+     *
      * @param contentType the contentType of the request
      * @return a reference to this object.
      */
     T setRequestContentType(String contentType);
     /**
-     * Sets parameters of the request. In default implementation only requests of type {@link MethodType#POST} and {@link MethodType#POST} can have parameters. 
+     * Sets parameters of the request. In default implementation only requests of type {@link MethodType#POST} and {@link MethodType#POST} can have parameters.
      * For other requests include parameters in url. This method accepts odd number of arguments, in form of name, value, name, value, name, value, etc
-     * 
+     *
      * @param params parameters of the request in as name, value pairs
      * @return a reference to this object.
      */
     T addRequestParameters(String... params);
-	
+
     /**
      * Adds generic Authenticator to the request.
      * @param authenticator
@@ -69,13 +69,15 @@ public interface Request<T extends Request<?>>
      */
     T addAuthentication(Authenticator authenticator);
     /**
-     * Adds TrustedTokenAuthentication to the request. Trusted token authenticator use current user to make a trusted application call. 
+     * Adds TrustedTokenAuthentication to the request. Trusted token authenticator use current user to make a trusted application call.
      * @return a reference to this object.
      */
     T addTrustedTokenAuthentication();
+
+    T addTrustedTokenAuthentication(String username);
     /**
      * Adds basic authentication to the request.
-     * 
+     *
      * @param username
      * @param password
      * @return a reference to this object.
@@ -83,7 +85,7 @@ public interface Request<T extends Request<?>>
     T addBasicAuthentication(String username, String password);
     /**
      * Adds seraph authentication to the request.
-     * 
+     *
      * @param username
      * @param password
      * @return a reference to this object.
@@ -96,8 +98,8 @@ public interface Request<T extends Request<?>>
 	 * @throws ResponseException
 	 */
 	void execute(ResponseHandler responseHandler) throws ResponseException;
-	
-	
+
+
 	/**
 	 * Executes a request and if response is successful, returns response as a string. @see {@link Response#getResponseBodyAsString()}
 	 * @return response as String
@@ -105,6 +107,6 @@ public interface Request<T extends Request<?>>
 	 */
 	String execute() throws ResponseException;
 
-	
-	
+
+
 }

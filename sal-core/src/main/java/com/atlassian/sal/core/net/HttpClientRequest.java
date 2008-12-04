@@ -62,21 +62,21 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     private String requestBody;
     private String requestContentType;
 
-    public HttpClientRequest(HttpClient httpClient, MethodType methodType, String url)
+    public HttpClientRequest(final HttpClient httpClient, final MethodType methodType, final String url)
     {
         this.httpClient = httpClient;
         this.methodType = methodType;
         this.url = url;
     }
 
-    public HttpClientRequest setUrl(String url)
+    public HttpClientRequest setUrl(final String url)
     {
         this.url = url;
         return this;
     }
 
     // ------------------------ authenticators -------------------------------------------
-    public HttpClientRequest addAuthentication(Authenticator authenticator)
+    public HttpClientRequest addAuthentication(final Authenticator authenticator)
     {
         if (authenticator instanceof HttpClientAuthenticator)
             this.authenticators.add((HttpClientAuthenticator) authenticator);
@@ -89,18 +89,26 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     {
         final UserManager userManager = ComponentLocator.getComponent(UserManager.class);
         final TrustedTokenAuthenticator trustedTokenAuthenticator = new TrustedTokenAuthenticator(userManager.getRemoteUsername());
-        
+
         this.authenticators.add(trustedTokenAuthenticator);
         return this;
     }
 
-    public HttpClientRequest addBasicAuthentication(String username, String password)
+    public HttpClientRequest addTrustedTokenAuthentication(final String username)
+    {
+        final TrustedTokenAuthenticator trustedTokenAuthenticator = new TrustedTokenAuthenticator(username);
+
+        this.authenticators.add(trustedTokenAuthenticator);
+        return this;
+    }
+
+    public HttpClientRequest addBasicAuthentication(final String username, final String password)
     {
         this.authenticators.add(new BaseAuthenticator(username, password));
         return this;
     }
 
-    public HttpClientRequest addSeraphAuthentication(String username, String password)
+    public HttpClientRequest addSeraphAuthentication(final String username, final String password)
     {
         this.authenticators.add(new SeraphAuthenticator(username, password));
         return this;
@@ -108,37 +116,37 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 
     // ------------------------ various setters -------------------------------------------
 
-    public HttpClientRequest setConnectionTimeout(int connectionTimeout)
+    public HttpClientRequest setConnectionTimeout(final int connectionTimeout)
     {
         final HttpConnectionManagerParams params = httpClient.getHttpConnectionManager().getParams();
         params.setConnectionTimeout(connectionTimeout);
         return this;
     }
 
-    public HttpClientRequest setSoTimeout(int soTimeout)
+    public HttpClientRequest setSoTimeout(final int soTimeout)
     {
         final HttpConnectionManagerParams params = httpClient.getHttpConnectionManager().getParams();
         params.setSoTimeout(soTimeout);
         return this;
     }
 
-    public HttpClientRequest setRequestBody(String requestBody)
+    public HttpClientRequest setRequestBody(final String requestBody)
     {
         this.requestBody = requestBody;
         if (methodType != MethodType.POST && methodType != MethodType.PUT)
         {
             throw new IllegalArgumentException("Only POST and PUT methods can have request body");
-        } 
+        }
         return this;
     }
 
-    public HttpClientRequest setRequestContentType(String requestContentType)
+    public HttpClientRequest setRequestContentType(final String requestContentType)
     {
         this.requestContentType = requestContentType;
         return this;
     }
 
-    public HttpClientRequest addRequestParameters(String... params)
+    public HttpClientRequest addRequestParameters(final String... params)
     {
         if (params.length%2!=0)
         {
@@ -148,7 +156,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
         if (methodType != MethodType.POST && methodType != MethodType.PUT)
         {
             throw new IllegalArgumentException("Only POST and PUT methods accept req");
-        } 
+        }
 
         for (int i = 0; i < params.length; i+=2)
         {
@@ -168,7 +176,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     /* (non-Javadoc)
      * @see com.atlassian.sal.api.net.Request#execute()
      */
-    public void execute(ResponseHandler responseHandler) throws ResponseException
+    public void execute(final ResponseHandler responseHandler) throws ResponseException
     {
         Throwable lastException = null;
         for (int attempts = 0; attempts < MAX_ATTEMPTS; attempts++)
@@ -212,7 +220,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
         throw new ResponseException("Maximum number of retries ("+MAX_ATTEMPTS+") reached.", lastException);
     }
 
-    private static void exhaustResponseContents(HttpMethod response)
+    private static void exhaustResponseContents(final HttpMethod response)
     {
         InputStream body = null;
         try
@@ -259,7 +267,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
         catch( final IOException ioe )
         {
         }
-    }    
+    }
 
 
     public String execute() throws ResponseException
@@ -267,7 +275,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
         final Set<String> stringHolder = new HashSet<String>();
         execute(new ResponseHandler()
         {
-            public void handle(Response response) throws ResponseException
+            public void handle(final Response response) throws ResponseException
             {
                 if (!response.isSuccessful())
                 {
@@ -285,7 +293,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 
     private class RetryAgainException extends Exception
     {
-        public RetryAgainException(Exception e)
+        public RetryAgainException(final Exception e)
         {
             super(e);
         }
