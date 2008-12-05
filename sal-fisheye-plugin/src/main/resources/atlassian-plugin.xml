@@ -1,7 +1,7 @@
 <atlassian-plugin key="com.atlassian.sal.fisheye" name="${project.name}" system="true" pluginsVersion="2">
     <plugin-info>
         <description>
-            A plugin that links FishEye to other Atlassian applications    
+            A plugin that provides an access layer for the underlying application.
         </description>
         <vendor name="Atlassian Software Systems" url="http://www.atlassian.com"/>
         <version>${pom.version}</version>
