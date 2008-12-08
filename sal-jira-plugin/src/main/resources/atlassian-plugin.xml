@@ -22,7 +22,7 @@
         <interface>com.atlassian.sal.api.component.ComponentLocator</interface>
     </component>
     <component key="pluginUpgradeManager" name="pluginUpgradeManager"
-               class="com.atlassian.sal.core.upgrade.DefaultPluginUpgradeManager"
+               class="com.atlassian.sal.jira.upgrade.JiraPluginUpgradeManager"
                system="true">
         <interface>com.atlassian.sal.api.upgrade.PluginUpgradeManager</interface>
         <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
