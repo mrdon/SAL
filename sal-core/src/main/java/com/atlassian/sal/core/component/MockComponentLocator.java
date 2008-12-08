@@ -1,7 +1,5 @@
 package com.atlassian.sal.core.component;
 
-import com.atlassian.sal.api.component.ComponentLocator;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,49 +7,59 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.atlassian.sal.api.component.ComponentLocator;
+
 /**
  * Mock implementation of the component locator for testing
  */
 public class MockComponentLocator extends ComponentLocator
 {
-    Map<Class,Object> components = new HashMap();
+    Map<Class<?>,Object> components = new HashMap<Class<?>, Object>();
 
-    public MockComponentLocator(Object... objects)
+    public MockComponentLocator(final Object... objects)
     {
         if (objects != null && objects.length > 0)
         {
-            for (Object o : objects)
+            for (final Object o : objects)
             {
                 add(o);
             }
         }
     }
 
-    public MockComponentLocator add(Class cls, Object obj)
+    public MockComponentLocator add(final Class<?> cls, final Object obj)
     {
         components.put(cls, obj);
         return this;
     }
 
-    public MockComponentLocator add(Object obj)
+    public MockComponentLocator add(final Object obj)
     {
-        List<Class> interfaces = new ArrayList<Class>();
-        Class cls = obj.getClass();
+        final List<Class> interfaces = new ArrayList<Class>();
+        Class<?> cls = obj.getClass();
         while (cls != null)
         {
+            // get all interfaces of this class
             interfaces.addAll(Arrays.asList(cls.getInterfaces()));
+            // get a superclass
+            interfaces.add(cls);
             cls = cls.getSuperclass();
         }
-        components.put(interfaces.get(0), obj);
+        // register this component with all its interfaces and supers
+        for (final Class<?> iface : interfaces)
+        {
+            components.put(iface, obj);
+        }
         return this;
     }
 
-    protected <T> T getComponentInternal(Class<T> iface)
+    @Override
+    protected <T> T getComponentInternal(final Class<T> iface)
     {
         return (T) components.get(iface);
     }
 
-	public static MockComponentLocator create(Object... objects)
+	public static MockComponentLocator create(final Object... objects)
 	{
 		final MockComponentLocator mockComponentLocator = new MockComponentLocator(objects);
 		ComponentLocator.setComponentLocator(mockComponentLocator);
@@ -59,13 +67,13 @@ public class MockComponentLocator extends ComponentLocator
 	}
 
 	@Override
-	protected <T> Collection<T> getComponentsInternal(Class<T> iface)
+	protected <T> Collection<T> getComponentsInternal(final Class<T> iface)
 	{
 		return null;
 	}
-	
+
 	@Override
-	protected <T> T getComponentInternal(Class<T> iface, String componentId)
+	protected <T> T getComponentInternal(final Class<T> iface, final String componentId)
 	{
 		return getComponentInternal(iface);
 	}
