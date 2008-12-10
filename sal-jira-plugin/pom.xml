@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.atlassian.sal</groupId>
@@ -8,6 +9,7 @@
 
     <artifactId>sal-jira-plugin</artifactId>
     <name>Shared Application Access Layer JIRA Plugin</name>
+    <description>Shared Application Access Layer JIRA Plugin</description>
     <packaging>bundle</packaging>
 
     <build>
@@ -18,9 +20,13 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                    <Private-Package>com.atlassian.sal.jira*</Private-Package>
-                    <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
-                    <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
+                        <Private-Package>com.atlassian.sal.jira*</Private-Package>
+                        <Export-Package>com.atlassian.sal.api*,</Export-Package>
+                        <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
+                        <Embed-Directory>META-INF/lib</Embed-Directory>
+                        <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
+                        <Spring-Context>*,timeout=60</Spring-Context>
                     </instructions>
                 </configuration>
             </plugin>
@@ -73,12 +79,6 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.7</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.0.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

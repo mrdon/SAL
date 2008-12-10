@@ -1,8 +1,6 @@
 <atlassian-plugin key="com.atlassian.sal.fisheye" name="${project.name}" system="true" pluginsVersion="2">
     <plugin-info>
-        <description>
-            A plugin that provides an access layer for the underlying application.
-        </description>
+        <description>A plugin that provides an access layer for the underlying application.</description>
         <vendor name="Atlassian Software Systems" url="http://www.atlassian.com"/>
         <version>${pom.version}</version>
     </plugin-info>
@@ -46,5 +44,4 @@
     <component key="fisheyeProjectManager" class="com.atlassian.sal.fisheye.project.FisheyeProjectManager"  public="true">
         <interface>com.atlassian.sal.api.project.ProjectManager</interface>
     </component>
-
 </atlassian-plugin>
