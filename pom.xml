@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.sal</groupId>
     <artifactId>sal-parent</artifactId>
@@ -34,7 +35,7 @@
         <module>sal-crowd-plugin</module>
         <module>sal-ctk-plugin</module>
         <module>sal-refimpl-plugin</module>
-  </modules>
+    </modules>
 
     <build>
         <resources>
@@ -62,12 +63,33 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <!-- TODO: Remove this once JIRA is on maven2 -->
+        <plugins>
+            <plugin>
+                <!-- Deploy to the maven1 repo, necessary as maven1 can't resolve snapshots -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-one-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <remoteRepositoryId>atlassian-m1-repository</remoteRepositoryId>
+                            <remoteRepositoryUrl>dav:https://maven.atlassian.com/maven1</remoteRepositoryUrl>
+                        </configuration>
+                        <goals>
+                            <goal>deploy-maven-one-repository</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
 
     <scm>
         <connection>scm:svn:https://studio.atlassian.com/svn/SAL/branches/jira-plugins-2.0</connection>
-        <developerConnection>scm:svn:https://studio.atlassian.com/svn/SAL/branches/jira-plugins-2.0</developerConnection>
+        <developerConnection>scm:svn:https://studio.atlassian.com/svn/SAL/branches/jira-plugins-2.0
+        </developerConnection>
         <url>https://studio.atlassian.com/svn/SAL/branches/jira-plugins-2.0</url>
     </scm>
+
 </project>
