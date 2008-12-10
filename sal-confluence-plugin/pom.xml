@@ -23,6 +23,7 @@
 						<Embed-Transitive>true</Embed-Transitive>
 						<Embed-Directory>META-INF/lib</Embed-Directory>
 						<Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
+                        <Spring-Context>*;timeout:=60</Spring-Context>
 					</instructions>
 				</configuration>
 			</plugin>
