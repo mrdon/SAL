@@ -9,7 +9,6 @@ import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
-import com.atlassian.sal.core.upgrade.PluginUpgrader;
 import com.atlassian.plugin.PluginManager;
 import com.atlassian.plugin.Plugin;
 
