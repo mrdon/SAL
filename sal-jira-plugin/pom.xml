@@ -21,12 +21,13 @@
                 <configuration>
                     <instructions>
                         <Private-Package>com.atlassian.sal.jira*</Private-Package>
-                        <Export-Package>com.atlassian.sal.api*,</Export-Package>
+                        <Export-Package>com.atlassian.sal.api*,com.atlassian.sal.jira.scheduling*</Export-Package>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Embed-Directory>META-INF/lib</Embed-Directory>
                         <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
-                        <Spring-Context>*,timeout=60</Spring-Context>
+                        <Spring-Context>*;timeout:=60</Spring-Context>
+                        <Require-Bundle>system.bundle</Require-Bundle>
                     </instructions>
                 </configuration>
             </plugin>

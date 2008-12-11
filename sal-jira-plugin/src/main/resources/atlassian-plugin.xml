@@ -17,10 +17,10 @@
     <component name="Certificate Factory" key="certificateFactory" class="com.atlassian.sal.jira.trusted.JiraCertificateFactory" public="true">
         <interface>com.atlassian.sal.core.trusted.CertificateFactory</interface>
     </component>
-    <component name="Application Properties" key="applicationProperties" class="com.atlassian.sal.jira.JiraApplicationProperties" public="true">
+    <component name="Application Properties" key="pluginApplicationProperties" class="com.atlassian.sal.jira.JiraApplicationProperties" public="true">
         <interface>com.atlassian.sal.api.ApplicationProperties</interface>
     </component>
-    <component key="userManager" name="User Manager" class="com.atlassian.sal.jira.user.DefaultUserManager" public="true">
+    <component key="pluginUserManager" name="User Manager" class="com.atlassian.sal.jira.user.DefaultUserManager" public="true">
         <interface>com.atlassian.sal.api.user.UserManager</interface>
     </component>
     <component name="License Handler" key="licenseHandler" class="com.atlassian.sal.jira.license.JiraLicenseHandler" public="true">
@@ -29,7 +29,7 @@
     <component name="Plugin Scheduler" key="pluginScheduler" class="com.atlassian.sal.jira.scheduling.JiraPluginScheduler" public="true">
         <interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
     </component>
-    <component name="NoOp Transaction Template" key="noopTransactionTemplate" class="com.atlassian.sal.core.transaction.HostContextTransactionTemplate" public="true">
+    <component name="NoOp Transaction Template" key="transactionTemplate" class="com.atlassian.sal.core.transaction.HostContextTransactionTemplate" public="true">
         <interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>
     </component>
     <component name="Jira Search Provider" key="jiraSearchProvider" class="com.atlassian.sal.jira.search.JiraSearchProvider" public="true">
