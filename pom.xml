@@ -21,7 +21,7 @@
         <atlassian-fisheye-api.version>1.6.4-338</atlassian-fisheye-api.version>
         <confluence.version>2.10-rc1</confluence.version>
         <crowd.version>1.5-studio-1</crowd.version>
-        <jira.version>4.0-SNAPSHOT</jira.version>
+        <jira.version>4.0-plugins2-SNAPSHOT</jira.version>
     </properties>
 
     <modules>

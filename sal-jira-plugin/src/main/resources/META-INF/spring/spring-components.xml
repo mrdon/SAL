@@ -11,7 +11,7 @@
     <bean name="pluginUpgradeManager" class="com.atlassian.sal.core.upgrade.DefaultPluginUpgradeManager">
         <constructor-arg ref="upgradeTasks" />
         <constructor-arg ref="transactionTemplate" />
-        <constructor-arg ref="pluginManager" />
+        <constructor-arg ref="pluginAccessor" />
         <constructor-arg ref="pluginSettingsFactory" />
     </bean>
 

@@ -242,8 +242,8 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
         for (final Iterator iterator = searchers.iterator(); iterator.hasNext();)
         {
             final IssueSearcher searcher = (IssueSearcher) iterator.next();
-            searcher.getSearchInputTransformer().populateFromParams(fieldValuesHolder, actionParams);
-            searcher.getSearchInputTransformer().validateParams(searchContext, fieldValuesHolder, new I18nBean(remoteUser), errors);
+            searcher./*getSearchInputTransformer().*/populateFromParams(fieldValuesHolder, actionParams);
+            searcher./*getSearchInputTransformer().*/validateParams(searchContext, fieldValuesHolder, new I18nBean(remoteUser), errors);
         }
     }
 
