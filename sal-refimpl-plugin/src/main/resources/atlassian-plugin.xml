@@ -36,7 +36,7 @@
                system="true" public="true">
         <interface>com.atlassian.sal.api.ApplicationProperties</interface>
     </component>
-    <component key="userManager" name="User Manager"
+    <component key="salUserManager" name="User Manager"
                class="com.atlassian.sal.refimpl.user.RefImplUserManager"
                system="true" public="true">
         <interface>com.atlassian.sal.api.user.UserManager</interface>

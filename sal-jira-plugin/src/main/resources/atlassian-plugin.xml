@@ -33,7 +33,7 @@
                system="true">
         <interface>com.atlassian.sal.api.ApplicationProperties</interface>
     </component>
-    <component key="userManager" name="User Manager"
+    <component key="salUserManager" name="User Manager"
                class="com.atlassian.sal.jira.user.DefaultUserManager"
                system="true">
         <interface>com.atlassian.sal.api.user.UserManager</interface>

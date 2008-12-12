@@ -20,7 +20,7 @@
     <component-import key="pluginScheduler" interface="com.atlassian.sal.api.scheduling.PluginScheduler" />
     <component-import key="searchProvider" interface="com.atlassian.sal.api.search.SearchProvider" />
     <component-import key="transactionTemplate" interface="com.atlassian.sal.api.transaction.TransactionTemplate" />
-    <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" />
+    <component-import key="salUserManager" interface="com.atlassian.sal.api.user.UserManager" />
 
     <component key="lifecycleTest" class="com.atlassian.sal.ctk.test.LifecycleAwareTest" public="true">
         <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>

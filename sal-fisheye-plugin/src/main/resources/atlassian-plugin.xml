@@ -16,7 +16,7 @@
     <component key="certificateFactory" class="com.atlassian.sal.fisheye.trusted.FisheyeCertificateFactory" public="true">
         <interface>com.atlassian.sal.core.trusted.CertificateFactory</interface>
     </component>
-    <component key="userManager" class="com.atlassian.sal.fisheye.user.DefaultUserManager" public="true">
+    <component key="salUserManager" class="com.atlassian.sal.fisheye.user.DefaultUserManager" public="true">
         <interface>com.atlassian.sal.api.user.UserManager</interface>
     </component>
     <component key="applicationProperties" class="com.atlassian.sal.fisheye.FisheyeApplicationProperties" public="true">
@@ -28,7 +28,7 @@
     <component key="transactionTemplate" class="com.atlassian.sal.core.transaction.HostContextTransactionTemplate" public="true" >
         <interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>
     </component>
-    <component key="cenquaSearchProvider" class="com.atlassian.sal.fisheye.search.CenquaSearchProvider" public="true" >
+    <component key="searchProvider" class="com.atlassian.sal.fisheye.search.CenquaSearchProvider" public="true" >
         <interface>com.atlassian.sal.api.search.SearchProvider</interface>
     </component>
     <component key="searchQueryParser" class="com.atlassian.sal.core.search.query.DefaultSearchQueryParser" public="true" >
@@ -43,7 +43,7 @@
     <component key="i18nResolver" class="com.atlassian.sal.fisheye.message.NoOpI18nResolver" public="true">
         <interface>com.atlassian.sal.api.message.I18nResolver</interface>
     </component>
-    <component key="fisheyeProjectManager" class="com.atlassian.sal.fisheye.project.FisheyeProjectManager"  public="true">
+    <component key="projectManager" class="com.atlassian.sal.fisheye.project.FisheyeProjectManager"  public="true">
         <interface>com.atlassian.sal.api.project.ProjectManager</interface>
     </component>
 
