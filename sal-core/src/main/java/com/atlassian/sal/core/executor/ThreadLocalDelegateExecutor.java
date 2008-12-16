@@ -1,7 +1,5 @@
 package com.atlassian.sal.core.executor;
 
-import com.atlassian.sal.core.executor.ThreadLocalContextManager;
-
 import java.util.concurrent.Executor;
 
 /**
@@ -10,7 +8,7 @@ import java.util.concurrent.Executor;
 class ThreadLocalDelegateExecutor implements Executor
 {
     private final Executor delegate;
-    private final ThreadLocalContextManager manager;
+    protected final ThreadLocalContextManager manager;
 
     ThreadLocalDelegateExecutor(ThreadLocalContextManager manager, Executor delegate)
     {

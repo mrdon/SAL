@@ -77,5 +77,9 @@
                class="com.atlassian.sal.refimpl.trusted.RefImplCertificateFactory" system="true">
         <interface>com.atlassian.sal.core.trusted.CertificateFactory</interface>
     </component>
+    <component name="Refimpl Thread Local Delegate Executor Factory" key="refimplThreadLocalDelegateExecutorFactory"
+               class="com.atlassian.sal.refimpl.executor.RefimplThreadLocalDelegateExecutorFactory" system="true">
+        <interface>com.atlassian.sal.api.executor.ThreadLocalDelegateExecutorFactory</interface>
+    </component>    
 </atlassian-plugin>
 
