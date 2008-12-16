@@ -12,9 +12,8 @@ public class TrustedTokenAuthenticator implements HttpClientAuthenticator
 {
     private final EncryptedCertificate userCertificate;
 
-    public TrustedTokenAuthenticator(String username)
+    public TrustedTokenAuthenticator(String username, CertificateFactory certificateFactory)
     {
-        final CertificateFactory certificateFactory = ComponentLocator.getComponent(CertificateFactory.class);
         if (username != null && !username.equals(""))
         {
             this.userCertificate = certificateFactory.createCertificate(username);

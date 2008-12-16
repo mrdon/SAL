@@ -43,6 +43,8 @@ import com.atlassian.sal.core.net.auth.BaseAuthenticator;
 import com.atlassian.sal.core.net.auth.HttpClientAuthenticator;
 import com.atlassian.sal.core.net.auth.SeraphAuthenticator;
 import com.atlassian.sal.core.net.auth.TrustedTokenAuthenticator;
+import com.atlassian.sal.core.trusted.CertificateFactory;
+
 /**
  *	HttpClient implementation of Request interface
  */
@@ -57,16 +59,19 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     private String url;
     private final Map<String, List<String>> parameters = new HashMap<String, List<String>>();
     private final List<HttpClientAuthenticator> authenticators = new ArrayList<HttpClientAuthenticator>();
+    private final CertificateFactory certificateFactory;
 
     private final HttpClient httpClient;
     private String requestBody;
     private String requestContentType;
 
-    public HttpClientRequest(final HttpClient httpClient, final MethodType methodType, final String url)
+    public HttpClientRequest(final HttpClient httpClient, final MethodType methodType, final String url,
+        CertificateFactory certificateFactory)
     {
         this.httpClient = httpClient;
         this.methodType = methodType;
         this.url = url;
+        this.certificateFactory = certificateFactory;
     }
 
     public HttpClientRequest setUrl(final String url)
@@ -88,7 +93,8 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     public HttpClientRequest addTrustedTokenAuthentication()
     {
         final UserManager userManager = ComponentLocator.getComponent(UserManager.class);
-        final TrustedTokenAuthenticator trustedTokenAuthenticator = new TrustedTokenAuthenticator(userManager.getRemoteUsername());
+        final TrustedTokenAuthenticator trustedTokenAuthenticator = new TrustedTokenAuthenticator(
+            userManager.getRemoteUsername(), certificateFactory);
 
         this.authenticators.add(trustedTokenAuthenticator);
         return this;
@@ -96,7 +102,8 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 
     public HttpClientRequest addTrustedTokenAuthentication(final String username)
     {
-        final TrustedTokenAuthenticator trustedTokenAuthenticator = new TrustedTokenAuthenticator(username);
+        final TrustedTokenAuthenticator trustedTokenAuthenticator = new TrustedTokenAuthenticator(username,
+            certificateFactory);
 
         this.authenticators.add(trustedTokenAuthenticator);
         return this;
@@ -266,6 +273,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
         }
         catch( final IOException ioe )
         {
+            // Do nothing
         }
     }
 
@@ -394,7 +402,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
         }
 
         // Set request body
-        if ((method instanceof EntityEnclosingMethod) && this.requestBody!=null)
+        if (this.requestBody!=null)
         {
             final EntityEnclosingMethod entityEnclosingMethod = (EntityEnclosingMethod) method;
             final String contentType = requestContentType + "; charset=UTF-8";

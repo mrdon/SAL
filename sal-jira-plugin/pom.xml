@@ -58,6 +58,12 @@
             <version>${pom.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-test-resources</artifactId>
+            <version>${pom.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
             <scope>test</scope>

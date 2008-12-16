@@ -12,10 +12,18 @@ import org.apache.log4j.Logger;
 
 import com.atlassian.sal.api.net.Request.MethodType;
 import com.atlassian.sal.api.net.RequestFactory;
+import com.atlassian.sal.core.trusted.CertificateFactory;
 
 public class HttpClientRequestFactory implements RequestFactory<HttpClientRequest>
 {
     private static final Logger log = Logger.getLogger(HttpClientRequestFactory.class);
+
+    private final CertificateFactory certificateFactory;
+
+    public HttpClientRequestFactory(CertificateFactory certificateFactory)
+    {
+        this.certificateFactory = certificateFactory;
+    }
 
     /**
      * The default time to wait without retrieving data from the remote connection
@@ -33,13 +41,12 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
     public HttpClientRequest createRequest(MethodType methodType, String url)
     {
         final HttpClient httpClient = getHttpClient(url);
-        return new HttpClientRequest(httpClient, methodType, url);
+        return new HttpClientRequest(httpClient, methodType, url, certificateFactory);
     }
 
     /**
-     * @param url
-     * @return
-     * @throws URISyntaxException
+     * @param url The URL
+     * @return The HTTP client
      */
     protected HttpClient getHttpClient(String url)
     {
@@ -63,8 +70,8 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
     }
 
     /**
-     * @param client
-     * @param remoteUrl
+     * @param client The client to configure the proxy of
+     * @param remoteUrl The remote URL
      */
     protected void configureProxy(HttpClient client, String remoteUrl)
     {

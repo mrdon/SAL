@@ -34,7 +34,8 @@ public class TestHttpClientRequest extends TestCase
         final AtomicInteger authenticatorCounter = new AtomicInteger(0);
 
         // lets create new GET request to http://url
-        HttpClientRequest request = new HttpClientRequest(mockHttpClient, MethodType.GET, "http://url");
+        HttpClientRequest request = new HttpClientRequest(mockHttpClient, MethodType.GET, "http://url",
+            null);
 
         // this is our authenticator
         final HttpClientAuthenticator authenticator = new HttpClientAuthenticator()
@@ -75,7 +76,8 @@ public class TestHttpClientRequest extends TestCase
         };
 
         // lets create new GET request to http://url
-        HttpClientRequest request = new HttpClientRequest(mockHttpClient, MethodType.GET, "http://url");
+        HttpClientRequest request = new HttpClientRequest(mockHttpClient, MethodType.GET, "http://url",
+            null);
         try
         {
             request.execute(EasyMock.createMock(ResponseHandler.class));
@@ -105,7 +107,8 @@ public class TestHttpClientRequest extends TestCase
         httpClientMockControl.replay();
 
         // create a request that will return mockPostMethod
-        HttpClientRequest request = new HttpClientRequest(httpClientMock, MethodType.POST, "http://url")
+        HttpClientRequest request = new HttpClientRequest(httpClientMock, MethodType.POST, "http://url",
+            null)
         {
             @Override
             protected HttpMethod makeMethod()
@@ -133,7 +136,8 @@ public class TestHttpClientRequest extends TestCase
         // Lets try to add parameters to GET method
         try
         {
-            HttpClientRequest request = new HttpClientRequest(EasyMock.createMock(HttpClient.class), MethodType.GET, "http://url");
+            HttpClientRequest request = new HttpClientRequest(EasyMock.createMock(HttpClient.class), MethodType.GET, "http://url",
+                null);
             request.addRequestParameters("doIt","quickly!");
             fail("Should throw exception that only POST and PUT methods can have parameters.");
         } catch (IllegalArgumentException e)
@@ -144,7 +148,8 @@ public class TestHttpClientRequest extends TestCase
         // Lets try to add uneven number of parameters
         try
         {
-            HttpClientRequest request = new HttpClientRequest(EasyMock.createMock(HttpClient.class), MethodType.PUT, "http://url");
+            HttpClientRequest request = new HttpClientRequest(EasyMock.createMock(HttpClient.class), MethodType.PUT, "http://url",
+                null);
             request.addRequestParameters("Isaid", "doIt","now");
             fail("Should throw exception about uneven number of parameters.");
         } catch (IllegalArgumentException e)
@@ -172,7 +177,8 @@ public class TestHttpClientRequest extends TestCase
 
 
         // create a request that will return mockPostMethod
-        HttpClientRequest request = new HttpClientRequest(mockHttpClient, MethodType.POST, "http://url")
+        HttpClientRequest request = new HttpClientRequest(mockHttpClient, MethodType.POST, "http://url",
+            null)
         {
             @Override
             protected HttpMethod makeMethod()

@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 
 import com.atlassian.config.lifecycle.events.ApplicationStartedEvent;
 import com.atlassian.sal.api.lifecycle.LifecycleManager;
-import com.atlassian.sal.core.component.MockComponentLocator;
+import com.atlassian.sal.testresources.component.MockComponentLocator;
 
 public class ApplicationReadyListenerTest extends TestCase
 {
