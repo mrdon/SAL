@@ -1,19 +1,22 @@
 package com.atlassian.sal.core.executor;
 
-import java.util.concurrent.*;
-import java.util.*;
+import java.util.List;
+import java.util.concurrent.AbstractExecutorService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Executor service that wraps executing callables and runnables in a wrapper that transfers the thread local state of
  * the caller to the thread of the executing task.
  */
-public class ThreadLocalDelegateExecutorService extends ThreadLocalDelegateExecutor implements ExecutorService
+public class ThreadLocalDelegateExecutorService extends AbstractExecutorService
 {
+    protected final ThreadLocalContextManager manager;
     private final ExecutorService delegate;
 
     public ThreadLocalDelegateExecutorService(ThreadLocalContextManager manager, ExecutorService delegate)
     {
-        super(manager, delegate);
+        this.manager = manager;
         this.delegate = delegate;
     }
 
@@ -43,52 +46,8 @@ public class ThreadLocalDelegateExecutorService extends ThreadLocalDelegateExecu
         return delegate.awaitTermination(timeout, unit);
     }
 
-    public <T> Future<T> submit(Callable<T> task)
+    public void execute(Runnable command)
     {
-        return delegate.submit(new ThreadLocalDelegateCallable<T>(manager, task));
-    }
-
-    public <T> Future<T> submit(Runnable task, T result)
-    {
-        return delegate.submit(new ThreadLocalDelegateRunnable(manager, task), result);
-    }
-
-    public Future<?> submit(Runnable task)
-    {
-        return delegate.submit(new ThreadLocalDelegateRunnable(manager, task));
-    }
-
-    public <T> List<Future<T>> invokeAll(Collection<Callable<T>> tasks)
-        throws InterruptedException
-    {
-        return delegate.invokeAll(wrapCallableList(tasks));
-    }
-
-    public <T> List<Future<T>> invokeAll(Collection<Callable<T>> tasks, long timeout, TimeUnit unit)
-        throws InterruptedException
-    {
-        return delegate.invokeAll(wrapCallableList(tasks), timeout, unit);
-    }
-
-    public <T> T invokeAny(Collection<Callable<T>> tasks)
-        throws InterruptedException, ExecutionException
-    {
-        return delegate.invokeAny(wrapCallableList(tasks));
-    }
-
-    public <T> T invokeAny(Collection<Callable<T>> tasks, long timeout, TimeUnit unit)
-        throws InterruptedException, ExecutionException, TimeoutException
-    {
-        return delegate.invokeAny(wrapCallableList(tasks), timeout, unit);
-    }
-
-    protected <T> Collection<Callable<T>> wrapCallableList(final Collection<Callable<T>> tasks)
-    {
-        Collection<Callable<T>> wrappedTasks = new ArrayList<Callable<T>>(tasks.size());
-        for (Callable<T> task : tasks)
-        {
-            wrappedTasks.add(new ThreadLocalDelegateCallable<T>(manager, task));
-        }
-        return wrappedTasks;
+        delegate.execute(new ThreadLocalDelegateRunnable(manager, command));
     }
 }
