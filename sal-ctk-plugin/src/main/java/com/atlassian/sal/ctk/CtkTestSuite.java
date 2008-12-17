@@ -26,7 +26,7 @@ public class CtkTestSuite
             try
             {
                 test.execute(results);
-            } catch (final Exception e)
+            } catch (final Throwable e)
             {
                 results.fail("Unable to execute tests: "+e.getMessage());
                 log.error(e, e);
