@@ -4,7 +4,6 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 
 import com.atlassian.sal.core.trusted.CertificateFactory;
-import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.security.auth.trustedapps.EncryptedCertificate;
 import com.atlassian.security.auth.trustedapps.TrustedApplicationUtils;
 
@@ -24,8 +23,8 @@ public class TrustedTokenAuthenticator implements HttpClientAuthenticator
     }
 
     /**
-     * @param httpClient
-     * @param method
+     * @param httpClient The client to process
+     * @param method The method type
      */
     public void process(HttpClient httpClient, HttpMethod method)
     {

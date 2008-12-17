@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import com.atlassian.sal.api.net.Request.MethodType;
 import com.atlassian.sal.api.net.RequestFactory;
+import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.core.trusted.CertificateFactory;
 
 public class HttpClientRequestFactory implements RequestFactory<HttpClientRequest>
@@ -19,10 +20,12 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
     private static final Logger log = Logger.getLogger(HttpClientRequestFactory.class);
 
     private final CertificateFactory certificateFactory;
+    private final UserManager userManager;
 
-    public HttpClientRequestFactory(CertificateFactory certificateFactory)
+    public HttpClientRequestFactory(CertificateFactory certificateFactory, UserManager userManager)
     {
         this.certificateFactory = certificateFactory;
+        this.userManager = userManager;
     }
 
     /**
@@ -41,7 +44,7 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
     public HttpClientRequest createRequest(MethodType methodType, String url)
     {
         final HttpClient httpClient = getHttpClient(url);
-        return new HttpClientRequest(httpClient, methodType, url, certificateFactory);
+        return new HttpClientRequest(httpClient, methodType, url, certificateFactory, userManager);
     }
 
     /**

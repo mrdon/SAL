@@ -13,12 +13,15 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.easymock.classextension.EasyMock;
 import org.easymock.classextension.IMocksControl;
+import static org.mockito.Mockito.*;
 
 import com.atlassian.sal.api.net.ResponseException;
 import com.atlassian.sal.api.net.ResponseHandler;
 import com.atlassian.sal.api.net.Request.MethodType;
+import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.core.net.auth.HttpClientAuthenticator;
 import com.atlassian.sal.core.net.HttpClientRequest;
+import com.atlassian.sal.core.trusted.CertificateFactory;
 
 public class TestHttpClientRequest extends TestCase
 {
@@ -35,7 +38,7 @@ public class TestHttpClientRequest extends TestCase
 
         // lets create new GET request to http://url
         HttpClientRequest request = new HttpClientRequest(mockHttpClient, MethodType.GET, "http://url",
-            null);
+            mock(CertificateFactory.class), mock(UserManager.class));
 
         // this is our authenticator
         final HttpClientAuthenticator authenticator = new HttpClientAuthenticator()
@@ -77,7 +80,7 @@ public class TestHttpClientRequest extends TestCase
 
         // lets create new GET request to http://url
         HttpClientRequest request = new HttpClientRequest(mockHttpClient, MethodType.GET, "http://url",
-            null);
+            mock(CertificateFactory.class), mock(UserManager.class));
         try
         {
             request.execute(EasyMock.createMock(ResponseHandler.class));
@@ -108,7 +111,7 @@ public class TestHttpClientRequest extends TestCase
 
         // create a request that will return mockPostMethod
         HttpClientRequest request = new HttpClientRequest(httpClientMock, MethodType.POST, "http://url",
-            null)
+            mock(CertificateFactory.class), mock(UserManager.class))
         {
             @Override
             protected HttpMethod makeMethod()
@@ -137,7 +140,7 @@ public class TestHttpClientRequest extends TestCase
         try
         {
             HttpClientRequest request = new HttpClientRequest(EasyMock.createMock(HttpClient.class), MethodType.GET, "http://url",
-                null);
+                mock(CertificateFactory.class), mock(UserManager.class));
             request.addRequestParameters("doIt","quickly!");
             fail("Should throw exception that only POST and PUT methods can have parameters.");
         } catch (IllegalArgumentException e)
@@ -149,7 +152,7 @@ public class TestHttpClientRequest extends TestCase
         try
         {
             HttpClientRequest request = new HttpClientRequest(EasyMock.createMock(HttpClient.class), MethodType.PUT, "http://url",
-                null);
+                mock(CertificateFactory.class), mock(UserManager.class));
             request.addRequestParameters("Isaid", "doIt","now");
             fail("Should throw exception about uneven number of parameters.");
         } catch (IllegalArgumentException e)
@@ -178,7 +181,7 @@ public class TestHttpClientRequest extends TestCase
 
         // create a request that will return mockPostMethod
         HttpClientRequest request = new HttpClientRequest(mockHttpClient, MethodType.POST, "http://url",
-            null)
+            mock(CertificateFactory.class), mock(UserManager.class))
         {
             @Override
             protected HttpMethod makeMethod()

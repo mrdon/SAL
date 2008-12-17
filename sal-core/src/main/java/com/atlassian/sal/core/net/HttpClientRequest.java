@@ -32,7 +32,6 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.net.Request;
 import com.atlassian.sal.api.net.Response;
 import com.atlassian.sal.api.net.ResponseException;
@@ -62,16 +61,18 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     private final CertificateFactory certificateFactory;
 
     private final HttpClient httpClient;
+    private final UserManager userManager;
     private String requestBody;
     private String requestContentType;
 
     public HttpClientRequest(final HttpClient httpClient, final MethodType methodType, final String url,
-        CertificateFactory certificateFactory)
+        CertificateFactory certificateFactory, UserManager userManager)
     {
         this.httpClient = httpClient;
         this.methodType = methodType;
         this.url = url;
         this.certificateFactory = certificateFactory;
+        this.userManager = userManager;
     }
 
     public HttpClientRequest setUrl(final String url)
@@ -92,7 +93,6 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 
     public HttpClientRequest addTrustedTokenAuthentication()
     {
-        final UserManager userManager = ComponentLocator.getComponent(UserManager.class);
         final TrustedTokenAuthenticator trustedTokenAuthenticator = new TrustedTokenAuthenticator(
             userManager.getRemoteUsername(), certificateFactory);
 
