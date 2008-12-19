@@ -2,11 +2,11 @@ package com.atlassian.sal.fisheye.user;
 
 import org.apache.log4j.Logger;
 
-import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.user.UserManager;
 import com.cenqua.crucible.filters.CrucibleFilter;
+import com.cenqua.fisheye.AppConfig;
 import com.cenqua.fisheye.LicensePolicyException;
 import com.cenqua.fisheye.rep.DbException;
 import com.cenqua.fisheye.user.UserLogin;
@@ -18,12 +18,11 @@ public class DefaultUserManager implements UserManager
 {
     private static final Logger log = Logger.getLogger(DefaultUserManager.class);
     private final PluginSettingsFactory pluginSettingsFactory;
-    private final com.cenqua.fisheye.user.UserManager userManager;
+    private com.cenqua.fisheye.user.UserManager userManager;
 
     DefaultUserManager(final PluginSettingsFactory pluginSettingsfactory)
     {
         this.pluginSettingsFactory = pluginSettingsfactory;
-        this.userManager = ComponentLocator.getComponent(com.cenqua.fisheye.user.UserManager.class);
     }
 
     public String getRemoteUsername()
@@ -31,7 +30,7 @@ public class DefaultUserManager implements UserManager
 
         try
         {
-            final UserLogin user = userManager.getCurrentUser(CrucibleFilter.getRequest());
+            final UserLogin user = getUserManager().getCurrentUser(CrucibleFilter.getRequest());
             if (user != null)
             {
                 return user.getUserName();
@@ -71,7 +70,7 @@ public class DefaultUserManager implements UserManager
     {
         try
         {
-            return userManager.isUserInGroup(group, username);
+            return getUserManager().isUserInGroup(group, username);
         }
         catch (final DbException e)
         {
@@ -84,7 +83,7 @@ public class DefaultUserManager implements UserManager
     {
         try
         {
-            final UserLogin userLogin = userManager.login(CrucibleFilter.getRequest(), CrucibleFilter.getResponse(), username, password, false);
+            final UserLogin userLogin = getUserManager().login(CrucibleFilter.getRequest(), CrucibleFilter.getResponse(), username, password, false);
             if (userLogin != null)
             {
                 return true;
@@ -99,5 +98,24 @@ public class DefaultUserManager implements UserManager
             log.error("License error trying to authenticate user '" + username + "'", e);
         }
         return false;
+    }
+
+    private com.cenqua.fisheye.user.UserManager getUserManager()
+    {
+        if (userManager==null)
+        {
+            userManager = AppConfig.getsConfig().getUserManager();
+            final Thread currentThread = Thread.currentThread();
+            final ClassLoader originalContextClassLoader = currentThread.getContextClassLoader();
+            try
+            {
+                currentThread.setContextClassLoader(AppConfig.class.getClassLoader());
+            } finally
+            {
+                currentThread.setContextClassLoader(originalContextClassLoader);
+            }
+        }
+
+        return userManager;
     }
 }
