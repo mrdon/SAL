@@ -1,5 +1,7 @@
 package com.atlassian.sal.fisheye.user;
 
+import java.util.concurrent.Callable;
+
 import org.apache.log4j.Logger;
 
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
@@ -27,7 +29,17 @@ public class DefaultUserManager implements UserManager
 
     public String getRemoteUsername()
     {
+        return doInApplicationContext(new Callable<String>()
+        {
 
+            public String call() throws Exception
+            {
+                return _getRemoteUsername();
+            }
+        });
+    }
+    public String _getRemoteUsername()
+    {
         try
         {
             final UserLogin user = getUserManager().getCurrentUser(CrucibleFilter.getRequest());
@@ -44,6 +56,17 @@ public class DefaultUserManager implements UserManager
     }
 
     public boolean isSystemAdmin(final String username)
+    {
+        return doInApplicationContext(new Callable<Boolean>()
+        {
+
+            public Boolean call() throws Exception
+            {
+                return _isSystemAdmin(username);
+            }
+        });
+    }
+    public boolean _isSystemAdmin(final String username)
     {
         if (username == null)
         {
@@ -68,6 +91,16 @@ public class DefaultUserManager implements UserManager
 
     public boolean isUserInGroup(final String username, final String group)
     {
+        return doInApplicationContext(new Callable<Boolean>()
+        {
+            public Boolean call() throws Exception
+            {
+                return _isUserInGroup(username, group);
+            }
+        });
+    }
+    public boolean _isUserInGroup(final String username, final String group)
+    {
         try
         {
             return getUserManager().isUserInGroup(group, username);
@@ -80,6 +113,16 @@ public class DefaultUserManager implements UserManager
     }
 
     public boolean authenticate(final String username, final String password)
+    {
+        return doInApplicationContext(new Callable<Boolean>()
+        {
+            public Boolean call() throws Exception
+            {
+                return _authenticate(username, password);
+            }
+        });
+    }
+    public boolean _authenticate(final String username, final String password)
     {
         try
         {
@@ -105,17 +148,36 @@ public class DefaultUserManager implements UserManager
         if (userManager==null)
         {
             userManager = AppConfig.getsConfig().getUserManager();
-            final Thread currentThread = Thread.currentThread();
-            final ClassLoader originalContextClassLoader = currentThread.getContextClassLoader();
-            try
-            {
-                currentThread.setContextClassLoader(AppConfig.class.getClassLoader());
-            } finally
-            {
-                currentThread.setContextClassLoader(originalContextClassLoader);
-            }
+//            final Thread currentThread = Thread.currentThread();
+//            final ClassLoader originalContextClassLoader = currentThread.getContextClassLoader();
+//            try
+//            {
+//                currentThread.setContextClassLoader(AppConfig.class.getClassLoader());
+//            } finally
+//            {
+//                currentThread.setContextClassLoader(originalContextClassLoader);
+//            }
         }
 
         return userManager;
+    }
+
+    // TODO write dynamic proxy instead
+    <V> V doInApplicationContext(final Callable<V> callable)
+    {
+        final Thread currentThread = Thread.currentThread();
+        final ClassLoader originalContextClassLoader = currentThread.getContextClassLoader();
+        try
+        {
+            currentThread.setContextClassLoader(AppConfig.class.getClassLoader());
+            return callable.call();
+        } catch (final Exception e)
+        {
+            log.error(e, e);
+            return null;
+        } finally
+        {
+            currentThread.setContextClassLoader(originalContextClassLoader);
+        }
     }
 }
