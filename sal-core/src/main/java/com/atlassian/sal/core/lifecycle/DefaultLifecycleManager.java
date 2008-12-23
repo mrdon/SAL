@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.PluginFrameworkStartedEvent;
 import com.atlassian.plugin.event.impl.DefaultPluginEventManager;
@@ -15,16 +16,24 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
 {
 	private boolean started = false;
 	private static final Logger log = Logger.getLogger(DefaultLifecycleManager.class);
-	private List<LifecycleAware> listeners;
+	private final List<LifecycleAware> listeners;
 
-	/**
+
+	public DefaultLifecycleManager(final PluginEventManager pluginEventManager, final List<LifecycleAware> listeners)
+    {
+	    this.listeners = listeners;
+        pluginEventManager.register(this);
+    }
+
+    /**
 	 * This method will be invoked by PluginEventManager when PluginFrameworkStartedEvent event occurs.
 	 * PluginEventManager uses methods called "channel" and methods with annotation "@PluginEventListener"
 	 * to notify a registered listeners about events.
 	 * See {@link DefaultPluginEventManager} for more details on this black magic.
 	 * @param event
 	 */
-	public void channel(final PluginFrameworkStartedEvent event)
+	@PluginEventListener
+	public void onFrameworkStart(final PluginFrameworkStartedEvent event)
 	{
 		start();
 	}
@@ -50,7 +59,8 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
 	 * @param service
 	 * @param properties
 	 */
-	public synchronized void onBind(final LifecycleAware service, final Map properties)
+	@SuppressWarnings("unchecked")
+    public synchronized void onBind(final LifecycleAware service, final Map properties)
 	{
 		if (started)
 			notifyLifecycleAwareOfStart(service);
@@ -76,16 +86,5 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
 			log.error("Unable to start component: " + entry.getClass().getName(), ex);
 		}
 	}
-
-	public void setListeners(final List<LifecycleAware> listeners)
-	{
-		this.listeners = listeners;
-	}
-
-	public void setPluginEventManager(final PluginEventManager pluginEventManager)
-    {
-        pluginEventManager.register(this);
-    }
-
 
 }

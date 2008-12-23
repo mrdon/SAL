@@ -56,6 +56,12 @@
 	</dependencyManagement>
 
     <dependencies>
+	        <dependency>
+	            <groupId>com.atlassian.plugins</groupId>
+	            <artifactId>atlassian-plugins-core</artifactId>
+	            <version>${plugins.version}</version>
+	            <scope>provided</scope>
+	        </dependency>
          <dependency>
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-api</artifactId>

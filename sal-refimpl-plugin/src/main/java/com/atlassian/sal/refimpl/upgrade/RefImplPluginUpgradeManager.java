@@ -10,9 +10,9 @@ import com.atlassian.sal.core.upgrade.DefaultPluginUpgradeManager;
 
 public class RefImplPluginUpgradeManager extends DefaultPluginUpgradeManager
 {
-    public RefImplPluginUpgradeManager(TransactionTemplate transactionTemplate,
-            PluginAccessor pluginAccessor,
-            PluginSettingsFactory pluginSettingsFactory)
+    public RefImplPluginUpgradeManager(final TransactionTemplate transactionTemplate,
+            final PluginAccessor pluginAccessor,
+            final PluginSettingsFactory pluginSettingsFactory)
     {
         super(Collections.<PluginUpgradeTask>emptyList(), transactionTemplate, pluginAccessor, pluginSettingsFactory);
     }
