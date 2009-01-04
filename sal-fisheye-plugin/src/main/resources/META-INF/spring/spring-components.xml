@@ -8,7 +8,7 @@
            http://www.springframework.org/schema/osgi/spring-osgi.xsd"
         default-autowire="autodetect">
 
-    <bean name="pluginUpgradeManager" class="com.atlassian.sal.core.upgrade.DefaultPluginUpgradeManager">
+    <bean id="pluginUpgradeManager" class="com.atlassian.sal.core.upgrade.DefaultPluginUpgradeManager">
         <constructor-arg ref="upgradeTasks" />
         <constructor-arg ref="transactionTemplate" />
         <constructor-arg ref="pluginManager" />
@@ -26,7 +26,7 @@
         <osgi:listener bind-method="onBind" ref="pluginUpgradeManager" />
     </osgi:list>
 
-    <bean name="salLifecycleManager" class="com.atlassian.sal.confluence.lifecycle.ConfluenceLifecycleManager">
+    <bean id="salLifecycleManager" class="com.atlassian.sal.confluence.lifecycle.ConfluenceLifecycleManager">
         <property name="pluginEventManager" ref="pluginEventManager"/>
         <property name="listeners" ref="lifecycleAwareImpls"/>
     </bean>
