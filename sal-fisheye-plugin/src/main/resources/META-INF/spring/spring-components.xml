@@ -27,8 +27,8 @@
     </osgi:list>
 
     <bean name="salLifecycleManager" class="com.atlassian.sal.fisheye.lifecycle.FisheyeLifecycleManager">
-        <constructor-arg ref="pluginEventManager"/>
-        <constructor-arg ref="lifecycleAwareImpls"/>
+        <property name="pluginEventManager" ref="pluginEventManager"/>
+        <property name="listeners" ref="lifecycleAwareImpls"/>
     </bean>
 
     <osgi:service id="salLifecycleManager_osgiService" ref="salLifecycleManager">

@@ -16,14 +16,7 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
 {
 	private boolean started = false;
 	private static final Logger log = Logger.getLogger(DefaultLifecycleManager.class);
-	private final List<LifecycleAware> listeners;
-
-
-	public DefaultLifecycleManager(final PluginEventManager pluginEventManager, final List<LifecycleAware> listeners)
-    {
-	    this.listeners = listeners;
-        pluginEventManager.register(this);
-    }
+	private List<LifecycleAware> listeners;
 
     /**
 	 * This method will be invoked by PluginEventManager when PluginFrameworkStartedEvent event occurs.
@@ -87,4 +80,19 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
 		}
 	}
 
+    /**
+     * @param listeners the listeners to set
+     */
+    public void setListeners(final List<LifecycleAware> listeners)
+    {
+        this.listeners = listeners;
+    }
+
+    /**
+     * @return the listeners
+     */
+    public void setPluginEventManager(final PluginEventManager pluginEventManager)
+    {
+        pluginEventManager.register(this);
+    }
 }
