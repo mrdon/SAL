@@ -148,22 +148,12 @@ public class DefaultUserManager implements UserManager
         if (userManager==null)
         {
             userManager = AppConfig.getsConfig().getUserManager();
-//            final Thread currentThread = Thread.currentThread();
-//            final ClassLoader originalContextClassLoader = currentThread.getContextClassLoader();
-//            try
-//            {
-//                currentThread.setContextClassLoader(AppConfig.class.getClassLoader());
-//            } finally
-//            {
-//                currentThread.setContextClassLoader(originalContextClassLoader);
-//            }
         }
-
         return userManager;
     }
 
     // TODO write dynamic proxy instead
-    <V> V doInApplicationContext(final Callable<V> callable)
+    private <V> V doInApplicationContext(final Callable<V> callable)
     {
         final Thread currentThread = Thread.currentThread();
         final ClassLoader originalContextClassLoader = currentThread.getContextClassLoader();
