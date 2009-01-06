@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.fisheye.Plugins2Hacks;
 import com.cenqua.crucible.filters.CrucibleFilter;
 import com.cenqua.fisheye.AppConfig;
 import com.cenqua.fisheye.LicensePolicyException;
@@ -29,9 +30,8 @@ public class DefaultUserManager implements UserManager
 
     public String getRemoteUsername()
     {
-        return doInApplicationContext(new Callable<String>()
+        return Plugins2Hacks.doInApplicationContext(new Callable<String>()
         {
-
             public String call() throws Exception
             {
                 return _getRemoteUsername();
@@ -57,7 +57,7 @@ public class DefaultUserManager implements UserManager
 
     public boolean isSystemAdmin(final String username)
     {
-        return doInApplicationContext(new Callable<Boolean>()
+        return Plugins2Hacks.doInApplicationContext(new Callable<Boolean>()
         {
 
             public Boolean call() throws Exception
@@ -91,7 +91,7 @@ public class DefaultUserManager implements UserManager
 
     public boolean isUserInGroup(final String username, final String group)
     {
-        return doInApplicationContext(new Callable<Boolean>()
+        return Plugins2Hacks.doInApplicationContext(new Callable<Boolean>()
         {
             public Boolean call() throws Exception
             {
@@ -114,7 +114,7 @@ public class DefaultUserManager implements UserManager
 
     public boolean authenticate(final String username, final String password)
     {
-        return doInApplicationContext(new Callable<Boolean>()
+        return Plugins2Hacks.doInApplicationContext(new Callable<Boolean>()
         {
             public Boolean call() throws Exception
             {
@@ -152,22 +152,4 @@ public class DefaultUserManager implements UserManager
         return userManager;
     }
 
-    // TODO write dynamic proxy instead
-    private <V> V doInApplicationContext(final Callable<V> callable)
-    {
-        final Thread currentThread = Thread.currentThread();
-        final ClassLoader originalContextClassLoader = currentThread.getContextClassLoader();
-        try
-        {
-            currentThread.setContextClassLoader(AppConfig.class.getClassLoader());
-            return callable.call();
-        } catch (final Exception e)
-        {
-            log.error(e, e);
-            return null;
-        } finally
-        {
-            currentThread.setContextClassLoader(originalContextClassLoader);
-        }
-    }
 }
