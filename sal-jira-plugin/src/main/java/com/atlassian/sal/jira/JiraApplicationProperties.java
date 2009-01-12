@@ -1,7 +1,11 @@
 package com.atlassian.sal.jira;
 
 import com.atlassian.jira.config.properties.APKeys;
+import com.atlassian.jira.util.BuildUtils;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.ApplicationDetails;
+
+import java.util.Date;
 
 /**
  * JIRA implementation of WebProperties
@@ -23,5 +27,20 @@ public class JiraApplicationProperties implements ApplicationProperties
     public String getApplicationName()
     {
         return "JIRA";
+    }
+
+    public String getVersion()
+    {
+        return BuildUtils.getVersion();
+    }
+
+    public Date getBuildDate()
+    {
+        return BuildUtils.getCurrentBuildDate();
+    }
+
+    public String getBuildNumber()
+    {
+        return BuildUtils.getCurrentBuildNumber();
     }
 }

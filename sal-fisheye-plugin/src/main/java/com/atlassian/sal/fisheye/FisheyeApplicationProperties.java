@@ -2,8 +2,12 @@ package com.atlassian.sal.fisheye;
 
 import com.atlassian.sal.api.ApplicationProperties;
 import com.cenqua.fisheye.AppConfig;
-import com.cenqua.fisheye.config.RootConfig;
-import com.cenqua.fisheye.config1.WebServerType;
+import com.cenqua.fisheye.FisheyeVersionInfo;
+import org.apache.commons.lang.StringUtils;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
@@ -12,10 +16,8 @@ public class FisheyeApplicationProperties implements ApplicationProperties
 {
     public String getBaseUrl()
     {
-        RootConfig getsConfig = AppConfig.getsConfig();
-        String siteURL = getsConfig.getSiteURL();
-        WebServerType ws = getsConfig.getConfig().getWebServer();
-        return removeTrailingSlash(siteURL);
+        final String siteURL = AppConfig.getsConfig().getSiteURL();
+        return StringUtils.removeEnd(siteURL, "/");
     }
 
     public String getApplicationName()
@@ -23,12 +25,26 @@ public class FisheyeApplicationProperties implements ApplicationProperties
         return "FishEye";
     }
 
-    String removeTrailingSlash(String siteURL)
+    public String getVersion()
     {
-        if (siteURL!=null && siteURL.endsWith("/"))
+        return FisheyeVersionInfo.RELEASE_NUM;
+    }
+
+    public Date getBuildDate()
+    {
+        final String buildDateFormat = "yyyy-MM-dd";
+        try
         {
-            siteURL = siteURL.substring(0,siteURL.length()-1);
+            return new SimpleDateFormat(buildDateFormat).parse(FisheyeVersionInfo.BUILD_DATE);
         }
-        return siteURL;
+        catch (ParseException e)
+        {
+            throw new RuntimeException("Unable to parse FishEye build date <" + FisheyeVersionInfo.BUILD_DATE + "> into format " + buildDateFormat, e);
+        }
+    }
+
+    public String getBuildNumber()
+    {
+        return FisheyeVersionInfo.BUILD_NUMBER;
     }
 }
