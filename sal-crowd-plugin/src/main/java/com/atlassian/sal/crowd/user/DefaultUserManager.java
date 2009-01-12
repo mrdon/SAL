@@ -1,5 +1,7 @@
 package com.atlassian.sal.crowd.user;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.acegisecurity.Authentication;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.acegisecurity.providers.anonymous.AnonymousAuthenticationToken;
@@ -21,7 +23,7 @@ public class DefaultUserManager implements UserManager
     	return user.getUsername();
     }
 
-    public boolean isSystemAdmin(String username)
+    public boolean isSystemAdmin(final String username)
     {
     	final CrowdUserDetails user = getUser();
 
@@ -33,20 +35,20 @@ public class DefaultUserManager implements UserManager
             if (user.getAuthorities()[i].getAuthority().equals("ROLE_ADMIN"))
                 return true;
         }
-    	
+
         return false;
     }
 
-    public boolean isUserInGroup(String username, String group)
+    public boolean isUserInGroup(final String username, final String group)
     {
     	throw new UnsupportedOperationException();
     }
 
-    public boolean authenticate(String username, String password)
+    public boolean authenticate(final String username, final String password)
     {
     	throw new UnsupportedOperationException();
     }
-	
+
 	private CrowdUserDetails getUser()
 	{
 		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -54,8 +56,15 @@ public class DefaultUserManager implements UserManager
 		{
 			return (CrowdUserDetails) auth.getPrincipal();
 		}
-		
+
 		return null;
 	}
+
+    public String getRemoteUsername(final HttpServletRequest request)
+    {
+        // TODO Implement SAL-16
+        return getRemoteUsername();
+    }
+
 }
 

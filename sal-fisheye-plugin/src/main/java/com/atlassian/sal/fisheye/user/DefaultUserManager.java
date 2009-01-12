@@ -2,6 +2,8 @@ package com.atlassian.sal.fisheye.user;
 
 import java.util.concurrent.Callable;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
@@ -150,6 +152,12 @@ public class DefaultUserManager implements UserManager
             userManager = AppConfig.getsConfig().getUserManager();
         }
         return userManager;
+    }
+
+    public String getRemoteUsername(final HttpServletRequest request)
+    {
+        // TODO Implement SAL-16
+        return getRemoteUsername();
     }
 
 }
