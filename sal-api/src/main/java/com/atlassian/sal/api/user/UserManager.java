@@ -1,5 +1,7 @@
 package com.atlassian.sal.api.user;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * Interface providing user based operations across various apps.
  */
@@ -8,9 +10,18 @@ public interface UserManager
     /**
      * Returns the username of the currently logged in user or null if no user can be found.
      * @return The user name of the logged in user or null
+     * @deprecated use {@link getRemoteUsername(javax.servlet.ServletRequest)}
      */
+    @Deprecated
     String getRemoteUsername();
 
+    /**
+     * Returns the username of the currently logged in user or null if no user can be found.
+     * @param request The request to retrieve the username from
+     * @return The user name of the logged in user or null
+     */
+    String getRemoteUsername(HttpServletRequest request);
+    
     /**
      * Returns whether the user is in the specify group
      * @param username The username to check

@@ -2,6 +2,8 @@ package com.atlassian.sal.refimpl.user;
 
 import java.security.Principal;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 
 import com.atlassian.seraph.auth.AuthenticationContext;
@@ -39,6 +41,11 @@ public class RefImplUserManager implements com.atlassian.sal.api.user.UserManage
         if (user == null)
             return null;
         return user.getName();
+    }
+    
+    public String getRemoteUsername(HttpServletRequest request)
+    {
+        return request.getRemoteUser();
     }
 
     public boolean isSystemAdmin(String username)
