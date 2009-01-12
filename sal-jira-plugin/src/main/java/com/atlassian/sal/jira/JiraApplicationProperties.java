@@ -3,7 +3,6 @@ package com.atlassian.sal.jira;
 import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.util.BuildUtils;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.ApplicationDetails;
 
 import java.util.Date;
 
