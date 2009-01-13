@@ -16,6 +16,11 @@
                system="true" public="true">
         <interface>com.atlassian.sal.api.message.I18nResolver</interface>
     </component>
+    <component key="localeResolver" name="Locale Resolver"
+               class="com.atlassian.sal.refimpl.message.RefimplLocaleResolver"
+               system="true" public="true">
+        <interface>com.atlassian.sal.api.message.LocaleResolver</interface>
+    </component>
     <component key="pluginSettingsFactory" name="Plugin settings factory"
                class="com.atlassian.sal.refimpl.pluginsettings.RefimplPluginSettingsFactory"
                system="true" public="true">
