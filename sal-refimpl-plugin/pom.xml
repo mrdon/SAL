@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.atlassian.sal</groupId>
@@ -18,11 +19,11 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                    <Import-Package>*,com.atlassian.plugin.predicate</Import-Package>
-                    <Private-Package>com.atlassian.sal.refimpl*</Private-Package>
-                    <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
-                    <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
-                    <Spring-Context>classpath:/META-INF/spring/*.xml;create-asynchronously:=false</Spring-Context> 
+                        <Import-Package>*,com.atlassian.plugin.predicate</Import-Package>
+                        <Private-Package>com.atlassian.sal.refimpl*</Private-Package>
+                        <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
+                        <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
+                        <Spring-Context>classpath:/META-INF/spring/*.xml;create-asynchronously:=false</Spring-Context>
                     </instructions>
                 </configuration>
             </plugin>
@@ -50,18 +51,27 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-spi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-core</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-spring</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.atlassian.user</groupId>
             <artifactId>atlassian-user</artifactId>
-            <version>2.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

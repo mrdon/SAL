@@ -42,7 +42,7 @@ public class TestDefaultUserManager extends TestCase
         DefaultUserManager defaultUserManager = new DefaultUserManager(null, null)
         {
             //package level protected for testing
-            User getUser(String username) throws EntityNotFoundException
+            User getUserInternal(String username) throws EntityNotFoundException
             {
                 Assert.assertEquals("tommy", username);
                 throw new EntityNotFoundException("tommy not found!");
@@ -68,7 +68,7 @@ public class TestDefaultUserManager extends TestCase
         DefaultUserManager defaultUserManager = new DefaultUserManager(mockGlobalPermissionManager, null)
         {
             //package level protected for testing
-            User getUser(String username) throws EntityNotFoundException
+            User getUserInternal(String username) throws EntityNotFoundException
             {
                 Assert.assertEquals("tommy", username);
                 return mockUser;
@@ -95,7 +95,7 @@ public class TestDefaultUserManager extends TestCase
         DefaultUserManager defaultUserManager = new DefaultUserManager(mockGlobalPermissionManager, null)
         {
             //package level protected for testing
-            User getUser(String username) throws EntityNotFoundException
+            User getUserInternal(String username) throws EntityNotFoundException
             {
                 Assert.assertEquals("tommy", username);
                 return mockUser;

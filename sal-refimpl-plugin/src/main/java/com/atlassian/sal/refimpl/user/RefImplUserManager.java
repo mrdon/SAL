@@ -71,6 +71,26 @@ public class RefImplUserManager implements com.atlassian.sal.api.user.UserManage
         }
     }
 
+    public com.atlassian.sal.api.user.User getUser(String username)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public com.atlassian.sal.api.user.User createUser(com.atlassian.sal.api.user.User user)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public com.atlassian.sal.api.user.User updateUser(com.atlassian.sal.api.user.User user)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void removeUser(String username)
+    {
+        throw new UnsupportedOperationException();
+    }
+
     public boolean isUserInGroup(String username, String group)
     {
         try

@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.User;
 import com.atlassian.sal.fisheye.Plugins2Hacks;
 import com.cenqua.crucible.filters.CrucibleFilter;
 import com.cenqua.fisheye.AppConfig;
@@ -124,6 +125,27 @@ public class DefaultUserManager implements UserManager
             }
         });
     }
+
+    public User getUser(String username)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public User createUser(User user)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public User updateUser(User user)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void removeUser(String username)
+    {
+        throw new UnsupportedOperationException();
+    }
+
     public boolean _authenticate(final String username, final String password)
     {
         try
