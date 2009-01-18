@@ -1,93 +1,69 @@
 package com.atlassian.sal.crowd.user;
 
-import com.atlassian.crowd.integration.acegi.user.CrowdUserDetails;
-import com.atlassian.sal.api.user.User;
-import com.atlassian.sal.api.user.UserManager;
-import org.acegisecurity.Authentication;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.acegisecurity.providers.anonymous.AnonymousAuthenticationToken;
-
 import javax.servlet.http.HttpServletRequest;
 
-/** FishEye implementation of the UserManager */
+import com.atlassian.crowd.model.user.UserAccessor;
+import com.atlassian.sal.api.user.User;
+import com.atlassian.sal.api.user.UserManager;
+
+/**
+ * FishEye implementation of the UserManager
+ */
 public class DefaultUserManager implements UserManager
 {
+
+    private final UserAccessor userAccessor;
+
+    public DefaultUserManager(final UserAccessor userAccessor)
+    {
+        this.userAccessor = userAccessor;
+    }
+
     public String getRemoteUsername()
     {
-        final CrowdUserDetails user = getUser();
-        if (user == null)
-        {
-            return null;
-        }
-
-        return user.getUsername();
+        return userAccessor.getRemoteUsername();
     }
 
     public boolean isSystemAdmin(final String username)
     {
-        final CrowdUserDetails user = getUser();
-
-        if (user == null)
-        {
-            return false;
-        }
-
-        for (int i = 0; i < user.getAuthorities().length; i++)
-        {
-            if (user.getAuthorities()[i].getAuthority().equals("ROLE_ADMIN"))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return userAccessor.isSystemAdmin(username);
     }
 
     public boolean isUserInGroup(final String username, final String group)
     {
-        throw new UnsupportedOperationException();
+    	throw new UnsupportedOperationException();
     }
 
     public boolean authenticate(final String username, final String password)
     {
-        throw new UnsupportedOperationException();
-    }
-
-    public User getUser(String username)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    public User createUser(User user)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    public User updateUser(User user)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    public void removeUser(String username)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    private CrowdUserDetails getUser()
-    {
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && !(auth instanceof AnonymousAuthenticationToken) && auth.getPrincipal() != null && (auth.getPrincipal() instanceof CrowdUserDetails))
-        {
-            return (CrowdUserDetails) auth.getPrincipal();
-        }
-
-        return null;
+    	throw new UnsupportedOperationException();
     }
 
     public String getRemoteUsername(final HttpServletRequest request)
     {
         // TODO Implement SAL-16
         return getRemoteUsername();
+    }
+
+
+    public User getUser(final String username)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public User createUser(final User user)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public User updateUser(final User user)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public void removeUser(final String username)
+    {
+        throw new UnsupportedOperationException();
     }
 
 }

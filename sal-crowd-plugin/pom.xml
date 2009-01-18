@@ -18,16 +18,54 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                    <Private-Package>com.atlassian.sal.crowd*</Private-Package>
-                    <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
-                    <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
+                        <Private-Package>com.atlassian.sal.crowd*</Private-Package>
+                        <Export-Package>com.atlassian.sal.api*,</Export-Package>
+                        <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
+                        <Embed-Directory>META-INF/lib</Embed-Directory>
+                        <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
+                        <Spring-Context>*;timeout:=60</Spring-Context>
                     </instructions>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.atlassian.seraph</groupId>
+                <artifactId>atlassian-seraph</artifactId>
+                <version>0.38</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>3.0</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    
     <dependencies>
+        <dependency>
+	        <groupId>com.atlassian.studio</groupId>
+	        <artifactId>studio-crowd-plugin</artifactId>
+	        <version>1.6-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-core</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.atlassian.crowd</groupId>
             <artifactId>crowd-api</artifactId>
@@ -35,9 +73,16 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.sal</groupId>
-            <artifactId>sal-core</artifactId>
-            <version>${pom.version}</version>
+            <groupId>servletapi</groupId>
+            <artifactId>servletapi</artifactId>
+            <version>2.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.7</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.sal</groupId>
