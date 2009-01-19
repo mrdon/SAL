@@ -20,11 +20,13 @@ public class ConfluencePluginSettings implements PluginSettings
 
     public Object put(final String key, final Object val)
     {
-    	if ((val instanceof Properties) || (val instanceof List)  || (val instanceof String) )
+    	if ((val instanceof Properties) || (val instanceof List)  || (val instanceof String) || (val == null))
 		{
+    		final Object removed = bandanaManager.getValue(ctx, key);
     		bandanaManager.setValue(ctx, key, val);
-    		return val;
-		} else
+    		return removed;
+		}
+    	else
 		{
             throw new IllegalArgumentException("Property type: "+val.getClass()+" not supported");
 		}
@@ -37,8 +39,6 @@ public class ConfluencePluginSettings implements PluginSettings
 
     public Object remove(final String key)
     {
-        final Object val = get(key);
-        put(key, null);
-        return val;
+        return put(key, null);
     }
 }
