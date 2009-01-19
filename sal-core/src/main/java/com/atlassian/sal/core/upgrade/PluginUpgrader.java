@@ -30,7 +30,7 @@ public class PluginUpgrader
 
     private static final Comparator<PluginUpgradeTask> UPGRADE_TASK_COMPARATOR = new Comparator<PluginUpgradeTask>()
     {
-        public int compare(PluginUpgradeTask t1, PluginUpgradeTask t2)
+        public int compare(final PluginUpgradeTask t1, final PluginUpgradeTask t2)
         {
             if (t1 == null)
             {
@@ -49,7 +49,7 @@ public class PluginUpgrader
         }
     };
 
-    protected PluginUpgrader(Plugin plugin, PluginSettings pluginSettings, List<PluginUpgradeTask> upgradeTasks)
+    protected PluginUpgrader(final Plugin plugin, final PluginSettings pluginSettings, final List<PluginUpgradeTask> upgradeTasks)
     {
         this.plugin = plugin;
         this.pluginSettings = pluginSettings;
@@ -71,7 +71,7 @@ public class PluginUpgrader
         try
         {
             log.info("Upgrading plugin " + plugin.getKey());
-            for (PluginUpgradeTask upgradeTask : upgradeTasks)
+            for (final PluginUpgradeTask upgradeTask : upgradeTasks)
             {
 
                 if (upgradeTask.getBuildNumber() <= getDataBuildNumber())
@@ -80,7 +80,7 @@ public class PluginUpgrader
                     continue;
                 }
 
-                Collection<Message> messages = upgradeTask.doUpgrade();
+                final Collection<Message> messages = upgradeTask.doUpgrade();
 
                 if (messages == null || messages.isEmpty())
                 {
@@ -92,7 +92,7 @@ public class PluginUpgrader
                 }
             }
         }
-        catch (Throwable e)
+        catch (final Throwable e)
         {
             errors.add(new DefaultMessage("upgrade.unexpected.exception", e));
             log.error("Upgrade failed: " + e.getMessage(), e);
@@ -104,21 +104,21 @@ public class PluginUpgrader
     }
 
 
-    protected void upgradeTaskSucceeded(PluginUpgradeTask upgradeTask)
+    protected void upgradeTaskSucceeded(final PluginUpgradeTask upgradeTask)
     {
         setDataBuildNumber(upgradeTask.getBuildNumber());
         log.info("Upgraded plugin " + upgradeTask.getPluginKey() + " to version " + upgradeTask.getBuildNumber() + " - " + upgradeTask.getShortDescription());
     }
 
-    protected void upgradeTaskFailed(PluginUpgradeTask upgradeTask, Collection<Message> messages)
+    protected void upgradeTaskFailed(final PluginUpgradeTask upgradeTask, final Collection<Message> messages)
     {
         errors.addAll(messages);
-        StringBuilder msg = new StringBuilder();
+        final StringBuilder msg = new StringBuilder();
         msg.append("Plugin upgrade failed for ").append(upgradeTask.getPluginKey());
         msg.append(" to version ").append(upgradeTask.getBuildNumber());
         msg.append(" - ").append(upgradeTask.getShortDescription());
         msg.append("\n");
-        for (Message message : messages)
+        for (final Message message : messages)
         {
             msg.append("\t* ").append(message.getKey()).append(" ").append(Arrays.toString(message.getArguments()));
         }
@@ -134,7 +134,7 @@ public class PluginUpgrader
     protected boolean needUpgrade()
     {
     	final PluginUpgradeTask lastUpgradeTask = this.upgradeTasks.get(this.upgradeTasks.size()-1);
-    	int dataBuildNumber = getDataBuildNumber();
+    	final int dataBuildNumber = getDataBuildNumber();
 		log.info("Plugin: " +plugin.getKey() + ", current version: " + dataBuildNumber + ", highest upgrade task found: " + lastUpgradeTask.getBuildNumber() + ".");
     	return lastUpgradeTask.getBuildNumber() > dataBuildNumber;
     }
@@ -145,7 +145,7 @@ public class PluginUpgrader
      */
     protected int getDataBuildNumber()
     {
-        String val = (String) pluginSettings.get(plugin.getKey() + BUILD);
+        final String val = (String) pluginSettings.get(plugin.getKey() + BUILD);
         if (val != null)
         {
             return Integer.parseInt(val);
@@ -156,7 +156,7 @@ public class PluginUpgrader
         }
     }
 
-    protected void setDataBuildNumber(int buildNumber)
+    protected void setDataBuildNumber(final int buildNumber)
     {
         pluginSettings.put(plugin.getKey() + BUILD, String.valueOf(buildNumber));
     }
