@@ -1,14 +1,15 @@
 package com.atlassian.sal.jira.user;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.sal.api.user.UserManager;
 import com.opensymphony.user.EntityNotFoundException;
 import com.opensymphony.user.User;
-import org.apache.log4j.Logger;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * OSUser based user operations
@@ -20,7 +21,7 @@ public class DefaultUserManager implements UserManager
     private final JiraAuthenticationContext authenticationContext;
 
     public DefaultUserManager(final GlobalPermissionManager globalPermissionManager,
-                              final JiraAuthenticationContext authenticationContext)
+        final JiraAuthenticationContext authenticationContext)
     {
         this.globalPermissionManager = globalPermissionManager;
         this.authenticationContext = authenticationContext;
@@ -40,7 +41,7 @@ public class DefaultUserManager implements UserManager
     {
         try
         {
-            final User user = getUserInternal(username);
+            final User user = getUser(username);
             return globalPermissionManager.hasPermission(Permissions.SYSTEM_ADMIN, user);
         }
         catch (final EntityNotFoundException e)
@@ -54,7 +55,7 @@ public class DefaultUserManager implements UserManager
     {
         try
         {
-            final User user = getUserInternal(username);
+            final User user = getUser(username);
             return user.authenticate(password);
         }
         catch (final EntityNotFoundException e)
@@ -65,38 +66,18 @@ public class DefaultUserManager implements UserManager
         return false;
     }
 
-    public com.atlassian.sal.api.user.User getUser(String username)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    public com.atlassian.sal.api.user.User createUser(com.atlassian.sal.api.user.User user)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    public com.atlassian.sal.api.user.User updateUser(com.atlassian.sal.api.user.User user)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    public void removeUser(String username)
-    {
-        throw new UnsupportedOperationException();
-    }
-
     /**
      * Returns whether the user is in the specify group
      *
      * @param username The username to check
-     * @param group    The group to check
+     * @param group The group to check
      * @return True if the user is in the specified group
      */
     public boolean isUserInGroup(final String username, final String group)
     {
         try
         {
-            return getUserInternal(username).inGroup(group);
+            return getUser(username).inGroup(group);
         }
         catch (final EntityNotFoundException enfe)
         {
@@ -105,7 +86,7 @@ public class DefaultUserManager implements UserManager
     }
 
     //package level protected for testing
-    User getUserInternal(final String username) throws EntityNotFoundException
+    User getUser(final String username) throws EntityNotFoundException
     {
         return com.opensymphony.user.UserManager.getInstance().getUser(username);
     }
