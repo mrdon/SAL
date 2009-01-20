@@ -40,7 +40,7 @@
     <component key="requestFactory" class="com.atlassian.sal.core.net.HttpClientRequestFactory" public="true">
         <interface>com.atlassian.sal.api.net.RequestFactory</interface>
     </component>
-    <component key="i18nResolver" class="com.atlassian.sal.fisheye.message.NoOpI18nResolver" public="true">
+    <component key="i18nResolver" class="com.atlassian.sal.fisheye.message.FishEyeI18nResolver" public="true">
         <interface>com.atlassian.sal.api.message.I18nResolver</interface>
     </component>
     <component key="projectManager" class="com.atlassian.sal.fisheye.project.FisheyeProjectManager"  public="true">
