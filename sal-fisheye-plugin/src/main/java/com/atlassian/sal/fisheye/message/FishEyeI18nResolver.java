@@ -5,25 +5,29 @@ import java.util.*;
 import java.text.MessageFormat;
 
 import com.atlassian.sal.core.message.AbstractI18nResolver;
+import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.elements.ResourceDescriptor;
-import com.atlassian.plugin.event.PluginEventManager;
-import com.atlassian.plugin.event.PluginEventListener;
-import com.atlassian.plugin.event.events.PluginDisabledEvent;
-import com.atlassian.plugin.event.events.PluginEnabledEvent;
 
 /**
  * This is a copy of the Refimpl resolver, and is in place here until FishEye realises that not everyone speaks English
  */
-public class FishEyeI18nResolver extends AbstractI18nResolver
+public class FishEyeI18nResolver extends AbstractI18nResolver implements LifecycleAware
 {
-    private final Map<String, Iterable<ResourceBundle>> pluginResourceBundles =
-        new HashMap<String, Iterable<ResourceBundle>>();
+    private final Map<String, Iterable<ResourceBundle>> pluginResourceBundles = new HashMap<String, Iterable<ResourceBundle>>();
+    private final PluginAccessor pluginAccessor;
 
-    public FishEyeI18nResolver(PluginAccessor pluginAccessor, PluginEventManager pluginEventManager)
+    public FishEyeI18nResolver(PluginAccessor pluginAccessor)
     {
-        pluginEventManager.register(this);
+        this.pluginAccessor = pluginAccessor;
+    }
+
+    /**
+     * Called when the application has started or has been restored from backup
+     */
+    public void onStart()
+    {
         addPluginResourceBundles(pluginAccessor.getPlugins());
     }
 
@@ -51,18 +55,6 @@ public class FishEyeI18nResolver extends AbstractI18nResolver
         return message;
     }
 
-    @PluginEventListener
-    public void pluginEnabled(PluginEnabledEvent event)
-    {
-        addPluginResourceBundles(event.getPlugin());
-    }
-
-    @PluginEventListener
-    public void pluginDisabled(PluginDisabledEvent event)
-    {
-        removePluginResourceBundles(event.getPlugin());
-    }
-
     private void addPluginResourceBundles(Iterable<Plugin> plugins)
     {
         for (Plugin plugin : plugins)
@@ -79,8 +71,7 @@ public class FishEyeI18nResolver extends AbstractI18nResolver
         {
             try
             {
-                bundles.add(ResourceBundle.getBundle(descriptor.getLocation(), Locale.getDefault(),
-                    plugin.getClassLoader()));
+                bundles.add(ResourceBundle.getBundle(descriptor.getLocation(), Locale.getDefault(), plugin.getClassLoader()));
             }
             catch (MissingResourceException e)
             {
@@ -89,10 +80,4 @@ public class FishEyeI18nResolver extends AbstractI18nResolver
         }
         pluginResourceBundles.put(plugin.getKey(), bundles);
     }
-
-    private void removePluginResourceBundles(Plugin plugin)
-    {
-        pluginResourceBundles.remove(plugin.getKey());
-    }
-
 }
