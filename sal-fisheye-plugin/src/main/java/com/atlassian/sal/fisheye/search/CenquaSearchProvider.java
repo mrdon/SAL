@@ -3,13 +3,13 @@ package com.atlassian.sal.fisheye.search;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.search.SearchProvider;
 import com.atlassian.sal.api.search.SearchResults;
 import com.atlassian.sal.api.search.parameter.SearchParameter;
 import com.atlassian.sal.api.search.query.SearchQuery;
 import com.atlassian.sal.api.search.query.SearchQueryParser;
-import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.core.message.DefaultMessage;
 
 /**
@@ -18,18 +18,18 @@ public class CenquaSearchProvider implements SearchProvider
 {
     private static final String FISH_EYE = "FishEye";
     private static final String CRUCIBLE = "Crucible";
-    private final SearchQueryParser queryParser;
+    private final SearchQueryParser searchQueryParser;
     private final ApplicationProperties applicationProperties;
 
-    public CenquaSearchProvider(SearchQueryParser queryParser, ApplicationProperties applicationProperties)
+    public CenquaSearchProvider(final SearchQueryParser queryParser, final ApplicationProperties applicationProperties)
     {
-        this.queryParser = queryParser;
+        this.searchQueryParser = queryParser;
         this.applicationProperties = applicationProperties;
     }
 
-    public SearchResults search(String username, String searchString)
+    public SearchResults search(final String username, final String searchString)
     {
-        final SearchQuery searchQuery = queryParser.parse(searchString);
+        final SearchQuery searchQuery = searchQueryParser.parse(searchString);
         final List<Message> errors = validateQuery(searchQuery);
         if (!errors.isEmpty())
         {
@@ -49,7 +49,7 @@ public class CenquaSearchProvider implements SearchProvider
         return null;
     }
 
-    private List<Message> validateQuery(SearchQuery searchQuery)
+    private List<Message> validateQuery(final SearchQuery searchQuery)
     {
         final List<Message> errors = new ArrayList<Message>();
         final String applicationParameter = searchQuery.getParameter(SearchParameter.APPLICATION);
@@ -67,11 +67,11 @@ public class CenquaSearchProvider implements SearchProvider
 
     SearchProvider getFisheyeSearchProvider()
     {
-        return new FisheyeSearchProvider();
+        return new FisheyeSearchProvider(searchQueryParser, applicationProperties);
     }
 
     SearchProvider getCrucibleSearchProvider()
     {
-        return new CrucibleSearchProvider(queryParser, applicationProperties);
+        return new CrucibleSearchProvider(searchQueryParser, applicationProperties);
     }
 }
