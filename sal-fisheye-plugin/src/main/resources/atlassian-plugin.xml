@@ -42,6 +42,7 @@
     </component>
     <component key="i18nResolver" class="com.atlassian.sal.fisheye.message.FishEyeI18nResolver" public="true">
         <interface>com.atlassian.sal.api.message.I18nResolver</interface>
+        <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
     </component>
     <component key="projectManager" class="com.atlassian.sal.fisheye.project.FisheyeProjectManager"  public="true">
         <interface>com.atlassian.sal.api.project.ProjectManager</interface>
