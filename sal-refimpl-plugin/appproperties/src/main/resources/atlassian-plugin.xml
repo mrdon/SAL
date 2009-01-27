@@ -1,0 +1,13 @@
+<atlassian-plugin key="com.atlassian.sal.refimpl.appproperties" name="${project.name}" system="true" pluginsVersion="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${pom.version}</version>
+        <vendor name="Atlassian Software Systems Pty Ltd" url="http://www.atlassian.com"/>
+    </plugin-info>
+
+    <component name="Application Properties" key="applicationProperties" class="com.atlassian.sal.refimpl.RefimplApplicationProperties"
+               system="true" public="true">
+        <interface>com.atlassian.sal.api.ApplicationProperties</interface>
+    </component>
+</atlassian-plugin>
+
