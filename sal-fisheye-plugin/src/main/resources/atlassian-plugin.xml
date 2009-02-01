@@ -48,4 +48,8 @@
         <interface>com.atlassian.sal.api.project.ProjectManager</interface>
     </component>
 
+    <component key="fisheyeAccessor" class="com.atlassian.sal.fisheye.appconfig.FisheyeAccessorFactoryBean" public="true">
+        <interface>com.atlassian.sal.fisheye.appconfig.FisheyeAccessor</interface>
+    </component>
+
 </atlassian-plugin>
