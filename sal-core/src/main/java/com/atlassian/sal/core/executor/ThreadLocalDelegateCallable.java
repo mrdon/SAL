@@ -1,11 +1,11 @@
 package com.atlassian.sal.core.executor;
 
-import com.atlassian.sal.core.executor.ThreadLocalContextManager;
-
 import java.util.concurrent.Callable;
 
 /**
  * A wrapping callable that copies the thread local state into the calling code
+ *
+ * @since 2.0
  */
 class ThreadLocalDelegateCallable<T> implements Callable<T>
 {
@@ -14,6 +14,12 @@ class ThreadLocalDelegateCallable<T> implements Callable<T>
     private final Object context;
     private final ClassLoader contextClassLoader;
 
+    /**
+     * Create a new callable
+     *
+     * @param manager The context manager to get the context from
+     * @param delegate The callable to delegate to
+     */
     ThreadLocalDelegateCallable(ThreadLocalContextManager manager, Callable<T> delegate)
     {
         this.delegate = delegate;

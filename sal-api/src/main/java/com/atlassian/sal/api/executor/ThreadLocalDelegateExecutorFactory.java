@@ -8,6 +8,8 @@ import java.util.concurrent.ScheduledExecutorService;
 /**
  * Factory to create {@link Executor} instances that delegate to a specific Executor and ensure the executed code runs
  * in the same thread local context.
+ *
+ * @since 2.0
  */
 public interface ThreadLocalDelegateExecutorFactory
 {

@@ -8,6 +8,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * Executor service that wraps executing callables and runnables in a wrapper that transfers the thread local state of
  * the caller to the thread of the executing task.
+ *
+ * @since 2.0
  */
 public class ThreadLocalDelegateExecutorService extends AbstractExecutorService
 {
