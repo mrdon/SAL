@@ -1,15 +1,5 @@
 package com.atlassian.sal.jira.search;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import junit.framework.TestCase;
-
-import org.easymock.EasyMock;
-import org.easymock.MockControl;
-import org.easymock.classextension.MockClassControl;
-
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.issue.search.SearchContext;
@@ -23,26 +13,33 @@ import com.atlassian.jira.issue.transport.FieldValuesHolder;
 import com.atlassian.jira.issue.transport.impl.FieldValuesHolderImpl;
 import com.atlassian.jira.issue.transport.impl.IssueNavigatorActionParams;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.search.SearchMatch;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.core.search.query.DefaultSearchQueryParser;
-import com.atlassian.sal.testresources.component.MockComponentLocator;
 import com.opensymphony.user.User;
+import junit.framework.TestCase;
+import org.easymock.EasyMock;
+import org.easymock.MockControl;
+import org.easymock.classextension.MockClassControl;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
  */
 public class TestJiraSearchProvider extends TestCase
 {
-	@Override
-	protected void setUp() throws Exception
-	{
-		super.setUp();
-		MockComponentLocator.create(new DefaultSearchQueryParser(), EasyMock.createNiceMock(UserManager.class));
-	}
+    @Override
+    protected void setUp() throws Exception
+    {
+        super.setUp();
+    }
+
     public void testNoResults() throws SearchException
     {
         final MockControl mockSearchRequestControl = MockClassControl.createControl(SearchRequest.class);
@@ -72,7 +69,7 @@ public class TestJiraSearchProvider extends TestCase
 
         final MockControl mockSearchRequestFactoryControl = MockControl.createControl(SearchRequestFactory.class);
         final SearchRequestFactory mockSearchRequestFactory = (SearchRequestFactory) mockSearchRequestFactoryControl.getMock();
-        mockSearchRequestFactory.create(null, null, fieldValuesHolder, null);
+        mockSearchRequestFactory.create(null, null, fieldValuesHolder, null, null);
         mockSearchRequestFactoryControl.setDefaultReturnValue(mockSearchRequest);
         mockSearchRequestFactoryControl.replay();
 
@@ -82,38 +79,46 @@ public class TestJiraSearchProvider extends TestCase
         mockSearchRequestManagerControl.setDefaultReturnValue(mockSearchRequest);
         mockSearchRequestManagerControl.replay();
 
-        final JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchProvider, null, null, null, mockSearchRequestFactory, null)
+        final JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchProvider, null, null, mockSearchRequestFactory, null, EasyMock.createNiceMock(UserUtil.class), new DefaultSearchQueryParser())
         {
             @Override
-			void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors, User remoteUser)
+            void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors, User remoteUser)
             {
                 fieldValuesHolder.put("query", "query");
             }
 
             @Override
-			SearchContext getSearchContext()
+            SearchContext getSearchContext()
             {
                 return null;
             }
 
             @Override
-			ApplicationProperties getWebProperties()
+            ApplicationProperties getWebProperties()
             {
                 return null;
             }
 
             @Override
-			User getUser(String username)
+            User getUser(String username)
             {
                 return null;
             }
+
             @Override
-			void setAuthenticationContextUser(User user) {}
+            void setAuthenticationContextUser(User user)
+            {}
 
             @Override
             User getAuthenticationContextUser()
             {
-            	return null;
+                return null;
+            }
+
+            @Override
+            List<String> getIssueKeysFromString(final String query)
+            {
+                return Collections.emptyList();
             }
         };
 
@@ -143,40 +148,47 @@ public class TestJiraSearchProvider extends TestCase
         mockQueryCreatorControl.setDefaultReturnValue("?query=query&summary=true");
         mockQueryCreatorControl.replay();
 
-        final JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, null, null, null, null, null, null)
+        final JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, null, null, null, null, null, EasyMock.createNiceMock(UserUtil.class), new DefaultSearchQueryParser())
         {
             @Override
-			void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors, User user)
+            void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors, User user)
             {
                 errors.addError("query", "invalid query string provided");
             }
 
             @Override
-			SearchContext getSearchContext()
+            SearchContext getSearchContext()
             {
                 return null;
             }
 
             @Override
-			ApplicationProperties getWebProperties()
+            ApplicationProperties getWebProperties()
             {
                 return null;
             }
 
 
             @Override
-			User getUser(String username)
+            User getUser(String username)
             {
                 return null;
             }
-            
+
             @Override
-			void setAuthenticationContextUser(User user) {}
+            void setAuthenticationContextUser(User user)
+            {}
 
             @Override
             User getAuthenticationContextUser()
             {
-            	return null;
+                return null;
+            }
+
+            @Override
+            List<String> getIssueKeysFromString(final String query)
+            {
+                return Collections.emptyList();
             }
         };
 
@@ -240,7 +252,7 @@ public class TestJiraSearchProvider extends TestCase
 
         final MockControl mockSearchRequestFactoryControl = MockControl.createControl(SearchRequestFactory.class);
         final SearchRequestFactory mockSearchRequestFactory = (SearchRequestFactory) mockSearchRequestFactoryControl.getMock();
-        mockSearchRequestFactory.create(null, null, fieldValuesHolder, null);
+        mockSearchRequestFactory.create(null, null, fieldValuesHolder, null, null);
         mockSearchRequestFactoryControl.setDefaultReturnValue(mockSearchRequest);
         mockSearchRequestFactoryControl.replay();
 
@@ -250,22 +262,22 @@ public class TestJiraSearchProvider extends TestCase
         mockSearchRequestManagerControl.setDefaultReturnValue(mockSearchRequest);
         mockSearchRequestManagerControl.replay();
 
-        final JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchProvider, null, null, null, mockSearchRequestFactory, null)
+        final JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchProvider, null, null, mockSearchRequestFactory, null, EasyMock.createNiceMock(UserUtil.class), new DefaultSearchQueryParser())
         {
             @Override
-			void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors, User user)
+            void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors, User user)
             {
                 fieldValuesHolder.put("query", "query");
             }
 
             @Override
-			SearchContext getSearchContext()
+            SearchContext getSearchContext()
             {
                 return null;
             }
 
             @Override
-			ApplicationProperties getWebProperties()
+            ApplicationProperties getWebProperties()
             {
                 MockControl mockWebPropertiesControl = MockControl.createControl(ApplicationProperties.class);
                 ApplicationProperties mockApplicationProperties = (ApplicationProperties) mockWebPropertiesControl.getMock();
@@ -279,17 +291,25 @@ public class TestJiraSearchProvider extends TestCase
             }
 
             @Override
-			User getUser(String username)
+            User getUser(String username)
             {
                 return null;
             }
+
             @Override
-			void setAuthenticationContextUser(User user) {}
+            void setAuthenticationContextUser(User user)
+            {}
 
             @Override
             User getAuthenticationContextUser()
             {
-            	return null;
+                return null;
+            }
+
+            @Override
+            List<String> getIssueKeysFromString(final String query)
+            {
+                return Collections.emptyList();
             }
         };
 

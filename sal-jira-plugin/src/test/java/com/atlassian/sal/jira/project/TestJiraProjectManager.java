@@ -36,7 +36,7 @@ public class TestJiraProjectManager extends TestCase
 
             public MockProject(String key)
             {
-                super(null, null, null);
+                super(null);
                 this.key = key;
             }
 

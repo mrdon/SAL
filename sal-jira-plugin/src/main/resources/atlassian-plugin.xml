@@ -1,80 +1,50 @@
-<atlassian-plugin key="com.atlassian.sal.jira" name="${project.name}" system="true">
+<atlassian-plugin key="com.atlassian.sal.jira" name="${project.name}" system="true" pluginsVersion="2">
     <plugin-info>
         <description>${project.description}</description>
+        <vendor name="Atlassian Software Systems" url="http://www.atlassian.com"/>
         <version>${pom.version}</version>
-        <vendor name="Atlassian Software Systems Pty Ltd" url="http://www.atlassian.com"/>
     </plugin-info>
 
-
-    <component key="i18nResolver" name="I18n Resolver"
-               class="com.atlassian.sal.jira.message.JiraI18nResolver"
-               system="true">
+    <component key="i18nResolver" name="I18n Resolver" class="com.atlassian.sal.jira.message.JiraI18nResolver" public="true">
         <interface>com.atlassian.sal.api.message.I18nResolver</interface>
     </component>
-    <component key="pluginSettingsFactory" name="Plugin settings factory"
-               class="com.atlassian.sal.jira.pluginsettings.JiraPluginSettingsFactory"
-               system="true">
+    <component key="pluginSettingsFactory" name="Plugin settings factory" class="com.atlassian.sal.jira.pluginsettings.JiraPluginSettingsFactory" public="true">
         <interface>com.atlassian.sal.api.pluginsettings.PluginSettingsFactory</interface>
     </component>
-    <component key="componentLocator" name="component locator"
-               class="com.atlassian.sal.jira.component.JiraComponentLocator"
-               system="true">
+    <component key="componentLocator" name="component locator" class="com.atlassian.sal.core.component.DefaultComponentLocator" public="true">
         <interface>com.atlassian.sal.api.component.ComponentLocator</interface>
     </component>
-    <component key="pluginUpgradeManager" name="pluginUpgradeManager"
-               class="com.atlassian.sal.jira.upgrade.JiraPluginUpgradeManager"
-               system="true">
-        <interface>com.atlassian.sal.api.upgrade.PluginUpgradeManager</interface>
-        <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
+    <component name="Certificate Factory" key="certificateFactory" class="com.atlassian.sal.jira.trusted.JiraCertificateFactory" public="true">
+        <interface>com.atlassian.sal.core.trusted.CertificateFactory</interface>
     </component>
-    <component name="Certificate Factory" key="certificateFactory"
-               class="com.atlassian.sal.jira.trusted.JiraCertificateFactory" system="true"/>
-    <component name="Application Properties" key="applicationProperties" class="com.atlassian.sal.jira.JiraApplicationProperties"
-               system="true">
+    <component name="Application Properties" key="pluginApplicationProperties" class="com.atlassian.sal.jira.JiraApplicationProperties" public="true">
         <interface>com.atlassian.sal.api.ApplicationProperties</interface>
     </component>
-    <component key="salUserManager" name="User Manager"
-               class="com.atlassian.sal.jira.user.DefaultUserManager"
-               system="true">
+    <component key="pluginUserManager" name="User Manager" class="com.atlassian.sal.jira.user.DefaultUserManager" public="true">
         <interface>com.atlassian.sal.api.user.UserManager</interface>
     </component>
-    <component name="License Handler" key="licenseHandler"
-               class="com.atlassian.sal.jira.license.JiraLicenseHandler" system="true">
+    <component name="License Handler" key="licenseHandler" class="com.atlassian.sal.jira.license.JiraLicenseHandler" public="true">
         <interface>com.atlassian.sal.api.license.LicenseHandler</interface>
     </component>
-    <component name="Plugin Scheduler" key="pluginScheduler"
-        class="com.atlassian.sal.jira.scheduling.JiraPluginScheduler" system="true">
+    <component name="Plugin Scheduler" key="pluginScheduler" class="com.atlassian.sal.jira.scheduling.JiraPluginScheduler" public="true">
         <interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
     </component>
-    <component name="Plugin Lifecycle Manager" key="lifecycleManager"
-               class="com.atlassian.sal.jira.lifecycle.JiraLifecycleManager" system="true">
-        <interface>com.atlassian.sal.api.lifecycle.LifecycleManager</interface>
-    </component>
-    <component name="NoOp Transaction Template" key="noopTransactionTemplate"
-               class="com.atlassian.sal.core.transaction.NoOpTransactionTemplate" system="true">
+    <component name="NoOp Transaction Template" key="transactionTemplate" class="com.atlassian.sal.core.transaction.HostContextTransactionTemplate" public="true">
         <interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>
     </component>
-    <component name="Jira Search Provider" key="jiraSearchProvider"
-               class="com.atlassian.sal.jira.search.JiraSearchProvider" system="true">
+    <component name="Jira Search Provider" key="jiraSearchProvider" class="com.atlassian.sal.jira.search.JiraSearchProvider" public="true">
         <interface>com.atlassian.sal.api.search.SearchProvider</interface>
     </component>
-    <component name="Search Query Parser" key="searchQueryParser" 
-            class="com.atlassian.sal.core.search.query.DefaultSearchQueryParser" system="true">
+    <component name="Search Query Parser" key="searchQueryParser" class="com.atlassian.sal.core.search.query.DefaultSearchQueryParser" public="true">
             <interface>com.atlassian.sal.api.search.query.SearchQueryParser</interface>
     </component>
-    
-    <component name="Request Factory" key="requestFactory" 
-               class="com.atlassian.sal.core.net.HttpClientRequestFactory" system="true">
+    <component name="Request Factory" key="requestFactory" class="com.atlassian.sal.core.net.HttpClientRequestFactory" public="true">
         <interface>com.atlassian.sal.api.net.RequestFactory</interface>
     </component>
-
-    <component name="JIRA Project Manager" key="jiraProjectManager"
-               class="com.atlassian.sal.jira.project.JiraProjectManager" system="true">
+    <component name="JIRA Project Manager" key="jiraProjectManager" class="com.atlassian.sal.jira.project.JiraProjectManager" public="true">
         <interface>com.atlassian.sal.api.project.ProjectManager</interface>
     </component>
-
-    <component name="JIRA Thread Local Delegate Executor Factory" key="jiraThreadLocalDelegateExecutorFactory"
-               class="com.atlassian.sal.jira.executor.JiraThreadLocalDelegateExecutorFactory" system="true">
+    <component name="JIRA Thread Local Delegate Executor Factory" key="jiraThreadLocalDelegateExecutorFactory" class="com.atlassian.sal.jira.executor.JiraThreadLocalDelegateExecutorFactory" public="true">
         <interface>com.atlassian.sal.api.executor.ThreadLocalDelegateExecutorFactory</interface>
     </component>
 </atlassian-plugin>

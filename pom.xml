@@ -1,8 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.sal</groupId>
     <artifactId>sal-parent</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <version>2.1.0-SNAPSHOT</version>
 
     <name>Shared Access Layer POM</name>
     <packaging>pom</packaging>
@@ -20,7 +21,7 @@
         <atlassian-fisheye-api.version>1.6.5.2-359</atlassian-fisheye-api.version>
         <confluence.version>2.10.1</confluence.version>
         <crowd.version>1.6</crowd.version>
-        <jira.version>3.13</jira.version>
+        <jira.version>4.0-SNAPSHOT</jira.version>
     </properties>
 
     <modules>

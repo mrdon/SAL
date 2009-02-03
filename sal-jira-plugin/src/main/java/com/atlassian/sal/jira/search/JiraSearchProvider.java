@@ -1,18 +1,5 @@
 package com.atlassian.sal.jira.search;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-
-import javax.servlet.http.HttpUtils;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import com.atlassian.jira.exception.DataAccessException;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
@@ -31,6 +18,7 @@ import com.atlassian.jira.issue.transport.impl.IssueNavigatorActionParams;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.JiraKeyUtils;
 import com.atlassian.jira.util.SimpleErrorCollection;
@@ -48,9 +36,17 @@ import com.atlassian.sal.api.search.query.SearchQueryParser;
 import com.atlassian.sal.core.message.DefaultMessage;
 import com.atlassian.sal.core.search.BasicResourceType;
 import com.atlassian.sal.core.search.BasicSearchMatch;
-import com.opensymphony.user.EntityNotFoundException;
 import com.opensymphony.user.User;
-import com.opensymphony.user.UserManager;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import javax.servlet.http.HttpUtils;
 
 /**
  *
@@ -61,35 +57,37 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
     private final IssueSearcherManager issueSearcherManager;
     private final QueryCreator queryCreator;
     private final SearchProvider searchProvider;
-    private final UserManager userManager;
     private final ProjectManager projectManager;
     private final IssueManager issueManager;
     private final SearchRequestFactory searchRequestFactory;
 	private final JiraAuthenticationContext authenticationContext;
+    private final UserUtil userUtil;
+    private final SearchQueryParser searchQueryParser;
 
 
     public JiraSearchProvider(IssueSearcherManager issueSearcherManager,
         QueryCreator queryCreator,
         com.atlassian.jira.issue.search.SearchProvider searchProvider,
-        UserManager userManager, ProjectManager projectManager, IssueManager issueManager,
-        SearchRequestFactory searchRequestFactory, JiraAuthenticationContext authenticationContext)
+        ProjectManager projectManager, IssueManager issueManager,
+        SearchRequestFactory searchRequestFactory, JiraAuthenticationContext authenticationContext, UserUtil userUtil,
+        SearchQueryParser searchQueryParser)
     {
         this.issueSearcherManager = issueSearcherManager;
         this.queryCreator = queryCreator;
         this.searchProvider = searchProvider;
-        this.userManager = userManager;
         this.projectManager = projectManager;
         this.issueManager = issueManager;
         this.searchRequestFactory = searchRequestFactory;
 		this.authenticationContext = authenticationContext;
+        this.userUtil = userUtil;
+        this.searchQueryParser = searchQueryParser;
     }
 
     public SearchResults search(String username, String searchString)
     {
-        final SearchQueryParser queryParser = ComponentLocator.getComponent(SearchQueryParser.class);
-        final SearchQuery searchQuery = queryParser.parse(searchString);
+        final SearchQuery searchQuery = searchQueryParser.parse(searchString);
         final int maxHits = searchQuery.getParameter(SearchParameter.MAXHITS, Integer.MAX_VALUE);
-        
+
         final User remoteUser = getUser(username);
         final User oldAuthenticationContextUser = getAuthenticationContextUser();
         try {
@@ -101,7 +99,7 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
         	final ErrorCollection errors = new SimpleErrorCollection();
         	// See if the search String contains a JIRA issue
         	final Collection<Issue> issues = getIssuesFromQuery(searchQuery.getSearchString());
-        	
+
         	final SearchRequest searchRequest = createSearchRequest(searchQuery, errors, remoteUser);
         	if (errors.hasAnyErrors())
         	{
@@ -113,7 +111,7 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
         		}
         		return new SearchResults(errorMessages);
         	}
-        	
+
         	return performSearch(maxHits, searchRequest, issues, remoteUser);
         } finally
         {
@@ -135,11 +133,11 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
                 searchProvider.search(searchRequest, remoteUser, pagerFilter);
             issues.addAll(searchResults.getIssues());
             final int numResults = searchResults.getTotal() - searchResults.getIssues().size()+issues.size();
-            
+
             List<Issue> trimedResults = new ArrayList<Issue>(issues);
             if (trimedResults.size() > maxHits)
             	trimedResults = trimedResults.subList(0, maxHits);
-            	
+
 			return new SearchResults(transformResults(trimedResults), numResults,
                 System.currentTimeMillis() - startTime);
         }
@@ -152,14 +150,7 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
         }
         finally
         {
-            try
-            {
-                ThreadLocalSearcherCache.resetSearchers();
-            }
-            catch (final IOException e)
-            {
-                log.error("Error closing searchers", e);
-            }
+            ThreadLocalSearcherCache.resetSearchers();
         }
     }
 
@@ -193,12 +184,12 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
             return null;
         }
 
-        return searchRequestFactory.create(null, remoteUser, holder, getSearchContext());
+        return searchRequestFactory.create(null, remoteUser, holder, null, getSearchContext());
     }
 
     private Collection<Issue> getIssuesFromQuery(String query)
     {
-        final Collection<String> issueKeys = JiraKeyUtils.getIssueKeysFromString(query);
+        final Collection<String> issueKeys = getIssueKeysFromString(query);
         // Need to ensure issue order is maintained, while also ensuring uniqueness, hence LinkedHashSet
         final Collection<Issue> issues = new LinkedHashSet<Issue>();
         for (final String issueKey : issueKeys)
@@ -210,6 +201,11 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
             }
         }
         return issues;
+    }
+
+    List<String> getIssueKeysFromString(final String query) 
+    {
+        return JiraKeyUtils.getIssueKeysFromString(query);
     }
 
     private Issue getIssueByKey(String issueKey)
@@ -246,8 +242,8 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
         for (final Iterator iterator = searchers.iterator(); iterator.hasNext();)
         {
             final IssueSearcher searcher = (IssueSearcher) iterator.next();
-            searcher.populateFromParams(fieldValuesHolder, actionParams);
-            searcher.validateParams(searchContext, fieldValuesHolder, new I18nBean(remoteUser), errors);
+            searcher.getSearchInputTransformer().populateFromParams(fieldValuesHolder, actionParams);
+            searcher.getSearchInputTransformer().validateParams(searchContext, fieldValuesHolder, new I18nBean(remoteUser), errors);
         }
     }
 
@@ -267,14 +263,7 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
         {
             return null;
         }
-        try
-        {
-            return userManager.getUser(username);
-        }
-        catch (final EntityNotFoundException e)
-        {
-            return null;
-        }
+        return userUtil.getUser(username);
     }
 
     void setAuthenticationContextUser(final User remoteUser)

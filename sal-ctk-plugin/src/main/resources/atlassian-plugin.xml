@@ -5,7 +5,10 @@
         </description>
         <vendor name="Atlassian Software Systems" url="http://www.atlassian.com"/>
         <version>${pom.version}</version>
-   	</plugin-info>
+        <bundle-instructions>
+            <Require-Bundle>system.bundle</Require-Bundle>
+        </bundle-instructions>
+    </plugin-info>
 
     <servlet key="ctk" class="com.atlassian.sal.ctk.CtkServlet">
         <url-pattern>/ctk*</url-pattern>
