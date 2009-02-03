@@ -184,7 +184,7 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
             return null;
         }
 
-        return searchRequestFactory.create(null, remoteUser, holder, getSearchContext());
+        return searchRequestFactory.create(null, remoteUser, holder, null, getSearchContext());
     }
 
     private Collection<Issue> getIssuesFromQuery(String query)
