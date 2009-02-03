@@ -69,7 +69,7 @@ public class TestJiraSearchProvider extends TestCase
 
         final MockControl mockSearchRequestFactoryControl = MockControl.createControl(SearchRequestFactory.class);
         final SearchRequestFactory mockSearchRequestFactory = (SearchRequestFactory) mockSearchRequestFactoryControl.getMock();
-        mockSearchRequestFactory.create(null, null, fieldValuesHolder, null);
+        mockSearchRequestFactory.create(null, null, fieldValuesHolder,null,  null);
         mockSearchRequestFactoryControl.setDefaultReturnValue(mockSearchRequest);
         mockSearchRequestFactoryControl.replay();
 
@@ -252,7 +252,7 @@ public class TestJiraSearchProvider extends TestCase
 
         final MockControl mockSearchRequestFactoryControl = MockControl.createControl(SearchRequestFactory.class);
         final SearchRequestFactory mockSearchRequestFactory = (SearchRequestFactory) mockSearchRequestFactoryControl.getMock();
-        mockSearchRequestFactory.create(null, null, fieldValuesHolder, null);
+        mockSearchRequestFactory.create(null, null, fieldValuesHolder, null, null);
         mockSearchRequestFactoryControl.setDefaultReturnValue(mockSearchRequest);
         mockSearchRequestFactoryControl.replay();
 
