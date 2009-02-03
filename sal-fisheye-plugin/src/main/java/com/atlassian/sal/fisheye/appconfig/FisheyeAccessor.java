@@ -2,16 +2,18 @@ package com.atlassian.sal.fisheye.appconfig;
 
 import java.util.List;
 
-import com.atlassian.fisheye.event.CommitEvent;
-import com.cenqua.fisheye.rep.ChangeSet;
-
 public interface FisheyeAccessor
 {
-    ChangeSet getCommitChangeSet(final CommitEvent commitEvent);
-
-    boolean repositoryExists(String repositoryName);
+    /* Repositories */
 
     void createRepository(String name, String description, String svnUrl, String svnUsername, String svnPassword, List<Linker> linkers) throws FisheyeAccessorException;
+    void deleteRepository(String key) throws FisheyeAccessorException;
+    void setRepositoryLinkers(String repositoryName, List<Linker> linkers) throws FisheyeAccessorException;
+    void enableAnonymousAccess(boolean enable) throws FisheyeAccessorException;
+    boolean repositoryExists(String repositoryName);
+
+    /* Other stuff */
+    String getSiteURL();
 
     interface Linker
     {
@@ -20,8 +22,7 @@ public interface FisheyeAccessor
         String getDescription();
     }
 
-    String getSiteURL();
-
+    /* Exceptions */
     public class FisheyeAccessorException extends Exception
     {
         public FisheyeAccessorException()
@@ -46,5 +47,5 @@ public interface FisheyeAccessor
 
     }
 
-    void deleteRepository(String key) throws FisheyeAccessorException;
+
 }

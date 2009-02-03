@@ -3,57 +3,24 @@ package com.atlassian.sal.fisheye.appconfig;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
-import com.atlassian.fisheye.event.CommitEvent;
 import com.cenqua.fisheye.AppConfig;
-import com.cenqua.fisheye.cache.RevisionCache;
 import com.cenqua.fisheye.config.ConfigException;
 import com.cenqua.fisheye.config.RepositoryManager;
 import com.cenqua.fisheye.config.RootConfig;
+import com.cenqua.fisheye.config1.ConfigDocument;
 import com.cenqua.fisheye.config1.LinkerSimpleType;
 import com.cenqua.fisheye.config1.LinkerType;
+import com.cenqua.fisheye.config1.RepSecurityType;
 import com.cenqua.fisheye.config1.RepositoryType;
 import com.cenqua.fisheye.config1.SvnRepType;
-import com.cenqua.fisheye.rep.ChangeSet;
-import com.cenqua.fisheye.rep.DbException;
-import com.cenqua.fisheye.rep.RepositoryEngine;
 import com.cenqua.fisheye.rep.RepositoryHandle;
-import com.cenqua.fisheye.rep.RepositoryHandle.StateException;
-import com.cenqua.fisheye.util.Disposer;
 import com.cenqua.fisheye.util.XmlbeansUtil;
 import com.cenqua.fisheye.web.admin.actions.svn.SvnSymbolicHelper;
 
 public class DefaultFisheyeAccessor implements FisheyeAccessor
 {
-    private static final Logger log = Logger.getLogger(DefaultFisheyeAccessor.class);
     private static final int REPO_CHILD_INDENT = 6;
     private static final int REPO_INDENT = 2;
-
-    public ChangeSet getCommitChangeSet(final CommitEvent commitEvent)
-    {
-        try
-        {
-            Disposer.pushThreadInstance();
-            final String repositoryName = commitEvent.getRepositoryName();
-            final String changeSetId = commitEvent.getChangeSetId();
-            final RepositoryManager repositoryManager = AppConfig.getsConfig().getRepositoryManager();
-            final RepositoryHandle repositoryHandle = repositoryManager.getRepository(repositoryName);
-            final RepositoryEngine repositoryEngine = repositoryHandle.acquireEngine();
-            final RevisionCache revisionCache = repositoryEngine.getRevisionCache();
-            return revisionCache.getChangeSet(changeSetId);
-        } catch (final DbException e)
-        {
-            log.error("Error getting changeset", e);
-        } catch (final StateException e)
-        {
-            log.error("Error getting changeset", e);
-        } finally
-        {
-            Disposer.popThreadInstance();
-        }
-        return null;
-    }
 
     public boolean repositoryExists(final String repName)
     {
@@ -61,7 +28,6 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
         final RepositoryHandle handle = rootConfig.getRepositoryManager().getRepository(repName);
         return handle != null;
     }
-
 
     public String getSiteURL()
     {
@@ -142,14 +108,54 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
         }
     }
 
+    public void setRepositoryLinkers(final String repositoryName, final List<Linker> linkers) throws FisheyeAccessorException
+    {
+        try
+        {
+            // find RepositoryType for given repositoryName
+            final RepositoryType repositoryType = getRepositoryType(repositoryName);
+            if (repositoryType == null)
+            {
+                throw new FisheyeAccessorException("Error setting up repository linkers. Repository " + repositoryName + " not found");
+            }
 
-    private int getRepositoryId(final String repositoryKey)
+            // add all default linkers
+            final LinkerType linkerType = LinkerType.Factory.newInstance();
+            for (final Linker linker : linkers)
+            {
+                final LinkerSimpleType simpleLinkerConfig = linkerType.addNewSimple();
+                simpleLinkerConfig.setRegex(linker.getRegexp());
+                simpleLinkerConfig.setHref(linker.getHref());
+                simpleLinkerConfig.setDescription(linker.getDescription());
+            }
+            repositoryType.setLinker(linkerType);
+
+            // some extra magic for linkers to work
+            final RepositoryHandle repositoryHandle = AppConfig.getsConfig().getRepositoryManager().getRepository(repositoryName);
+            repositoryHandle.getCfg().setupLinker();
+
+            // save the config
+            AppConfig.getsConfig().saveConfig();
+
+            // refresh config
+            final RepositoryManager rm = AppConfig.getsConfig().getRepositoryManager();
+            rm.reloadList();
+        } catch (final IOException e)
+        {
+            throw new FisheyeAccessorException("Error setting up repository linkers: " + e, e);
+        } catch (final ConfigException e)
+        {
+            throw new FisheyeAccessorException("Error setting up repository linkers: " + e, e);
+        }
+    }
+
+    private int getRepositoryId(final String repositoryName)
     {
         final RepositoryType[] repositoryArray = AppConfig.getsConfig().getConfig().getRepositoryArray();
         for (int i = 0; i < repositoryArray.length; i++)
         {
             final RepositoryType repositoryType = repositoryArray[i];
-            if (repositoryKey.equals(repositoryType.getName()))
+            if (repositoryName.equals(repositoryType.getName()))
             {
                 return i;
             }
@@ -157,4 +163,30 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
         return -1;
     }
 
+    private RepositoryType getRepositoryType(final String repositoryName)
+    {
+        final RepositoryType[] repositories = AppConfig.getsConfig().getConfigDocument().getConfig().getRepositoryArray();
+        for (final RepositoryType repository : repositories)
+        {
+            if (repository.getName().equals(repositoryName))
+            {
+                return repository;
+            }
+        }
+        return null;
+    }
+
+    public void enableAnonymousAccess(final boolean enable) throws FisheyeAccessorException
+    {
+        try
+        {
+            final ConfigDocument.Config cfg = AppConfig.getsConfig().getConfig();
+            final RepSecurityType security = cfg.getRepositoryDefaults().getSecurity();
+            security.setAllowAnon(enable);
+            AppConfig.getsConfig().saveConfig();
+        } catch (final IOException e)
+        {
+            throw new FisheyeAccessorException("Error " + (enable?"enabling":"disabling") +" anonymous access to fisheye repositories. " + e, e);
+        }
+    }
 }
