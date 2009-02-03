@@ -3,8 +3,11 @@ package com.atlassian.sal.api.scheduling;
 import java.util.Map;
 
 /**
- * A job to be executed by the PluginScheduler.  Implementations of this class should not store local data, as a new
- * instance of the job is instantiated for each execution.
+ * A job to be executed by the PluginScheduler.
+ * 
+ * Implementations of this class should not store local data, as a new instance of the job is instantiated for each execution.
+ * 
+ * Implementations of this class should also provide a default constructor with no arguments.
  */
 public interface PluginJob
 {
