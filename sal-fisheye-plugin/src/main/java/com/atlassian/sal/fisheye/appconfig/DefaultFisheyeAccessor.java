@@ -1,18 +1,23 @@
 package com.atlassian.sal.fisheye.appconfig;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.cenqua.fisheye.AppConfig;
+import com.cenqua.fisheye.config.AdminConfig;
 import com.cenqua.fisheye.config.ConfigException;
 import com.cenqua.fisheye.config.RepositoryManager;
 import com.cenqua.fisheye.config.RootConfig;
 import com.cenqua.fisheye.config1.ConfigDocument;
+import com.cenqua.fisheye.config1.LicenseType;
 import com.cenqua.fisheye.config1.LinkerSimpleType;
 import com.cenqua.fisheye.config1.LinkerType;
 import com.cenqua.fisheye.config1.RepSecurityType;
 import com.cenqua.fisheye.config1.RepositoryType;
 import com.cenqua.fisheye.config1.SvnRepType;
+import com.cenqua.fisheye.license.LicenseException;
 import com.cenqua.fisheye.rep.RepositoryHandle;
 import com.cenqua.fisheye.util.XmlbeansUtil;
 import com.cenqua.fisheye.web.admin.actions.svn.SvnSymbolicHelper;
@@ -188,5 +193,47 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
         {
             throw new FisheyeAccessorException("Error " + (enable?"enabling":"disabling") +" anonymous access to fisheye repositories. " + e, e);
         }
+    }
+
+    public void setLicense(final String license) throws FisheyeAccessorException
+    {
+        final RootConfig rootConfig = AppConfig.getsConfig();
+        final LicenseType licenses = AppConfig.getsConfig().getConfig().getLicense();
+        licenses.setCrucible(license);
+        licenses.setFisheye(license);
+        try
+        {
+            rootConfig.saveConfig();
+            rootConfig.refreshLicenses();
+        }
+        catch (final IOException ioe)
+        {
+            throw new FisheyeAccessorException("Error saving configuration while reloading license", ioe);
+        }
+        catch (final LicenseException le)
+        {
+            throw new FisheyeAccessorException("Error loading license", le);
+        }
+    }
+
+    public boolean isApplicationSetUp()
+    {
+        // this code is copied from TotalityFilter.requresSetup() method
+        final RootConfig rootConfig = AppConfig.getsConfig();
+        final AdminConfig acfg = rootConfig.getAdminConfig();
+        final boolean requiresSetup = !acfg.haveDoneInitialSetup() || (rootConfig.getLicense() == null) || rootConfig.getLicense().isTerminated();
+        return !requiresSetup;
+    }
+
+    public Collection<String> getRepositoryNames()
+    {
+        // Get FishEye projects
+        final Collection<String> results = new ArrayList<String>();
+        final List<RepositoryHandle> handles = AppConfig.getsConfig().getRepositoryManager().getHandles();
+        for (final RepositoryHandle handle : handles)
+        {
+            results.add(handle.getName());
+        }
+        return results;
     }
 }

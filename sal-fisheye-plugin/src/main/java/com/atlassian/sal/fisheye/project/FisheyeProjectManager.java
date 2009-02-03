@@ -1,18 +1,23 @@
 package com.atlassian.sal.fisheye.project;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.ArrayList;
 
-import com.cenqua.fisheye.AppConfig;
-import com.cenqua.fisheye.rep.RepositoryHandle;
 import com.atlassian.sal.api.project.ProjectManager;
+import com.atlassian.sal.fisheye.appconfig.FisheyeAccessor;
 
 /**
  * Fisheye implementation of the project key locator
  */
 public class FisheyeProjectManager implements ProjectManager
 {
+
+    private final FisheyeAccessor fisheyeAccessor;
+
+    public FisheyeProjectManager(final FisheyeAccessor fisheyeAccessor)
+    {
+        this.fisheyeAccessor = fisheyeAccessor;
+    }
+
     /**
      * Get all project keys
      *
@@ -20,13 +25,6 @@ public class FisheyeProjectManager implements ProjectManager
      */
     public Collection<String> getAllProjectKeys()
     {
-        // Get FishEye projects
-        Collection<String> results = new ArrayList<String>();
-        List<RepositoryHandle> handles = AppConfig.getsConfig().getRepositoryManager().getHandles();
-        for (RepositoryHandle handle : handles)
-        {
-            results.add(handle.getName());
-        }
-        return results;
+        return fisheyeAccessor.getRepositoryNames();
     }
 }

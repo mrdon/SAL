@@ -1,75 +1,36 @@
 package com.atlassian.sal.fisheye.user;
 
-import java.util.concurrent.Callable;
-
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
 
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.fisheye.Plugins2Hacks;
-import com.cenqua.crucible.filters.CrucibleFilter;
-import com.cenqua.fisheye.AppConfig;
-import com.cenqua.fisheye.LicensePolicyException;
-import com.cenqua.fisheye.rep.DbException;
-import com.cenqua.fisheye.user.UserLogin;
+import com.atlassian.sal.fisheye.appconfig.FisheyeUserManagerAccessor;
 
 /**
  * FishEye implementation of the UserManager
  */
 public class DefaultUserManager implements UserManager
 {
-    private static final Logger log = Logger.getLogger(DefaultUserManager.class);
     private final PluginSettingsFactory pluginSettingsFactory;
-    private com.cenqua.fisheye.user.UserManager userManager;
+    private final FisheyeUserManagerAccessor fisheyeUserManagerAccessor;
 
-    DefaultUserManager(final PluginSettingsFactory pluginSettingsfactory)
+    DefaultUserManager(final PluginSettingsFactory pluginSettingsfactory, final FisheyeUserManagerAccessor fisheyeUserManagerAccessor)
     {
         this.pluginSettingsFactory = pluginSettingsfactory;
+        this.fisheyeUserManagerAccessor = fisheyeUserManagerAccessor;
     }
 
     public String getRemoteUsername()
     {
-        return Plugins2Hacks.doInApplicationContext(new Callable<String>()
-        {
-            public String call() throws Exception
-            {
-                return _getRemoteUsername();
-            }
-        });
-    }
-    public String _getRemoteUsername()
-    {
-        try
-        {
-            final UserLogin user = getUserManager().getCurrentUser(CrucibleFilter.getRequest());
-            if (user != null)
-            {
-                return user.getUserName();
-            }
-        }
-        catch (final IllegalStateException ise)
-        {
-            log.error("Illegal State Exception while trying to get the remote user's name: ",ise);
-        }
-        return null;
+        return fisheyeUserManagerAccessor.getRemoteUsername();
     }
 
     public boolean isSystemAdmin(final String username)
     {
-        return Plugins2Hacks.doInApplicationContext(new Callable<Boolean>()
-        {
+        // TODO: replace with:
+        // return fisheyeUserManagerAccessor.isSystemAdmin(username);
 
-            public Boolean call() throws Exception
-            {
-                return _isSystemAdmin(username);
-            }
-        });
-    }
-    public boolean _isSystemAdmin(final String username)
-    {
         if (username == null)
         {
             return false;
@@ -93,71 +54,17 @@ public class DefaultUserManager implements UserManager
 
     public boolean isUserInGroup(final String username, final String group)
     {
-        return Plugins2Hacks.doInApplicationContext(new Callable<Boolean>()
-        {
-            public Boolean call() throws Exception
-            {
-                return _isUserInGroup(username, group);
-            }
-        });
-    }
-    public boolean _isUserInGroup(final String username, final String group)
-    {
-        try
-        {
-            return getUserManager().isUserInGroup(group, username);
-        }
-        catch (final DbException e)
-        {
-            log.error("Database error trying to test users group: '" + username + "'", e);
-        }
-        return false;
+        return fisheyeUserManagerAccessor.isUserInGroup(username, group);
     }
 
     public boolean authenticate(final String username, final String password)
     {
-        return Plugins2Hacks.doInApplicationContext(new Callable<Boolean>()
-        {
-            public Boolean call() throws Exception
-            {
-                return _authenticate(username, password);
-            }
-        });
-    }
-    public boolean _authenticate(final String username, final String password)
-    {
-        try
-        {
-            final UserLogin userLogin = getUserManager().login(CrucibleFilter.getRequest(), CrucibleFilter.getResponse(), username, password, false);
-            if (userLogin != null)
-            {
-                return true;
-            }
-        }
-        catch (final DbException e)
-        {
-            log.error("Database error trying to authenticate user '" + username + "'", e);
-        }
-        catch (final LicensePolicyException e)
-        {
-            log.error("License error trying to authenticate user '" + username + "'", e);
-        }
-        return false;
+        return fisheyeUserManagerAccessor.authenticate(username, password);
     }
 
-    private com.cenqua.fisheye.user.UserManager getUserManager()
-    {
-        if (userManager==null)
-        {
-            userManager = AppConfig.getsConfig().getUserManager();
-        }
-        return userManager;
-    }
-
-    public String getRemoteUsername(final HttpServletRequest request)
-    {
-        // TODO Implement SAL-16
-        return getRemoteUsername();
+   public String getRemoteUsername(final HttpServletRequest request)
+   {
+       return fisheyeUserManagerAccessor.getRemoteUsername(request);
     }
 
 }
