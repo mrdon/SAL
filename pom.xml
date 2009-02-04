@@ -66,9 +66,9 @@
             </plugins>
         </pluginManagement>
         <!-- TODO: Remove this once JIRA is on maven2 -->
+        <!--
         <plugins>
             <plugin>
-                <!-- Deploy to the maven1 repo, necessary as maven1 can't resolve snapshots -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-one-plugin</artifactId>
                 <executions>
@@ -85,6 +85,7 @@
             </plugin>
         </plugins>
     </build>
+    -->
 
     <dependencyManagement>
         <dependencies>
