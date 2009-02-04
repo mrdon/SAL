@@ -58,7 +58,7 @@
         <dependency>
 	        <groupId>com.atlassian.studio</groupId>
 	        <artifactId>studio-crowd-plugin</artifactId>
-	        <version>1.6-SNAPSHOT</version>
+	        <version>1.6.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
