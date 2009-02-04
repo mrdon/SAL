@@ -84,8 +84,8 @@
                 </executions>
             </plugin>
         </plugins>
+        -->
     </build>
-    -->
 
     <dependencyManagement>
         <dependencies>
