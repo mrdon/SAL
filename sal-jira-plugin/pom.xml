@@ -20,6 +20,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Bundle-SymbolicName>com.atlassian.sal.jira</Bundle-SymbolicName>
                         <Private-Package>com.atlassian.sal.jira*</Private-Package>
                         <Export-Package>com.atlassian.sal.api*,com.atlassian.sal.jira.scheduling*</Export-Package>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
