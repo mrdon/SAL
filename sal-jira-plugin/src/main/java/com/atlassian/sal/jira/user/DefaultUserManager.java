@@ -1,15 +1,16 @@
 package com.atlassian.sal.jira.user;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.seraph.auth.DefaultAuthenticator;
 import com.opensymphony.user.EntityNotFoundException;
 import com.opensymphony.user.User;
+import org.apache.log4j.Logger;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * OSUser based user operations
@@ -93,7 +94,16 @@ public class DefaultUserManager implements UserManager
 
     public String getRemoteUsername(final HttpServletRequest request)
     {
-        // TODO Implement SAL-16
-        return getRemoteUsername();
+        final HttpSession session = request.getSession(false);
+        if(session != null)
+        {
+            final User user = (User) session.getAttribute(DefaultAuthenticator.LOGGED_IN_KEY);
+            if(user != null)
+            {                
+                return user.getName();
+            }
+        }
+
+        return null;
     }
 }

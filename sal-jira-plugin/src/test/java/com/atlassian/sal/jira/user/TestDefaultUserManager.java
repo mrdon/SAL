@@ -3,12 +3,14 @@ package com.atlassian.sal.jira.user;
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.sal.jira.MockProviderAccessor;
-import com.atlassian.sal.jira.user.DefaultUserManager;
 import com.opensymphony.user.EntityNotFoundException;
 import com.opensymphony.user.User;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import org.easymock.MockControl;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  */
@@ -105,6 +107,54 @@ public class TestDefaultUserManager extends TestCase
         boolean systemAdmin = defaultUserManager.isSystemAdmin("tommy");
         assertTrue(systemAdmin);
         mockGlobalPermissionManagerControl.verify();
+    }
+
+    public void testGetRemoteUserRequest()
+    {
+        MockProviderAccessor mpa = new MockProviderAccessor();
+        final User mockUser = new User("tommy", mpa);
+
+        MockControl mockHttpSessionControl = MockControl.createControl(HttpSession.class);
+        HttpSession mockHttpSession = (HttpSession) mockHttpSessionControl.getMock();
+        mockHttpSession.getAttribute("seraph_defaultauthenticator_user");
+        mockHttpSessionControl.setReturnValue(mockUser);
+        mockHttpSessionControl.replay();
+
+        MockControl mockHttpServletRequestControl = MockControl.createControl(HttpServletRequest.class);
+        HttpServletRequest mockHttpServletRequest = (HttpServletRequest) mockHttpServletRequestControl.getMock();
+        mockHttpServletRequest.getSession(false);
+        mockHttpServletRequestControl.setReturnValue(mockHttpSession);
+        mockHttpServletRequestControl.replay();
+
+        DefaultUserManager defaultUserManager = new DefaultUserManager(null, null);
+        final String remoteUsername = defaultUserManager.getRemoteUsername(mockHttpServletRequest);
+        assertEquals("tommy", remoteUsername);
+
+        mockHttpSessionControl.verify();
+        mockHttpServletRequestControl.verify();
+    }
+
+    public void testGetRemoteUserRequestNoUser()
+    {
+
+        MockControl mockHttpSessionControl = MockControl.createControl(HttpSession.class);
+        HttpSession mockHttpSession = (HttpSession) mockHttpSessionControl.getMock();
+        mockHttpSession.getAttribute("seraph_defaultauthenticator_user");
+        mockHttpSessionControl.setReturnValue(null);
+        mockHttpSessionControl.replay();
+
+        MockControl mockHttpServletRequestControl = MockControl.createControl(HttpServletRequest.class);
+        HttpServletRequest mockHttpServletRequest = (HttpServletRequest) mockHttpServletRequestControl.getMock();
+        mockHttpServletRequest.getSession(false);
+        mockHttpServletRequestControl.setReturnValue(mockHttpSession);
+        mockHttpServletRequestControl.replay();
+
+        DefaultUserManager defaultUserManager = new DefaultUserManager(null, null);
+        final String remoteUsername = defaultUserManager.getRemoteUsername(mockHttpServletRequest);
+        assertNull(remoteUsername);
+
+        mockHttpSessionControl.verify();
+        mockHttpServletRequestControl.verify();
     }
 }
 
