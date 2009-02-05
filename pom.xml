@@ -66,7 +66,6 @@
             </plugins>
         </pluginManagement>
         <!-- TODO: Remove this once JIRA is on maven2 -->
-        <!--
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -84,7 +83,6 @@
                 </executions>
             </plugin>
         </plugins>
-        -->
     </build>
 
     <dependencyManagement>
