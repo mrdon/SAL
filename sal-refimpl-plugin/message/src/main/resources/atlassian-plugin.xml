@@ -5,6 +5,9 @@
         <vendor name="Atlassian Software Systems Pty Ltd" url="http://www.atlassian.com"/>
     </plugin-info>
     
+    <component-import key="pluginAccessor" interface="com.atlassian.plugin.PluginAccessor" />
+    <component-import key="pluginEventManager" interface="com.atlassian.plugin.event.PluginEventManager" />
+
     <component key="i18nResolver" name="I18n Resolver"
                class="com.atlassian.sal.refimpl.message.RefimplI18nResolver"
                system="true" public="true">
