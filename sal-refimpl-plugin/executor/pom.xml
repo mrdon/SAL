@@ -10,6 +10,10 @@
     <name>Shared Application Access Layer Reference Implementation Executor Plugin</name>
     <packaging>bundle</packaging>
 
+    <properties>
+        <atlassian.plugin.key>com.atlassian.sal.refimpl.executor</atlassian.plugin.key>
+    </properties>
+
     <build>
         <plugins>
             <plugin>

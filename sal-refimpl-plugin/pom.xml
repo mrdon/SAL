@@ -10,6 +10,23 @@
     <name>Shared Application Access Layer Reference Implementation Plugins</name>
     <packaging>pom</packaging>
     
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <instructions>
+                            <Bundle-SymbolicName>${atlassian.plugin.key}</Bundle-SymbolicName>
+                        </instructions>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
     <modules>
         <module>appproperties</module>
         <module>component</module>
