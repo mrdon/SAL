@@ -26,7 +26,7 @@
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Embed-Directory>META-INF/lib</Embed-Directory>
-                        <Bundle-ClassPath>{maven-dependencies}</Bundle-ClassPath>
+                        <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
                         <Spring-Context>*;timeout:=60</Spring-Context>
                         <Require-Bundle>system.bundle</Require-Bundle>
                     </instructions>
