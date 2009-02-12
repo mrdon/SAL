@@ -29,9 +29,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>atlassian-core</groupId>
+            <groupId>com.atlassian.core</groupId>
             <artifactId>atlassian-core</artifactId>
-            <version>4.0</version>
+            <version>3.9</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
