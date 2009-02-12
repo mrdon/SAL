@@ -31,7 +31,7 @@
         <dependency>
             <groupId>atlassian-core</groupId>
             <artifactId>atlassian-core</artifactId>
-            <version>2007-04-23</version>
+            <version>4.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
