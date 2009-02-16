@@ -18,6 +18,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                    <Bundle-SymbolicName>com.atlassian.sal.jira</Bundle-SymbolicName>
                     <Private-Package>com.atlassian.sal.jira*</Private-Package>
                     <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                     <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
