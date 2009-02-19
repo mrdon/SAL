@@ -1,7 +1,7 @@
 package com.atlassian.sal.jira;
 
-import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.util.BuildUtils;
+import com.atlassian.jira.util.velocity.VelocityRequestContextFactory;
 import com.atlassian.sal.api.ApplicationProperties;
 
 import java.util.Date;
@@ -11,16 +11,16 @@ import java.util.Date;
  */
 public class JiraApplicationProperties implements ApplicationProperties
 {
-    private final com.atlassian.jira.config.properties.ApplicationProperties applicationProperties;
+    private final VelocityRequestContextFactory velocityRequestContextFactory;
 
-    public JiraApplicationProperties(com.atlassian.jira.config.properties.ApplicationProperties applicationProperties)
+    public JiraApplicationProperties(VelocityRequestContextFactory velocityRequestContextFactory)
     {
-        this.applicationProperties = applicationProperties;
+        this.velocityRequestContextFactory = velocityRequestContextFactory;
     }
 
     public String getBaseUrl()
     {
-        return applicationProperties.getDefaultBackedString(APKeys.JIRA_BASEURL);
+        return velocityRequestContextFactory.getJiraVelocityRequestContext().getCanonicalBaseUrl();
     }
 
     public String getApplicationName()
