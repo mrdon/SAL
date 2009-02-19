@@ -50,8 +50,29 @@ public class CrowdPluginSettings extends AbstractStringPluginSettings
 	@Override
 	protected void putActual(String propertyName, String val)
 	{
+        SALProperty salProperty = null;
 		final String notNullPropertyName = propertyName == null ? NULL_STRING : propertyName;
-		salPropertyDAO.saveOrUpdate(new SALProperty(key, notNullPropertyName, val));
+        try
+        {
+            salProperty = salPropertyDAO.find(key, propertyName == null ? NULL_STRING : propertyName);
+        }
+        catch (final DataAccessException e)
+        {
+            log.warn(e, e);
+        }
+        catch (final ObjectNotFoundException e)
+        {
+            // return null
+        }
+        if (salProperty == null)
+        {
+            salProperty = new SALProperty(key, notNullPropertyName, val);
+            salPropertyDAO.saveOrUpdate(salProperty);
+        }
+        else
+        {
+            salProperty.setStringValue(val);
+        }
 	}
 
 	@Override
