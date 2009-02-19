@@ -63,4 +63,8 @@
     	<interface>com.atlassian.sal.api.executor.ThreadLocalDelegateExecutorFactory</interface>
 	</component>
 
-	</atlassian-plugin>
+    <component key="localeResolver" class="com.atlassian.sal.confluence.message.ConfluenceLocaleResolver" name="Confluence Locale Resolver" public="true">
+        <interface>com.atlassian.sal.api.message.LocaleResolver</interface>
+    </component>
+
+</atlassian-plugin>
