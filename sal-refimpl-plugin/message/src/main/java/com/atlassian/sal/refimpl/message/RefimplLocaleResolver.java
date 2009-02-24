@@ -1,10 +1,11 @@
 package com.atlassian.sal.refimpl.message;
 
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.sal.api.message.LocaleResolver;
+
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
 
 public class RefimplLocaleResolver implements LocaleResolver
 {
@@ -32,5 +33,12 @@ public class RefimplLocaleResolver implements LocaleResolver
             locale = request.getLocale();
         }
         return locale;
+    }
+
+    public Set<Locale> getSupportedLocales()
+    {
+        final Set<Locale> ret = new HashSet<Locale>();
+        ret.add(Locale.US);
+        return ret;
     }
 }
