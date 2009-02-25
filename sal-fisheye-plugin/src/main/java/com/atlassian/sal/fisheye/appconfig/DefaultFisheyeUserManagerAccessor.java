@@ -26,8 +26,15 @@ public class DefaultFisheyeUserManagerAccessor implements FisheyeUserManagerAcce
 
     public boolean isSystemAdmin(final String username)
     {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not implemented in fisheye yet");
+        try
+        {
+            return getUserManager().hasSysAdminPrivileges(username);
+        } catch (final DbException e)
+        {
+            log.error("Database error while checking user '" + username + "' for sysadmin permissions.", e);
+        }
+        return false;
+
     }
 
     public boolean isUserInGroup(final String username, final String groupname)

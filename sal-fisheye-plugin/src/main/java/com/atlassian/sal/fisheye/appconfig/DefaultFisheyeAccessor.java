@@ -18,7 +18,9 @@ import com.cenqua.fisheye.config1.RepSecurityType;
 import com.cenqua.fisheye.config1.RepositoryType;
 import com.cenqua.fisheye.config1.SvnRepType;
 import com.cenqua.fisheye.license.LicenseException;
+import com.cenqua.fisheye.rep.DbException;
 import com.cenqua.fisheye.rep.RepositoryHandle;
+import com.cenqua.fisheye.user.AdminUserConfig;
 import com.cenqua.fisheye.util.XmlbeansUtil;
 import com.cenqua.fisheye.web.admin.actions.svn.SvnSymbolicHelper;
 
@@ -236,4 +238,29 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
         }
         return results;
     }
+
+    public void addSysadminGroup(final String groupname) throws FisheyeAccessorException
+    {
+        try
+        {
+            final AdminUserConfig adminUserManager = AppConfig.getsConfig().getAdminUserManager();
+            adminUserManager.addGroup(groupname);
+            AppConfig.getsConfig().saveConfig();
+        } catch (final IOException e)
+        {
+            throw new FisheyeAccessorException("IOException occured while trying to add sysadmin group: " + groupname, e);
+        }
+    }
+
+    public Collection<String> getUsersInGroup(final String groupname) throws FisheyeAccessorException
+    {
+        try
+        {
+            return AppConfig.getsConfig().getUserManager().getUsersInGroup(groupname);
+        } catch (final DbException e)
+        {
+            throw new FisheyeAccessorException("Exception occured while retrieving users for group: " + groupname, e);
+        }
+    }
+
 }

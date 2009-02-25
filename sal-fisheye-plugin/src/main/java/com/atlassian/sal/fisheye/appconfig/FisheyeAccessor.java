@@ -17,6 +17,8 @@ public interface FisheyeAccessor
     String getSiteURL();
     void setLicense(String license) throws FisheyeAccessorException;
     boolean isApplicationSetUp();
+    void addSysadminGroup(String systemAdmins) throws FisheyeAccessorException;
+    Collection<String> getUsersInGroup(String groupname) throws FisheyeAccessorException;
 
 
     interface Linker
@@ -50,9 +52,5 @@ public interface FisheyeAccessor
         }
 
     }
-
-
-
-
 
 }

@@ -2,8 +2,6 @@ package com.atlassian.sal.fisheye.user;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.atlassian.sal.api.pluginsettings.PluginSettings;
-import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.fisheye.appconfig.FisheyeUserManagerAccessor;
 
@@ -12,12 +10,10 @@ import com.atlassian.sal.fisheye.appconfig.FisheyeUserManagerAccessor;
  */
 public class DefaultUserManager implements UserManager
 {
-    private final PluginSettingsFactory pluginSettingsFactory;
     private final FisheyeUserManagerAccessor fisheyeUserManagerAccessor;
 
-    DefaultUserManager(final PluginSettingsFactory pluginSettingsfactory, final FisheyeUserManagerAccessor fisheyeUserManagerAccessor)
+    public DefaultUserManager(final FisheyeUserManagerAccessor fisheyeUserManagerAccessor)
     {
-        this.pluginSettingsFactory = pluginSettingsfactory;
         this.fisheyeUserManagerAccessor = fisheyeUserManagerAccessor;
     }
 
@@ -28,28 +24,7 @@ public class DefaultUserManager implements UserManager
 
     public boolean isSystemAdmin(final String username)
     {
-        // TODO: replace with:
-        // return fisheyeUserManagerAccessor.isSystemAdmin(username);
-
-        if (username == null)
-        {
-            return false;
-        }
-
-        final PluginSettings pluginSettings = pluginSettingsFactory.createGlobalSettings();
-        final String sysadminGroups = (String) pluginSettings.get("sysadmin-groups");
-        if (sysadminGroups == null)
-        {
-            return false;
-        }
-        for (final String sysadminGroup : sysadminGroups.split(","))
-        {
-            if (isUserInGroup(username, sysadminGroup))
-            {
-                return true;
-            }
-        }
-        return false;
+        return fisheyeUserManagerAccessor.isSystemAdmin(username);
     }
 
     public boolean isUserInGroup(final String username, final String group)
