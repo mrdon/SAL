@@ -54,9 +54,10 @@ public class JiraI18nResolver extends AbstractI18nResolver
     public Map<String, String> getAllTranslationsForPrefix(final String prefix, final Locale locale)
     {
         Assertions.notNull("prefix", prefix);
-        Assertions.notNull("locale", locale);
-        
-        final Collection<ResourceBundle> bundles = new I18nBean(locale).getBundles();
+
+        //if no locale was provided, fall back to the default locale.
+        final I18nBean i18nBean = locale == null ? new I18nBean() : new I18nBean(locale);
+        final Collection<ResourceBundle> bundles = i18nBean.getBundles();
 
         final Map<String, String> ret = new HashMap<String, String>();
         //loop through all resource bundles, and find all keys with the given prefix.
