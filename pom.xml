@@ -19,7 +19,7 @@
         <fisheye-jar.version>1.6.5.2-359</fisheye-jar.version>
         <atlassian-fisheye-api.version>1.6.5.2-359</atlassian-fisheye-api.version>
         <confluence.version>2.10.1</confluence.version>
-        <crowd.version>1.6</crowd.version>
+        <crowd.version>1.6.1</crowd.version>
         <jira.version>3.13</jira.version>
     </properties>
 
