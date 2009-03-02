@@ -1,19 +1,20 @@
 package com.atlassian.sal.jira.message;
 
+import com.atlassian.cache.CacheFactory;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.jira.web.bean.I18nBean;
+import com.atlassian.jira.util.I18nHelper;
 import com.atlassian.jira.util.dbc.Assertions;
-import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.jira.web.bean.I18nBean;
+import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.sal.core.message.AbstractI18nResolver;
-import org.apache.log4j.Logger;
 
 import java.io.Serializable;
-import java.util.Map;
-import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * A JIRA I18nResolver.  Uses the user's locale if a user is logged in or the default
@@ -21,33 +22,19 @@ import java.util.Enumeration;
  */
 public class JiraI18nResolver extends AbstractI18nResolver
 {
-	private static final Logger log = Logger.getLogger(JiraI18nResolver.class);
     private final JiraAuthenticationContext jiraAuthenticationContext;
-    private final PluginAccessor pluginAccessor;
+    private final I18nHelper.BeanFactory beanFactory;
 
-    public JiraI18nResolver(JiraAuthenticationContext jiraAuthenticationContext, PluginAccessor pluginAccessor)
+    public JiraI18nResolver(final JiraAuthenticationContext jiraAuthenticationContext, final I18nHelper.BeanFactory beanFactory)
     {
         this.jiraAuthenticationContext = jiraAuthenticationContext;
-        this.pluginAccessor = pluginAccessor;
-    }
-
-    private I18nBean getI18nBean()
-    {
-        return new I18nBean(jiraAuthenticationContext.getUser())
-        {
-            @Override
-            protected PluginAccessor getPluginAccessor()
-            {
-                return pluginAccessor;
-            }
-        };
+        this.beanFactory = beanFactory;
     }
 
     public String resolveText(String key, Serializable[] arguments)
     {
-        // TODO: this is creating a new i18n bean for each call. this is suboptimal. need to do some kind of 
-        // profiling/benchmarking to see if this is acceptable.
-        return getI18nBean().getText(key, arguments);
+        final I18nHelper bean = beanFactory.getInstance(jiraAuthenticationContext.getLocale());
+        return bean.getText(key, arguments);
     }
 
     @Override
