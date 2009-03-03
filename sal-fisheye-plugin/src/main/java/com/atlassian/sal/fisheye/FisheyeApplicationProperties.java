@@ -1,22 +1,30 @@
 package com.atlassian.sal.fisheye;
 
-import com.atlassian.sal.api.ApplicationProperties;
-import com.cenqua.fisheye.AppConfig;
-import com.cenqua.fisheye.FisheyeVersionInfo;
-import org.apache.commons.lang.StringUtils;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.fisheye.appconfig.FisheyeAccessor;
+import com.cenqua.fisheye.FisheyeVersionInfo;
 
 /**
  *
  */
 public class FisheyeApplicationProperties implements ApplicationProperties
 {
+
+    private final FisheyeAccessor fisheyeAccessor;
+    public FisheyeApplicationProperties(final FisheyeAccessor fisheyeAccessor)
+    {
+        this.fisheyeAccessor = fisheyeAccessor;
+    }
+
     public String getBaseUrl()
     {
-        final String siteURL = AppConfig.getsConfig().getSiteURL();
+        final String siteURL = fisheyeAccessor.getSiteURL();
         return StringUtils.removeEnd(siteURL, "/");
     }
 
@@ -37,7 +45,7 @@ public class FisheyeApplicationProperties implements ApplicationProperties
         {
             return new SimpleDateFormat(buildDateFormat).parse(FisheyeVersionInfo.BUILD_DATE);
         }
-        catch (ParseException e)
+        catch (final ParseException e)
         {
             throw new RuntimeException("Unable to parse FishEye build date <" + FisheyeVersionInfo.BUILD_DATE + "> into format " + buildDateFormat, e);
         }

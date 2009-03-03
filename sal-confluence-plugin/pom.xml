@@ -17,13 +17,14 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
+						<Bundle-SymbolicName>com.atlassian.sal.confluence</Bundle-SymbolicName>
 						<Private-Package>com.atlassian.sal.confluence*</Private-Package>
 						<Export-Package>com.atlassian.sal.api*,</Export-Package>
 						<Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
 						<Embed-Directory>META-INF/lib</Embed-Directory>
 						<Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
-                        <Spring-Context>*;timeout:=60</Spring-Context>
+						<Spring-Context>*;timeout:=60</Spring-Context>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -73,7 +74,7 @@
         <dependency>
             <groupId>com.atlassian.seraph</groupId>
             <artifactId>atlassian-seraph</artifactId>
-            <version>0.38</version>
+            <version>0.38.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -103,7 +104,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>1.5</version>
+            <version>1.7</version>
             <scope>test</scope>
         </dependency> 
     </dependencies>

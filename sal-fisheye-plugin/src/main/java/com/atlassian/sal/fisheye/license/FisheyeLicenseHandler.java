@@ -1,14 +1,10 @@
 package com.atlassian.sal.fisheye.license;
 
-import com.atlassian.sal.api.license.LicenseHandler;
-import com.cenqua.fisheye.AppConfig;
-import com.cenqua.fisheye.license.LicenseException;
-import com.cenqua.fisheye.config.RootConfig;
-import com.cenqua.fisheye.config1.LicenseType;
-
-import java.io.IOException;
-
 import org.apache.log4j.Logger;
+
+import com.atlassian.sal.api.license.LicenseHandler;
+import com.atlassian.sal.fisheye.appconfig.FisheyeAccessor;
+import com.atlassian.sal.fisheye.appconfig.FisheyeAccessor.FisheyeAccessorException;
 
 /**
  * License handler for fisheye
@@ -16,25 +12,21 @@ import org.apache.log4j.Logger;
 public class FisheyeLicenseHandler implements LicenseHandler
 {
     private static Logger log = Logger.getLogger(FisheyeLicenseHandler.class);
+    private final FisheyeAccessor fisheyeAccessor;
 
-    public void setLicense(String license)
+    public FisheyeLicenseHandler(final FisheyeAccessor fisheyeAccessor)
     {
-        RootConfig rootConfig = AppConfig.getsConfig();
-        LicenseType licenses = AppConfig.getsConfig().getConfig().getLicense();
-        licenses.setCrucible(license);
-        licenses.setFisheye(license);
+        this.fisheyeAccessor = fisheyeAccessor;
+    }
+
+    public void setLicense(final String license)
+    {
         try
         {
-            rootConfig.saveConfig();
-            rootConfig.refreshLicenses();
-        }
-        catch (IOException ioe)
+            fisheyeAccessor.setLicense(license);
+        } catch (final FisheyeAccessorException e)
         {
-            log.error("Error saving configuration while reloading license", ioe);
-        }
-        catch (LicenseException le)
-        {
-            log.error("Error loading license", le);
+            log.error(e,e);
         }
     }
 }

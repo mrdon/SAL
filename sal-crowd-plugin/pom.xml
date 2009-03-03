@@ -18,6 +18,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Bundle-SymbolicName>com.atlassian.sal.crowd</Bundle-SymbolicName>
                         <Private-Package>com.atlassian.sal.crowd*</Private-Package>
                         <Export-Package>com.atlassian.sal.api*,</Export-Package>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
@@ -36,7 +37,7 @@
             <dependency>
                 <groupId>com.atlassian.seraph</groupId>
                 <artifactId>atlassian-seraph</artifactId>
-                <version>0.38</version>
+                <version>0.38.3</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -58,7 +59,7 @@
         <dependency>
 	        <groupId>com.atlassian.studio</groupId>
 	        <artifactId>studio-crowd-plugin</artifactId>
-	        <version>1.6-SNAPSHOT</version>
+	        <version>1.7-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -93,7 +94,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>1.5</version>
+            <version>1.7</version>
             <scope>test</scope>
         </dependency> 
     </dependencies>

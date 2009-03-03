@@ -18,8 +18,8 @@
         <jdkLevel>1.5</jdkLevel>
         <fisheye-jar.version>1.6.5.2-359</fisheye-jar.version>
         <atlassian-fisheye-api.version>1.6.5.2-359</atlassian-fisheye-api.version>
-        <confluence.version>2.10.1</confluence.version>
-        <crowd.version>1.6</crowd.version>
+        <confluence.version>2.10.2</confluence.version>
+        <crowd.version>1.6.1</crowd.version>
         <jira.version>3.13</jira.version>
     </properties>
 
@@ -39,13 +39,6 @@
     </modules>
 
     <build>
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-webdav</artifactId>
-                <version>1.0-beta-2</version>
-            </extension>
-        </extensions>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -98,7 +91,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>1.6</version>
+            <version>1.7</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
