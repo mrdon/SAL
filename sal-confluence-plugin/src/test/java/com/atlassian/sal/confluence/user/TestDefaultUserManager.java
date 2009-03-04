@@ -1,12 +1,12 @@
 package com.atlassian.sal.confluence.user;
 
+import junit.framework.TestCase;
+
+import org.easymock.MockControl;
+
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.UserAccessor;
-import com.atlassian.confluence.security.PermissionManager;
-import com.atlassian.sal.confluence.user.DefaultUserManager;
 import com.atlassian.user.User;
-import junit.framework.TestCase;
-import org.easymock.MockControl;
 
 /**
  */
@@ -14,7 +14,7 @@ public class TestDefaultUserManager extends TestCase
 {
     public void testGetRemoteUsername()
     {
-        DefaultUserManager defaultUserManager = new DefaultUserManager();
+        final DefaultUserManager defaultUserManager = new DefaultUserManager(null);
         String username = defaultUserManager.getRemoteUsername();
         assertNull(username);
 
@@ -32,7 +32,6 @@ public class TestDefaultUserManager extends TestCase
 
     public void testIsSystemAdminNoUser()
     {
-        DefaultUserManager defaultUserManager = new DefaultUserManager();
 
         final MockControl mockUserControl = MockControl.createControl(User.class);
         final User mockUser = (User) mockUserControl.getMock();
@@ -44,26 +43,25 @@ public class TestDefaultUserManager extends TestCase
 
         final MockControl mockUserAccessorControl = MockControl.createControl(UserAccessor.class);
         final UserAccessor mockUserAccessor = (UserAccessor) mockUserAccessorControl.getMock();
+
         mockUserAccessor.getUser("tommy");
         mockUserAccessorControl.setReturnValue(null);
+        mockUserAccessor.isSuperUser(mockUser);
+        mockUserAccessorControl.setReturnValue(false);
+
         mockUserAccessor.getUser("noaccess");
         mockUserAccessorControl.setReturnValue(mockUser);
+        mockUserAccessor.isSuperUser(mockUser);
+        mockUserAccessorControl.setReturnValue(false);
+
         mockUserAccessor.getUser("sysadmin");
         mockUserAccessorControl.setReturnValue(mockUser2);
+        mockUserAccessor.isSuperUser(mockUser2);
+        mockUserAccessorControl.setReturnValue(true);
+
         mockUserAccessorControl.replay();
 
-        final MockControl mockPermissionManagerControl = MockControl.createControl(PermissionManager.class);
-        final PermissionManager mockPermissionManager = (PermissionManager) mockPermissionManagerControl.getMock();
-
-        mockPermissionManager.isConfluenceAdministrator(mockUser);
-        mockPermissionManagerControl.setReturnValue(false);
-
-        mockPermissionManager.isConfluenceAdministrator(mockUser2);
-        mockPermissionManagerControl.setReturnValue(true);
-        mockPermissionManagerControl.replay();
-
-        defaultUserManager.setUserAccessor(mockUserAccessor);
-        defaultUserManager.setPermissionManager(mockPermissionManager);
+        final DefaultUserManager defaultUserManager = new DefaultUserManager(mockUserAccessor);
 
         boolean isSystemAdmin = defaultUserManager.isSystemAdmin("tommy");
         assertFalse(isSystemAdmin);
@@ -74,15 +72,12 @@ public class TestDefaultUserManager extends TestCase
         isSystemAdmin = defaultUserManager.isSystemAdmin("sysadmin");
         assertTrue(isSystemAdmin);
 
-        mockPermissionManagerControl.verify();
-        mockUserAccessorControl.verify();
         mockUserControl.verify();
         mockUser2Control.verify();
     }
 
     public void testAuthenticate()
     {
-        DefaultUserManager defaultUserManager = new DefaultUserManager();
 
         final MockControl mockUserControl = MockControl.createControl(User.class);
         final User mockUser = (User) mockUserControl.getMock();
@@ -110,7 +105,7 @@ public class TestDefaultUserManager extends TestCase
         mockUserAccessorControl.setReturnValue(true);
         mockUserAccessorControl.replay();
 
-        defaultUserManager.setUserAccessor(mockUserAccessor);
+        final DefaultUserManager defaultUserManager = new DefaultUserManager(mockUserAccessor);
 
         boolean isAuthenticated = defaultUserManager.authenticate("tommy", "dontmatteruserdoesntexist");
         assertFalse(isAuthenticated);

@@ -2,7 +2,6 @@ package com.atlassian.sal.confluence.user;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.sal.api.user.UserManager;
@@ -11,8 +10,12 @@ import com.atlassian.user.User;
 /** Authenticates a user against UserAccessor in Confluence. */
 public class DefaultUserManager implements UserManager
 {
-    private UserAccessor userAccessor;
-    private PermissionManager permissionManager;
+    private final UserAccessor userAccessor;
+
+    public DefaultUserManager(final UserAccessor userAccessor)
+    {
+        this.userAccessor = userAccessor;
+    }
 
     public String getRemoteUsername()
     {
@@ -27,7 +30,7 @@ public class DefaultUserManager implements UserManager
     public boolean isSystemAdmin(final String username)
     {
         final User user = userAccessor.getUser(username);
-        return user != null && permissionManager.isConfluenceAdministrator(user);
+        return user != null && userAccessor.isSuperUser(user);
     }
 
     public boolean authenticate(final String username, final String password)
@@ -46,16 +49,6 @@ public class DefaultUserManager implements UserManager
     public boolean isUserInGroup(final String username, final String group)
     {
         return userAccessor.hasMembership(group, username);
-    }
-
-    public void setUserAccessor(final UserAccessor userAccessor)
-    {
-        this.userAccessor = userAccessor;
-    }
-
-    public void setPermissionManager(final PermissionManager permissionManager)
-    {
-        this.permissionManager = permissionManager;
     }
 
     public String getRemoteUsername(final HttpServletRequest request)
