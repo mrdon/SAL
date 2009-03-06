@@ -23,11 +23,24 @@ import com.cenqua.fisheye.rep.RepositoryHandle;
 import com.cenqua.fisheye.user.AdminUserConfig;
 import com.cenqua.fisheye.util.XmlbeansUtil;
 import com.cenqua.fisheye.web.admin.actions.svn.SvnSymbolicHelper;
+import com.cenqua.crucible.actions.admin.project.ProjectData;
+import com.cenqua.crucible.actions.admin.project.ProjectDataFactory;
+import com.cenqua.crucible.model.managers.ProjectManager;
+import com.cenqua.crucible.model.Project;
 
 public class DefaultFisheyeAccessor implements FisheyeAccessor
 {
     private static final int REPO_CHILD_INDENT = 6;
     private static final int REPO_INDENT = 2;
+
+    private final ProjectManager projectManager;
+    private final ProjectDataFactory projectDataFactory;
+
+    public DefaultFisheyeAccessor(ProjectManager projectManager, ProjectDataFactory projectDataFactory)
+    {
+        this.projectManager = projectManager;
+        this.projectDataFactory = projectDataFactory;
+    }
 
     public boolean repositoryExists(final String repName)
     {
@@ -239,6 +252,22 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
         return results;
     }
 
+    public void updateProject(ProjectData projectData)
+    {
+        projectDataFactory.updateProject(projectManager, projectData);
+    }
+
+    public ProjectData getProjectByKey(String key)
+    {
+        Project project = projectManager.getProjectByKey(key);
+        if (project == null)
+        {
+            return null;
+        }
+        
+        return new ProjectData(project);
+    }
+
     public void addSysadminGroup(final String groupname) throws FisheyeAccessorException
     {
         try
@@ -262,5 +291,4 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
             throw new FisheyeAccessorException("Exception occured while retrieving users for group: " + groupname, e);
         }
     }
-
 }

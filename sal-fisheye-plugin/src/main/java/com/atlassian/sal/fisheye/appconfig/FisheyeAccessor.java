@@ -1,5 +1,7 @@
 package com.atlassian.sal.fisheye.appconfig;
 
+import com.cenqua.crucible.actions.admin.project.ProjectData;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -20,6 +22,10 @@ public interface FisheyeAccessor
     void addSysadminGroup(String systemAdmins) throws FisheyeAccessorException;
     Collection<String> getUsersInGroup(String groupname) throws FisheyeAccessorException;
 
+    /* Crucible project administration */
+    // These can't use the SPI ProjectData objects because they don't contain the data that needs to be updated
+    void updateProject(ProjectData projectData);
+    ProjectData getProjectByKey(String key);
 
     interface Linker
     {
