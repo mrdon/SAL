@@ -17,6 +17,12 @@ public class FisheyeAccessorFactoryBean implements FactoryBean
 {
     private static final ClassLoader FISHEYE_HOST_CLASSLOADER = AppConfig.class.getClassLoader();
 
+    @SuppressWarnings("UnusedDeclaration")
+    public FisheyeAccessorFactoryBean(ComponentLocator componentLocator)
+    {
+        // Ensures ComponentLocator is initialised first
+    }
+
     public Object getObject() throws Exception
     {
         ProjectManager projectManager = ComponentLocator.getComponent(ProjectManager.class);
