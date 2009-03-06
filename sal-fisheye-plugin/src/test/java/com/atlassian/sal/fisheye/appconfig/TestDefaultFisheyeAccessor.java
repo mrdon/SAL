@@ -4,6 +4,8 @@ import com.cenqua.crucible.model.managers.ProjectManager;
 import com.cenqua.crucible.model.Project;
 import com.cenqua.crucible.actions.admin.project.ProjectDataFactory;
 import com.cenqua.crucible.actions.admin.project.ProjectData;
+import com.atlassian.crucible.spi.TxTemplate;
+import com.atlassian.crucible.spi.TxCallback;
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Mockito.*;
@@ -20,7 +22,22 @@ public class TestDefaultFisheyeAccessor
     {
         mockProjectManager = mock(ProjectManager.class);
         mockProjectDataFactory = mock(ProjectDataFactory.class);
-        fisheyeAccessor = new DefaultFisheyeAccessor(mockProjectManager, mockProjectDataFactory);
+        fisheyeAccessor = new DefaultFisheyeAccessor(mockProjectManager, mockProjectDataFactory, new TxTemplate()
+        {
+            @Override
+            public <T> T execute(TxCallback<T> txCallback)
+            {
+                try
+                {
+                    return txCallback.doInTransaction(null);
+                }
+                catch (Exception e)
+                {
+                    // Do nothing
+                }
+                return null;
+            }
+        });
     }
 
     @Test

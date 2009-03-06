@@ -11,6 +11,7 @@ import com.cenqua.fisheye.AppConfig;
 import com.cenqua.crucible.model.managers.ProjectManager;
 import com.cenqua.crucible.actions.admin.project.ProjectDataFactory;
 import com.atlassian.sal.api.component.ComponentLocator;
+import com.atlassian.crucible.spi.TxTemplate;
 
 public class FisheyeAccessorFactoryBean implements FactoryBean
 {
@@ -20,8 +21,9 @@ public class FisheyeAccessorFactoryBean implements FactoryBean
     {
         ProjectManager projectManager = ComponentLocator.getComponent(ProjectManager.class);
         ProjectDataFactory projectDataFactory = ComponentLocator.getComponent(ProjectDataFactory.class);
+        TxTemplate txTemplate = ComponentLocator.getComponent(TxTemplate.class);
         return wrapService(new Class[]{FisheyeAccessor.class}, new DefaultFisheyeAccessor(projectManager,
-            projectDataFactory), FISHEYE_HOST_CLASSLOADER);
+            projectDataFactory, txTemplate), FISHEYE_HOST_CLASSLOADER);
     }
 
     public Class<?> getObjectType()
