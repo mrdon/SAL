@@ -1,6 +1,7 @@
 package com.atlassian.sal.fisheye.appconfig;
 
 import com.cenqua.crucible.actions.admin.project.ProjectData;
+import com.cenqua.crucible.configuration.metrics.XMLValidationException;
 
 import java.util.Collection;
 import java.util.List;
@@ -26,6 +27,8 @@ public interface FisheyeAccessor
     // These can't use the SPI ProjectData objects because they don't contain the data that needs to be updated
     void updateProject(ProjectData projectData);
     ProjectData getProjectByKey(String key);
+    int updateCrucibleMetrics(String xml) throws FisheyeAccessorException;
+    String getCrucibleMetrics();
 
     interface Linker
     {

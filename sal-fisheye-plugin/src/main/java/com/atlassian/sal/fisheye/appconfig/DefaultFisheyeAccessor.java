@@ -27,6 +27,8 @@ import com.cenqua.crucible.actions.admin.project.ProjectData;
 import com.cenqua.crucible.actions.admin.project.ProjectDataFactory;
 import com.cenqua.crucible.model.managers.ProjectManager;
 import com.cenqua.crucible.model.Project;
+import com.cenqua.crucible.configuration.metrics.MetricsManager;
+import com.cenqua.crucible.configuration.metrics.XMLValidationException;
 import com.atlassian.crucible.spi.TxTemplate;
 import com.atlassian.crucible.spi.TxCallback;
 import org.springframework.transaction.TransactionStatus;
@@ -274,7 +276,7 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
 
     public void updateProject(final ProjectData projectData)
     {
-        txTemplate.execute(new TxCallback()
+        txTemplate.execute(new TxCallback<Object>()
         {
             public Object doInTransaction(TransactionStatus transactionStatus) throws Exception
             {
@@ -293,6 +295,36 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
         }
 
         return new ProjectData(project);
+    }
+
+    public int updateCrucibleMetrics(final String xml) throws FisheyeAccessorException
+    {
+        try
+        {
+            return txTemplate.execute(new TxCallback<Integer>()
+            {
+                public Integer doInTransaction(TransactionStatus transactionStatus) throws Exception
+                {
+                    return MetricsManager.INSTANCE.storeNewConfig(xml, false);
+                }
+            });
+        }
+        catch (RuntimeException re)
+        {
+            if (re.getCause() instanceof XMLValidationException)
+            {
+                throw new FisheyeAccessorException("XML failed validation", re);
+            }
+            else
+            {
+                throw new FisheyeAccessorException("Error updating Crucible metrics", re);
+            }
+        }
+    }
+
+    public String getCrucibleMetrics()
+    {
+        return MetricsManager.INSTANCE.getConfigDef(MetricsManager.INSTANCE.getLatestVersion()).getXml();
     }
 
     public void addSysadminGroup(final String groupname) throws FisheyeAccessorException
