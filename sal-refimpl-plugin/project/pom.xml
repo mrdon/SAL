@@ -24,11 +24,7 @@
                     <instructions>
 	                    <Import-Package>com.atlassian.sal.api.project</Import-Package>
 	                    <Private-Package>com.atlassian.sal.refimpl.project</Private-Package>
-<!--
-	                    <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
-	                    <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
-	                    <Spring-Context>classpath:/META-INF/spring/*.xml;create-asynchronously:=false</Spring-Context> 
--->
+                            <Spring-Context>*;timeout:=60</Spring-Context>                                                
                     </instructions>
                 </configuration>
             </plugin>

@@ -24,11 +24,7 @@
                     <instructions>
 	                    <Import-Package>com.atlassian.sal.api.executor,com.atlassian.seraph.auth</Import-Package>
 	                    <Private-Package>com.atlassian.sal.refimpl.executor,com.atlassian.sal.core.executor</Private-Package>
-<!--
-	                    <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
-	                    <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
-	                    <Spring-Context>classpath:/META-INF/spring/*.xml;create-asynchronously:=false</Spring-Context> 
--->
+                            <Spring-Context>*;timeout:=60</Spring-Context>                                                
                     </instructions>
                 </configuration>
             </plugin>
