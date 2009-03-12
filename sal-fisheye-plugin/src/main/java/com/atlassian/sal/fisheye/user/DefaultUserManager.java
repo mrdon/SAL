@@ -50,10 +50,13 @@ public class DefaultUserManager implements UserManager
     {
         try
         {
-            fisheyeUserManagerAccessor.getUser(username);
+            if (fisheyeUserManagerAccessor.getUser(username) == null)
+            {
+                return null;
+            }
         } catch (final DbException e)
         {
-            throw new UserResolutionException("User '" + username + "' doesn't exist.", e);
+            throw new UserResolutionException("Exception resolving user  '" + username + "'.", e);
         }
         return new Principal()
         {

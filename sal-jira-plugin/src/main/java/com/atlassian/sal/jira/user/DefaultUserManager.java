@@ -107,7 +107,7 @@ public class DefaultUserManager implements UserManager
             getUser(username);
         } catch (final EntityNotFoundException e)
         {
-            throw new UserResolutionException("User '" + username + "' doesn't exist.", e);
+            return null;
         }
         return new Principal()
         {

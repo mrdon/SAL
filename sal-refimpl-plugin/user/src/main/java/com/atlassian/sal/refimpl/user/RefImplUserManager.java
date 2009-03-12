@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
+import com.atlassian.sal.api.user.UserResolutionException;
 import com.atlassian.seraph.auth.AuthenticationContext;
 import com.atlassian.user.EntityException;
 import com.atlassian.user.Group;
@@ -26,8 +27,8 @@ public class RefImplUserManager implements com.atlassian.sal.api.user.UserManage
     private final UserManager userManager;
     private final Authenticator authenticator;
 
-    public RefImplUserManager(AuthenticationContext authenticationContext, UserManager userManager,
-        GroupManager groupManager, Authenticator authenticator)
+    public RefImplUserManager(final AuthenticationContext authenticationContext, final UserManager userManager,
+        final GroupManager groupManager, final Authenticator authenticator)
     {
         this.authenticationContext = authenticationContext;
         this.userManager = userManager;
@@ -37,51 +38,72 @@ public class RefImplUserManager implements com.atlassian.sal.api.user.UserManage
 
     public String getRemoteUsername()
     {
-        Principal user = authenticationContext.getUser();
+        final Principal user = authenticationContext.getUser();
         if (user == null)
             return null;
         return user.getName();
     }
-    
-    public String getRemoteUsername(HttpServletRequest request)
+
+    public String getRemoteUsername(final HttpServletRequest request)
     {
         return request.getRemoteUser();
     }
 
-    public boolean isSystemAdmin(String username)
+    public boolean isSystemAdmin(final String username)
     {
         return isUserInGroup(username, "administrators");
     }
 
-    public boolean authenticate(String username, String password)
+    public boolean authenticate(final String username, final String password)
     {
         try
         {
-            boolean authenticated = authenticator.authenticate(username, password);
+            final boolean authenticated = authenticator.authenticate(username, password);
             if (!authenticated)
             {
                 log.info("Cannot login user '" + username + "' as they used an incorrect password");
             }
             return authenticated;
         }
-        catch (EntityException e)
+        catch (final EntityException e)
         {
             log.info("Cannot login user '" + username + "' as they do not exist.");
             return false;
         }
     }
 
-    public boolean isUserInGroup(String username, String group)
+    public boolean isUserInGroup(final String username, final String group)
     {
         try
         {
-            User user = userManager.getUser(username);
-            Group adminGroup = groupManager.getGroup(group);
+            final User user = userManager.getUser(username);
+            final Group adminGroup = groupManager.getGroup(group);
             return groupManager.hasMembership(adminGroup, user);
         }
-        catch (EntityException e)
+        catch (final EntityException e)
         {
             return false;
         }
+    }
+
+    public Principal resolve(final String username) throws UserResolutionException
+    {
+        try
+        {
+            if (userManager.getUser(username)==null)
+            {
+                return null;
+            }
+        } catch (final EntityException e)
+        {
+            throw new UserResolutionException("Exception resolving user  '" + username + "'.", e);
+        }
+        return new Principal()
+        {
+            public String getName()
+            {
+                return username;
+            }
+        };
     }
 }

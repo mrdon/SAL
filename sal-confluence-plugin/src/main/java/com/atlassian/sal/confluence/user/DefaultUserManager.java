@@ -62,10 +62,9 @@ public class DefaultUserManager implements UserManager
 
     public Principal resolve(final String username) throws UserResolutionException
     {
-        final User user = userAccessor.getUser(username);
-        if (user == null)
+        if (userAccessor.getUser(username) == null)
         {
-            throw new UserResolutionException("User '" + username + "' doesn't exist.");
+            return null;
         }
         return new Principal()
         {
