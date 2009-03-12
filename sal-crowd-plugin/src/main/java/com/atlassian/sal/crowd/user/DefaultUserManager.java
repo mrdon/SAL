@@ -1,9 +1,12 @@
 package com.atlassian.sal.crowd.user;
 
+import java.security.Principal;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.crowd.model.user.UserAccessor;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserResolutionException;
 
 /**
  * FishEye implementation of the UserManager
@@ -43,5 +46,21 @@ public class DefaultUserManager implements UserManager
         // TODO Implement SAL-16
         return getRemoteUsername();
     }
-}
+
+    public Principal resolve(final String username) throws UserResolutionException
+    {
+        throw new UnsupportedOperationException();
+//        final User user = userAccessor.getUser(username);
+//        if (user == null)
+//        {
+//            throw new UserResolutionException("User '" + username + "' doesn't exist.");
+//        }
+//        return new Principal()
+//        {
+//            public String getName()
+//            {
+//                return username;
+//            }
+//        };
+    }}
 

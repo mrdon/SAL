@@ -1,5 +1,7 @@
 package com.atlassian.sal.jira.user;
 
+import java.security.Principal;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -8,6 +10,7 @@ import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserResolutionException;
 import com.opensymphony.user.EntityNotFoundException;
 import com.opensymphony.user.User;
 
@@ -95,5 +98,23 @@ public class DefaultUserManager implements UserManager
     {
         // TODO Implement SAL-16
         return getRemoteUsername();
+    }
+
+    public Principal resolve(final String username) throws UserResolutionException
+    {
+        try
+        {
+            getUser(username);
+        } catch (final EntityNotFoundException e)
+        {
+            throw new UserResolutionException("User '" + username + "' doesn't exist.", e);
+        }
+        return new Principal()
+        {
+            public String getName()
+            {
+                return username;
+            }
+        };
     }
 }

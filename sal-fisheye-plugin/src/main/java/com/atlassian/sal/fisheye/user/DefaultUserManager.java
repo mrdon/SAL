@@ -1,9 +1,13 @@
 package com.atlassian.sal.fisheye.user;
 
+import java.security.Principal;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserResolutionException;
 import com.atlassian.sal.fisheye.appconfig.FisheyeUserManagerAccessor;
+import com.cenqua.fisheye.rep.DbException;
 
 /**
  * FishEye implementation of the UserManager
@@ -37,9 +41,27 @@ public class DefaultUserManager implements UserManager
         return fisheyeUserManagerAccessor.authenticate(username, password);
     }
 
-   public String getRemoteUsername(final HttpServletRequest request)
-   {
-       return fisheyeUserManagerAccessor.getRemoteUsername(request);
+    public String getRemoteUsername(final HttpServletRequest request)
+    {
+        return fisheyeUserManagerAccessor.getRemoteUsername(request);
+    }
+
+    public Principal resolve(final String username) throws UserResolutionException
+    {
+        try
+        {
+            fisheyeUserManagerAccessor.getUser(username);
+        } catch (final DbException e)
+        {
+            throw new UserResolutionException("User '" + username + "' doesn't exist.", e);
+        }
+        return new Principal()
+        {
+            public String getName()
+            {
+                return username;
+            }
+        };
     }
 
 }
