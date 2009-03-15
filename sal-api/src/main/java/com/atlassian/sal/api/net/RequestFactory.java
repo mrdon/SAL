@@ -15,4 +15,12 @@ public interface RequestFactory<T extends Request<?>>
 	 * @return
 	 */
 	T createRequest(MethodType methodType, String url);
+	
+	/**
+	 * Indicates whether the requests can support headers
+	 * @return true if the requests can support headers
+	 * @see Request#setHeader(String, String)
+	 * @see Request#addHeader(String, String)
+	 */
+	boolean supportsHeader();
 }

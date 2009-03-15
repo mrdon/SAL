@@ -1,10 +1,10 @@
 package com.atlassian.sal.testresources.net;
 
-import com.atlassian.sal.api.net.RequestFactory;
-import com.atlassian.sal.api.net.Request;
-
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+
+import com.atlassian.sal.api.net.Request;
+import com.atlassian.sal.api.net.RequestFactory;
 
 /**
  * Mock request factory.  Either mock a request and call addRequest() with the URL you want that request
@@ -14,12 +14,12 @@ public class MockRequestFactory implements RequestFactory<Request<?>>
 {
     private final Map<String, Request<?>> requestMap = new HashMap<String, Request<?>>();
 
-    public void addRequest(String url, Request<?> request)
+    public void addRequest(final String url, final Request<?> request)
     {
         requestMap.put(url, request);
     }
 
-    public Request<?> createRequest(Request.MethodType methodType, String url)
+    public Request<?> createRequest(final Request.MethodType methodType, final String url)
     {
         if (requestMap.containsKey(url))
         {
@@ -30,4 +30,9 @@ public class MockRequestFactory implements RequestFactory<Request<?>>
             return new MockRequest(methodType, url);
         }
     }
+
+	public boolean supportsHeader()
+	{
+		return true;
+	}
 }

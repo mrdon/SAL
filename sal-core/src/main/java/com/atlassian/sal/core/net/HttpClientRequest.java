@@ -57,6 +57,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     private final Request.MethodType methodType;
     private String url;
     private final Map<String, List<String>> parameters = new HashMap<String, List<String>>();
+    private final Map<String, List<String>> headers = new HashMap<String, List<String>>();
     private final List<HttpClientAuthenticator> authenticators = new ArrayList<HttpClientAuthenticator>();
     private final CertificateFactory certificateFactory;
 
@@ -66,7 +67,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     private String requestContentType;
 
     public HttpClientRequest(final HttpClient httpClient, final MethodType methodType, final String url,
-        CertificateFactory certificateFactory, UserManager userManager)
+        final CertificateFactory certificateFactory, final UserManager userManager)
     {
         this.httpClient = httpClient;
         this.methodType = methodType;
@@ -180,6 +181,46 @@ public class HttpClientRequest implements Request<HttpClientRequest>
         return this;
     }
 
+    public HttpClientRequest addHeader(final String headerName, final String headerValue)
+    {
+        List<String> list = headers.get(headerName);
+        if (list==null)
+        {
+            list = new ArrayList<String>();
+            headers.put(headerName, list);
+        }
+        list.add(headerValue);
+        return this;
+    }
+
+    public HttpClientRequest setHeader(final String headerName, final String headerValue)
+    {
+        headers.put(headerName, new ArrayList<String>(Arrays.asList(headerValue)));
+        return this;
+    }
+
+    public HttpClientRequest addHeaders(final String... params)
+    {
+        if (params.length%2!=0)
+        {
+            throw new IllegalArgumentException("You must enter even number of arguments");
+        }
+
+        for (int i = 0; i < params.length; i+=2)
+        {
+            final String name = params[i];
+            final String value = params[i+1];
+            List<String> list = headers.get(name);
+            if (list==null)
+            {
+                list = new ArrayList<String>();
+                headers.put(name, list);
+            }
+            list.add(value);
+        }
+        return this;
+    }
+
     /* (non-Javadoc)
      * @see com.atlassian.sal.api.net.Request#execute()
      */
@@ -189,6 +230,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
         for (int attempts = 0; attempts < MAX_ATTEMPTS; attempts++)
         {
             final HttpMethod method = makeMethod();
+            processHeaders(method);
             processAuthenticator(method);
             processParameters(method);
             if (log.isDebugEnabled())
@@ -377,6 +419,17 @@ public class HttpClientRequest implements Request<HttpClientRequest>
         } catch (final IOException e)
         {
             throw new RetryAgainException(e);
+        }
+    }
+
+    private void processHeaders(final HttpMethod method)
+    {
+        for (final String headerName : this.headers.keySet())
+        {
+            for (final String headerValue : this.headers.get(headerName))
+            {
+                method.addRequestHeader(headerName, headerValue);
+            }
         }
     }
 

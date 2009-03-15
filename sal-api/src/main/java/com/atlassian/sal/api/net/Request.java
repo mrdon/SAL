@@ -75,6 +75,7 @@ public interface Request<T extends Request<?>>
     T addTrustedTokenAuthentication();
 
     T addTrustedTokenAuthentication(String username);
+    
     /**
      * Adds basic authentication to the request.
      *
@@ -83,6 +84,7 @@ public interface Request<T extends Request<?>>
      * @return a reference to this object.
      */
     T addBasicAuthentication(String username, String password);
+    
     /**
      * Adds seraph authentication to the request.
      *
@@ -91,7 +93,27 @@ public interface Request<T extends Request<?>>
      * @return a reference to this object.
      */
     T addSeraphAuthentication(String username, String password);
-
+    
+    /**
+     * Adds the specified header to the request, not overwriting any previous value.
+     * Support for this operation is optional.
+     * @param headerName the header's name
+     * @param headerValue the header's value
+     * @return a reference to this object
+     * @see RequestFactory#supportsHeader()
+     */
+    T addHeader(String headerName, String headerValue);
+    
+    /**
+     * Sets the specified header to the request, overwriting any previous value.
+     * Support for this operation is optional.
+     * @param headerName the header's name
+     * @param headerValue the header's value
+     * @return a reference to this object
+     * @see RequestFactory#supportsHeader()
+     */
+    T setHeader(String headerName, String headerValue);
+    
 	/**
 	 * Executes the request.
 	 * @param responseHandler Callback handler of the response.
