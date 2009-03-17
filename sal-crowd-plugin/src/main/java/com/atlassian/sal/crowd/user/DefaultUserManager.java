@@ -1,41 +1,40 @@
 package com.atlassian.sal.crowd.user;
 
-import javax.servlet.http.HttpServletRequest;
-
-import com.atlassian.crowd.model.user.UserAccessor;
+import com.atlassian.crowd.service.UserService;
 import com.atlassian.sal.api.user.UserManager;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
- * FishEye implementation of the UserManager
+ * Crowd implementation of the UserManager
  */
 public class DefaultUserManager implements UserManager
 {
+    private final UserService userService;
 
-    private final UserAccessor userAccessor;
-
-    public DefaultUserManager(final UserAccessor userAccessor)
+    public DefaultUserManager(final UserService userService)
     {
-        this.userAccessor = userAccessor;
+        this.userService = userService;
     }
 
     public String getRemoteUsername()
     {
-        return userAccessor.getRemoteUsername();
+        return userService.getRemoteUsername();
     }
 
     public boolean isSystemAdmin(final String username)
     {
-        return userAccessor.isSystemAdmin(username);
+        return userService.isSystemAdmin(username);
     }
 
     public boolean isUserInGroup(final String username, final String group)
     {
-        throw new UnsupportedOperationException();
+        return userService.isUserInGroup(username, group);
     }
 
     public boolean authenticate(final String username, final String password)
     {
-        throw new UnsupportedOperationException();
+        return userService.authenticate(username, password);
     }
 
     public String getRemoteUsername(final HttpServletRequest request)

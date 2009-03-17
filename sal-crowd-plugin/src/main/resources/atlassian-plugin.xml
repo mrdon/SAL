@@ -12,7 +12,7 @@
     <component key="transactionTemplate" class="com.atlassian.sal.core.transaction.HostContextTransactionTemplate" public="true" >
         <interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>
     </component>
-
+    
     <component key="certificateFactory" class="com.atlassian.sal.crowd.trusted.CrowdCertificateFactory" name="Certificate Factory" public="true">
         <interface>com.atlassian.sal.core.trusted.CertificateFactory</interface>
     </component>
@@ -23,6 +23,10 @@
 
     <component key="pluginSettingsFactory" class="com.atlassian.sal.crowd.pluginsettings.CrowdPluginSettingsFactory" name="Plugin Settings Factory" public="true">
         <interface>com.atlassian.sal.api.pluginsettings.PluginSettingsFactory</interface>
+    </component>
+
+    <component key="applicationProperties" class="com.atlassian.sal.crowd.CrowdApplicationProperties" name="Crowd Application Properties" public="true">
+        <interface>com.atlassian.sal.api.ApplicationProperties</interface>
     </component>
 
     <component key="salUserManager" class="com.atlassian.sal.crowd.user.DefaultUserManager" name="User Manager" public="true">
