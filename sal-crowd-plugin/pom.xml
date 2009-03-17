@@ -57,12 +57,6 @@
     
     <dependencies>
         <dependency>
-	        <groupId>com.atlassian.studio</groupId>
-	        <artifactId>studio-crowd-plugin</artifactId>
-	        <version>1.6.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-core</artifactId>
             <version>${pom.version}</version>

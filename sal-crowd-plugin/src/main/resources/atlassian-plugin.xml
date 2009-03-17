@@ -25,10 +25,14 @@
         <interface>com.atlassian.sal.api.pluginsettings.PluginSettingsFactory</interface>
     </component>
 
+    <component key="applicationProperties" class="com.atlassian.sal.crowd.CrowdApplicationProperties" name="Crowd Application Properties" public="true">
+        <interface>com.atlassian.sal.api.ApplicationProperties</interface>
+    </component>
+
     <component key="salUserManager" class="com.atlassian.sal.crowd.user.DefaultUserManager" name="User Manager" public="true">
         <interface>com.atlassian.sal.api.user.UserManager</interface>
     </component>
 
     <listener key="applicationReadyListener" class="com.atlassian.sal.crowd.lifecycle.ApplicationReadyListener" />
-    
+
 </atlassian-plugin>
