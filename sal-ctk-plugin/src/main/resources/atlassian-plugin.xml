@@ -14,6 +14,7 @@
     <component-import key="loc" interface="com.atlassian.sal.api.license.LicenseHandler" />
     <component-import key="lifecycleManager" interface="com.atlassian.sal.api.lifecycle.LifecycleManager" />
     <component-import key="i18nResolver" interface="com.atlassian.sal.api.message.I18nResolver" />
+    <component-import key="localeResolver" interface="com.atlassian.sal.api.message.LocaleResolver" />
     <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
     <component-import key="requestFactory" interface="com.atlassian.sal.api.net.RequestFactory" />
     <component-import key="projectManager" interface="com.atlassian.sal.api.project.ProjectManager" />

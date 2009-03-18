@@ -1,6 +1,8 @@
 package com.atlassian.sal.api.message;
 
 import java.io.Serializable;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * This interface is responsible for resolving a message or key/argument pairs to
@@ -48,4 +50,14 @@ public interface I18nResolver
      * @return
      */
     MessageCollection createMessageCollection();
+
+    /**
+     * Given a prefix, this method will return all translations where the key starts with the given prefix as key ->
+     * value mappings..
+     *
+     * @param prefix The prefix for a particular key to start with. May not be null. Empty string will match everything, which may be slow.
+     * @param locale The locale for which to lookup translations. Use null for the default locale.
+     * @return A Map of i18nKey -> translation mappings where i18nKey starts with the prefix. Empty map if no matches.
+     */
+    Map<String, String> getAllTranslationsForPrefix(String prefix, Locale locale);
 }

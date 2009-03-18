@@ -1,7 +1,7 @@
 package com.atlassian.sal.api.message;
 
 import java.util.Locale;
-
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -18,4 +18,12 @@ public interface LocaleResolver
      * @return Locale to be used in i18n and l10n
      */
     Locale getLocale(HttpServletRequest request);
+
+    /**
+     * Returns a set of all the supported locales by the host application. This is all the language packs that
+     * are installed.
+     *
+     * @return a set of all the supported locales by the host application.
+     */
+    Set<Locale> getSupportedLocales();
 }
