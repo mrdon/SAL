@@ -18,9 +18,10 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Bundle-SymbolicName>com.atlassian.sal.refimpl.net</Bundle-SymbolicName>
                         <Import-Package>
                             com.atlassian.security.auth.trustedapps, com.atlassian.sal.api.user,
-                            com.atlassian.sal.api.net, com.atlassian.sal.api.net.auth, 
+                            com.atlassian.sal.api.net, com.atlassian.sal.api.net.auth, com.atlassian.sal.api.component, 
                             javax.crypto, javax.crypto.spec, javax.net, javax.net.ssl, javax.servlet.http,
                             org.apache.commons.codec, org.apache.commons.codec.binary, org.apache.commons.codec.net,
                             org.apache.commons.lang, org.apache.commons.logging, org.apache.log4j

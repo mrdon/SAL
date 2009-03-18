@@ -18,6 +18,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Bundle-SymbolicName>com.atlassian.sal.refimpl.license</Bundle-SymbolicName>
 	                    <Import-Package>com.atlassian.sal.api.license,org.apache.commons.logging</Import-Package>
 	                    <Private-Package>com.atlassian.sal.refimpl.license</Private-Package>
 <!--

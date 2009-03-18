@@ -18,6 +18,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Bundle-SymbolicName>com.atlassian.sal.refimpl.upgrade</Bundle-SymbolicName>
 	                    <Import-Package>
 	                        com.atlassian.sal.api.upgrade,com.atlassian.plugin,
 	                        com.atlassian.sal.api.pluginsettings,com.atlassian.sal.api.transaction,

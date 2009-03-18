@@ -18,6 +18,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Bundle-SymbolicName>com.atlassian.sal.refimpl.transaction</Bundle-SymbolicName>
                         <Import-Package>
                             com.atlassian.sal.api.transaction,com.atlassian.sal.spi
                         </Import-Package>

@@ -18,6 +18,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Bundle-SymbolicName>com.atlassian.sal.refimpl.message</Bundle-SymbolicName>
 	                    <Import-Package>
 	                        com.atlassian.sal.api.message,com.atlassian.plugin,
 	                        com.atlassian.plugin.elements, com.atlassian.plugin.event,

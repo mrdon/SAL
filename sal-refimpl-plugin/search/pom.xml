@@ -18,6 +18,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Bundle-SymbolicName>com.atlassian.sal.refimpl.search</Bundle-SymbolicName>
 	                    <Import-Package>
 	                       com.atlassian.sal.api.search,com.atlassian.sal.api.search.query,
 	                       com.atlassian.sal.api.search.parameter,
