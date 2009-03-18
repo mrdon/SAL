@@ -1,25 +1,31 @@
 package com.atlassian.sal.crowd.pluginsettings;
 
 import com.atlassian.crowd.model.salproperty.SALPropertyDAO;
+import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 
 public class CrowdPluginSettingsFactory implements PluginSettingsFactory
 {
-    private final SALPropertyDAO salPropertyDAO;
+    private SALPropertyDAO salPropertyDAO;
 
-    public CrowdPluginSettingsFactory(final SALPropertyDAO salPropertyDAO)
+    public CrowdPluginSettingsFactory()
     {
-        this.salPropertyDAO = salPropertyDAO;
     }
 
     public PluginSettings createGlobalSettings()
     {
-        return new CrowdPluginSettings(null, this.salPropertyDAO);
+        return new CrowdPluginSettings(null, getSalPropertyDao());
     }
 
     public PluginSettings createSettingsForKey(String key)
     {
-        return new CrowdPluginSettings(key, this.salPropertyDAO);
+        return new CrowdPluginSettings(key, getSalPropertyDao());
     }
+
+	private SALPropertyDAO getSalPropertyDao() {
+		if (this.salPropertyDAO == null)
+			this.salPropertyDAO = ComponentLocator.getComponent(SALPropertyDAO.class);
+		return this.salPropertyDAO;
+	}
 }
