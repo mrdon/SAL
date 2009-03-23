@@ -42,5 +42,12 @@
             <artifactId>sal-core</artifactId>
             <version>${pom.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-spi</artifactId>
+            <version>${pom.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 </project>

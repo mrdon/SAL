@@ -21,6 +21,7 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
 
     public DefaultLifecycleManager(PluginEventManager pluginEventManager, List<LifecycleAware> listeners)
     {
+        Validate.notNull(listeners, "The list of lifecycle aware listeners must be specified");
         this.listeners = listeners;
         pluginEventManager.register(this);
     }
