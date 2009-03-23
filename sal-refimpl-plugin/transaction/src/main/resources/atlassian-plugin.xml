@@ -6,8 +6,14 @@
     </plugin-info>
 
     <component name="NoOp Transaction Template" key="noopTransactionTemplate"
-               class="com.atlassian.sal.core.transaction.NoOpTransactionTemplate" system="true" public="true">
+               class="com.atlassian.sal.core.transaction.HostContextTransactionTemplate" system="true" public="true">
         <interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>
     </component>
+    
+    <component name="Refimpl Host Context Accessor" key="hostContextAccessor"
+               class="com.atlassian.sal.refimpl.RefimplHostContextAccessor" public="true" system="true">
+        <interface>com.atlassian.sal.spi.HostContextAccessor</interface>
+    </component>
 </atlassian-plugin>
+
 
