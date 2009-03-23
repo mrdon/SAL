@@ -55,9 +55,11 @@ public interface I18nResolver
      * Given a prefix, this method will return all translations where the key starts with the given prefix as key ->
      * value mappings.
      *
-     * @param prefix The prefix for a particular key to start with. May not be null. Empty string will match everything, which may be slow.
-     * @param locale The locale for which to lookup translations. May not be null.
+     * @param prefix The prefix for a particular key to start with. Empty string will match everything, which may be
+     * slow. Throws {@code NullPointerException} if {@code null}.
+     * @param locale The locale for which to lookup translations.  Throws {@code NullPointerException} if {@code null}.
      * @return A Map of i18nKey -> translation mappings where i18nKey starts with the prefix. Empty map if no matches.
+     * @throws NullPointerException if {@code prefix} or {@code link} are {@code null}  
      */
     Map<String, String> getAllTranslationsForPrefix(String prefix, Locale locale);
 }
