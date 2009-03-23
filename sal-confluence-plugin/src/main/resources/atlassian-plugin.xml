@@ -63,8 +63,11 @@
     	<interface>com.atlassian.sal.api.executor.ThreadLocalDelegateExecutorFactory</interface>
 	</component>
 
+    <component key="localeResolver" class="com.atlassian.sal.confluence.message.ConfluenceLocaleResolver" name="Confluence Locale Resolver" public="true">
+        <interface>com.atlassian.sal.api.message.LocaleResolver</interface>
+    </component>
     <component key="loginUriProvider" class="com.atlassian.sal.confluence.auth.ConfluenceLoginUriProvider" name="Confluence Login Uri Provider" public="true">
     	<interface>com.atlassian.sal.api.auth.LoginUriProvider</interface>
 	</component>
 
-	</atlassian-plugin>
+</atlassian-plugin>
