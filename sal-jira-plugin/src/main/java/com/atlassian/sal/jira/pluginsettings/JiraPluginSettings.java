@@ -14,9 +14,13 @@ public class JiraPluginSettings extends AbstractStringPluginSettings
 
     protected Object removeActual(String key)
     {
+        Object val = null;
         if (propertySet.exists(key))
+        {
+            val = getActual(key);
             propertySet.remove(key);
-        return key;
+        }
+        return val;
     }
 
     protected void putActual(String key, String val)

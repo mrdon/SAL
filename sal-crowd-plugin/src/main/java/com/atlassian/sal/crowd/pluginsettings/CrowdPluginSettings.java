@@ -34,7 +34,14 @@ public class CrowdPluginSettings extends AbstractStringPluginSettings
         try
         {
             salProperty = salPropertyDAO.find(key, propertyName == null ? NULL_STRING : propertyName);
-            return salProperty.getStringValue();
+            if (salProperty != null)
+            {
+                return salProperty.getStringValue();
+            }
+            else
+            {
+                return null;               
+            }
         }
         catch (final DataAccessException e)
         {
@@ -80,7 +87,8 @@ public class CrowdPluginSettings extends AbstractStringPluginSettings
     protected Object removeActual(String propertyName)
     {
         final String notNullPropertyName = propertyName == null ? NULL_STRING : propertyName;
+        Object val = getActual(notNullPropertyName);
         salPropertyDAO.remove(key, notNullPropertyName);
-        return propertyName;
+        return val;
     }
 }

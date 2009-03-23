@@ -91,6 +91,12 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
 
     protected abstract void putActual(String key, String val);
     protected abstract String getActual(String key);
+
+    /**
+     * Do the removal
+     * @param key The key to remove
+     * @return The value that was removed
+     */
     protected abstract Object removeActual(String key);
 
 
