@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 public interface AuthenticationListener
 {
     /**
-     * Called when the OAuth signature is validated and the user is resolved and permissions are verified.  Responsible
+     * Called when the signature is validated and the user is resolved and permissions are verified.  Responsible
      * for preparing the HTTP request or session such that the application sees the user as logged in for the rest of
      * this request.
      *
@@ -21,7 +21,7 @@ public interface AuthenticationListener
     void authenticationSuccess(Authenticator.Result result, HttpServletRequest request, HttpServletResponse response);
 
     /**
-     * Called when the OAuth signature cannot be validated or the user cannot be resolved or does not have permission
+     * Called when the signature cannot be validated or the user cannot be resolved or does not have permission
      * to access the resource.
      *
      * @param result Authentication result containing the details of the failure

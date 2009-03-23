@@ -8,14 +8,14 @@ import javax.servlet.http.HttpServletResponse;
 import com.atlassian.sal.api.message.Message;
 
 /**
- * Authenticates OAuth requests
+ * Authenticates requests
  */
 public interface Authenticator
 {
     Result authenticate(HttpServletRequest request, HttpServletResponse response);
 
     /**
-     * Encapsulates the results of an OAuth authentication attempt.  Includes the result status, any problem that
+     * Encapsulates the results of an authentication attempt.  Includes the result status, any problem that
      * occurred, and possibly the authenticated users {@link Principal}.
      */
     static class Result

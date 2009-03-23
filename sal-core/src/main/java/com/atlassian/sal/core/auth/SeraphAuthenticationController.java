@@ -5,6 +5,7 @@ import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.sal.api.auth.AuthenticationController;
+import com.atlassian.sal.core.util.Assert;
 import com.atlassian.seraph.auth.RoleMapper;
 import com.atlassian.seraph.filter.BaseLoginFilter;
 
@@ -21,11 +22,7 @@ public class SeraphAuthenticationController implements AuthenticationController
      */
     public SeraphAuthenticationController(final RoleMapper roleMapper)
     {
-        if (roleMapper == null)
-        {
-            throw new NullPointerException("roleMapper");
-        }
-        this.roleMapper = roleMapper;
+        this.roleMapper = Assert.notNull(roleMapper, "roleMapper");
     }
 
     /**

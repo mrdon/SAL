@@ -6,9 +6,9 @@ package com.atlassian.sal.api.user;
  */
 public class UserResolutionException extends RuntimeException
 {
-    public UserResolutionException(final String messge, final Throwable cause)
+    public UserResolutionException(final String message, final Throwable cause)
     {
-        super(messge, cause);
+        super(message, cause);
     }
 
     public UserResolutionException(final Throwable cause)

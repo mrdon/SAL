@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 
 import com.atlassian.sal.api.user.UserResolutionException;
+import com.atlassian.sal.core.util.Assert;
 import com.atlassian.seraph.auth.AuthenticationContext;
 import com.atlassian.user.EntityException;
 import com.atlassian.user.Group;
@@ -30,10 +31,10 @@ public class RefImplUserManager implements com.atlassian.sal.api.user.UserManage
     public RefImplUserManager(final AuthenticationContext authenticationContext, final UserManager userManager,
         final GroupManager groupManager, final Authenticator authenticator)
     {
-        this.authenticationContext = authenticationContext;
-        this.userManager = userManager;
-        this.groupManager = groupManager;
-        this.authenticator = authenticator;
+        this.authenticationContext = Assert.notNull(authenticationContext, "authenticationContext");
+        this.userManager = Assert.notNull(userManager, "userManager");
+        this.groupManager = Assert.notNull(groupManager, "groupManager");
+        this.authenticator = Assert.notNull(authenticator, "authenticator");
     }
 
     public String getRemoteUsername()
@@ -61,13 +62,13 @@ public class RefImplUserManager implements com.atlassian.sal.api.user.UserManage
             final boolean authenticated = authenticator.authenticate(username, password);
             if (!authenticated)
             {
-                log.info("Cannot login user '" + username + "' as they used an incorrect password");
+                log.info("Cannot authenticate user '" + username + "' as they used an incorrect password");
             }
             return authenticated;
         }
         catch (final EntityException e)
         {
-            log.info("Cannot login user '" + username + "' as they do not exist.");
+            log.info("Cannot authenticate user '" + username + "' as they do not exist.");
             return false;
         }
     }

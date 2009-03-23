@@ -5,17 +5,17 @@ import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Allows the host application to communicate to the OAuth system details about when authentication should be performed
+ * Allows the host application to communicate about when authentication should be performed
  * and users allowed to login.
  */
 public interface AuthenticationController
 {
     /**
-     * Check whether or not authentication via OAuth should be tried. Typically this will return
+     * Check whether or not authentication should be tried. Typically this will return
      * {@code true} if the current principal is not already authenticated.
      *
      * @param request the current {@link HttpServletRequest}
-     * @return {@code true} if OAuth authentication should be tried, {@code false} otherwise.
+     * @return {@code true} if authentication should be tried, {@code false} otherwise.
      */
     boolean shouldAttemptAuthentication(HttpServletRequest request);
 
