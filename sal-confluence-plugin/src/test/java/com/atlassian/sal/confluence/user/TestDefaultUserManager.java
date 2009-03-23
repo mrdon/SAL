@@ -4,6 +4,8 @@ import junit.framework.TestCase;
 
 import org.easymock.MockControl;
 
+import com.atlassian.confluence.security.Permission;
+import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.user.User;
@@ -14,7 +16,7 @@ public class TestDefaultUserManager extends TestCase
 {
     public void testGetRemoteUsername()
     {
-        final DefaultUserManager defaultUserManager = new DefaultUserManager(null);
+        final DefaultUserManager defaultUserManager = new DefaultUserManager(null, null);
         String username = defaultUserManager.getRemoteUsername();
         assertNull(username);
 
@@ -61,7 +63,17 @@ public class TestDefaultUserManager extends TestCase
 
         mockUserAccessorControl.replay();
 
-        final DefaultUserManager defaultUserManager = new DefaultUserManager(mockUserAccessor);
+        final MockControl mockPermissionManagerControl = MockControl.createControl(PermissionManager.class);
+        final PermissionManager permissionManager = (PermissionManager) mockPermissionManagerControl.getMock();
+
+        permissionManager.hasPermission(mockUser, Permission.ADMINISTER, PermissionManager.TARGET_SYSTEM);
+        mockPermissionManagerControl.setReturnValue(false);
+
+        permissionManager.hasPermission(mockUser2, Permission.ADMINISTER, PermissionManager.TARGET_SYSTEM);
+        mockPermissionManagerControl.setReturnValue(true);
+        mockPermissionManagerControl.replay();
+
+        final DefaultUserManager defaultUserManager = new DefaultUserManager(mockUserAccessor, permissionManager);
 
         boolean isSystemAdmin = defaultUserManager.isSystemAdmin("tommy");
         assertFalse(isSystemAdmin);
@@ -105,7 +117,7 @@ public class TestDefaultUserManager extends TestCase
         mockUserAccessorControl.setReturnValue(true);
         mockUserAccessorControl.replay();
 
-        final DefaultUserManager defaultUserManager = new DefaultUserManager(mockUserAccessor);
+        final DefaultUserManager defaultUserManager = new DefaultUserManager(mockUserAccessor, null);
 
         boolean isAuthenticated = defaultUserManager.authenticate("tommy", "dontmatteruserdoesntexist");
         assertFalse(isAuthenticated);

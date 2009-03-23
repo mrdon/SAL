@@ -4,6 +4,8 @@ import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.atlassian.confluence.security.Permission;
+import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.sal.api.user.UserManager;
@@ -14,10 +16,12 @@ import com.atlassian.user.User;
 public class DefaultUserManager implements UserManager
 {
     private final UserAccessor userAccessor;
+    private final PermissionManager permissionManager;
 
-    public DefaultUserManager(final UserAccessor userAccessor)
+    public DefaultUserManager(final UserAccessor userAccessor, final PermissionManager permissionManager)
     {
         this.userAccessor = userAccessor;
+        this.permissionManager = permissionManager;
     }
 
     public String getRemoteUsername()
@@ -33,7 +37,9 @@ public class DefaultUserManager implements UserManager
     public boolean isSystemAdmin(final String username)
     {
         final User user = userAccessor.getUser(username);
-        return user != null && userAccessor.isSuperUser(user);
+        return user != null &&
+            ( permissionManager.hasPermission(user, Permission.ADMINISTER, PermissionManager.TARGET_SYSTEM)
+              || userAccessor.isSuperUser(user));
     }
 
     public boolean authenticate(final String username, final String password)
