@@ -21,7 +21,7 @@
                         <Bundle-SymbolicName>com.atlassian.sal.refimpl.user</Bundle-SymbolicName>
 	                    <Import-Package>
 	                        com.atlassian.sal.api.user,com.atlassian.seraph.auth,com.atlassian.user,
-	                        com.atlassian.user.security.authentication, javax.servlet.http, org.apache.log4j
+	                        com.atlassian.user.security.authentication, com.atlassian.sal.core.util, javax.servlet.http, org.apache.log4j
                         </Import-Package>
 	                    <Private-Package>com.atlassian.sal.refimpl.user</Private-Package>
 <!--
