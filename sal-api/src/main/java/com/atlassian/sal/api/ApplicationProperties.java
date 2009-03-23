@@ -1,8 +1,7 @@
 package com.atlassian.sal.api;
 
-import java.util.Date;
-import java.util.Set;
 import java.io.File;
+import java.util.Date;
 
 /**
  * Component for looking up application properties specific to their web interface
