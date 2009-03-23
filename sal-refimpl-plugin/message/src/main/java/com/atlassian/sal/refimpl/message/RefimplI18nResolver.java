@@ -61,6 +61,14 @@ public class RefimplI18nResolver extends AbstractI18nResolver
     @Override
     public Map<String, String> getAllTranslationsForPrefix(String prefix, Locale locale)
     {
+        if (prefix == null)
+        {
+            throw new NullPointerException("prefix must not be null");
+        }
+        if (locale == null)
+        {
+            throw new NullPointerException("locale must not be null");
+        }
         Map<String, String> translationsWithPrefix = new HashMap<String, String>();
         for (Iterable<ResourceBundle> bundles : pluginResourceBundles.values())
         {
