@@ -21,11 +21,7 @@
                         <Bundle-SymbolicName>com.atlassian.sal.refimpl.license</Bundle-SymbolicName>
 	                    <Import-Package>com.atlassian.sal.api.license,org.apache.commons.logging</Import-Package>
 	                    <Private-Package>com.atlassian.sal.refimpl.license</Private-Package>
-<!--
-	                    <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
-	                    <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
-	                    <Spring-Context>classpath:/META-INF/spring/*.xml;create-asynchronously:=false</Spring-Context> 
--->
+                        <Spring-Context>*;timeout:=60</Spring-Context>
                     </instructions>
                 </configuration>
             </plugin>

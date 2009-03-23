@@ -28,11 +28,7 @@
 	                       com.atlassian.sal.refimpl.search,com.atlassian.sal.refimpl.search.query,
 	                       com.atlassian.sal.refimpl.search.parameter,com.atlassian.sal.core.search
                         </Private-Package>
-<!--
-	                    <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
-	                    <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
-	                    <Spring-Context>classpath:/META-INF/spring/*.xml;create-asynchronously:=false</Spring-Context> 
--->
+                        <Spring-Context>*;timeout:=60</Spring-Context>
                     </instructions>
                 </configuration>
             </plugin>

@@ -23,11 +23,7 @@
                             org.apache.commons.lang    
                         </Import-Package>
 	                    <Private-Package>com.atlassian.sal.refimpl.lifecycle,com.atlassian.sal.core.lifecycle</Private-Package>
-<!--
-	                    <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
-	                    <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
-	                    <Spring-Context>classpath:/META-INF/spring/*.xml;create-asynchronously:=false</Spring-Context> 
--->
+                        <Spring-Context>*;timeout:=60</Spring-Context>
                     </instructions>
                 </configuration>
             </plugin>
