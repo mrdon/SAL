@@ -23,7 +23,7 @@
                             com.atlassian.sal.api.transaction,com.atlassian.sal.spi
                         </Import-Package>
                         <Private-Package>
-                            com.atlassian.sal.core.transaction
+                            com.atlassian.sal.refimpl,com.atlassian.sal.core.transaction
                         </Private-Package>
 <!--
 	                    <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
