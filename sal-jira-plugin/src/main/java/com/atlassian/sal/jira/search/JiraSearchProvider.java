@@ -161,8 +161,8 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
             final Project project = projectManager.getProjectObjByKey(projectKey);
             if (project != null)
             {
-                holder.put("pid", project.getId().toString());
-            }
+                holder.put("pid", Arrays.asList(project.getId().toString()));
+            } 
         }
 
         return searchRequestFactory.create(null, remoteUser, holder, getSearchContext());
