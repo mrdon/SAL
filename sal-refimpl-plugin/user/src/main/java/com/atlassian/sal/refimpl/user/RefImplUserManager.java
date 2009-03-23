@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 
 import com.atlassian.sal.api.user.UserResolutionException;
-import com.atlassian.sal.core.util.Assert;
 import com.atlassian.seraph.auth.AuthenticationContext;
 import com.atlassian.user.EntityException;
 import com.atlassian.user.Group;
@@ -31,10 +30,10 @@ public class RefImplUserManager implements com.atlassian.sal.api.user.UserManage
     public RefImplUserManager(final AuthenticationContext authenticationContext, final UserManager userManager,
         final GroupManager groupManager, final Authenticator authenticator)
     {
-        this.authenticationContext = Assert.notNull(authenticationContext, "authenticationContext");
-        this.userManager = Assert.notNull(userManager, "userManager");
-        this.groupManager = Assert.notNull(groupManager, "groupManager");
-        this.authenticator = Assert.notNull(authenticator, "authenticator");
+        this.authenticationContext = assertNotNull(authenticationContext, "authenticationContext");
+        this.userManager = assertNotNull(userManager, "userManager");
+        this.groupManager = assertNotNull(groupManager, "groupManager");
+        this.authenticator = assertNotNull(authenticator, "authenticator");
     }
 
     public String getRemoteUsername()
@@ -106,5 +105,27 @@ public class RefImplUserManager implements com.atlassian.sal.api.user.UserManage
                 return username;
             }
         };
+    }
+
+    /**
+     * Check that {@code reference} is not {@code null}. If it is, throw a
+     * {@code IllegalArgumentException}.
+     *
+     * @param reference
+     *            reference to check is {@code null} or not
+     * @param errorMessage
+     *            message passed to the {@code IllegalArgumentException} constructor
+     *            to give more context when debugging
+     * @return {@code reference} so it may be used
+     * @throws IllegalArgumentException
+     *             if {@code reference} is {@code null}
+     */
+    private static <T> T assertNotNull(final T reference, final Object errorMessage)
+    {
+        if (reference == null)
+        {
+            throw new IllegalArgumentException(String.valueOf(errorMessage));
+        }
+        return reference;
     }
 }
