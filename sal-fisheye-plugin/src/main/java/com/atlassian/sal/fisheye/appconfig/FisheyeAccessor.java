@@ -5,6 +5,7 @@ import com.cenqua.crucible.configuration.metrics.XMLValidationException;
 
 import java.util.Collection;
 import java.util.List;
+import java.io.File;
 
 public interface FisheyeAccessor
 {
@@ -18,6 +19,7 @@ public interface FisheyeAccessor
 
     /* Other stuff */
     String getSiteURL();
+    File getInstanceDirectory();
     void setLicense(String license) throws FisheyeAccessorException;
     boolean isApplicationSetUp();
     void addSysadminGroup(String systemAdmins) throws FisheyeAccessorException;

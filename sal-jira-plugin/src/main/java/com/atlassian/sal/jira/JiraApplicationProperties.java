@@ -5,6 +5,7 @@ import com.atlassian.jira.util.BuildUtils;
 import com.atlassian.sal.api.ApplicationProperties;
 
 import java.util.Date;
+import java.io.File;
 
 /**
  * JIRA implementation of WebProperties
@@ -41,5 +42,10 @@ public class JiraApplicationProperties implements ApplicationProperties
     public String getBuildNumber()
     {
         return BuildUtils.getCurrentBuildNumber();
+    }
+
+    public File getHomeDirectory()
+    {
+        return null;
     }
 }

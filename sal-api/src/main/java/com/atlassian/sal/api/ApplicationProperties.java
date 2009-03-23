@@ -1,6 +1,7 @@
 package com.atlassian.sal.api;
 
 import java.util.Date;
+import java.io.File;
 
 /**
  * Component for looking up application properties specific to their web interface
@@ -36,4 +37,11 @@ public interface ApplicationProperties
      * @since 2.0.0
      */
     String getBuildNumber();
+
+
+    /**
+     * @return the home directory of the application or null if none is defined
+     * @since 2.2.0
+     */
+    File getHomeDirectory();
 }

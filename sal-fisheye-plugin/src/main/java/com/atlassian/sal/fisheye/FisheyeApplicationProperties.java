@@ -3,6 +3,7 @@ package com.atlassian.sal.fisheye;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.io.File;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -54,5 +55,13 @@ public class FisheyeApplicationProperties implements ApplicationProperties
     public String getBuildNumber()
     {
         return FisheyeVersionInfo.BUILD_NUMBER;
+    }
+
+    /**
+     * @return the FishEye instance directory, not the home or application directory
+     */
+    public File getHomeDirectory()
+    {
+        return fisheyeAccessor.getInstanceDirectory();
     }
 }

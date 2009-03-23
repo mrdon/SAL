@@ -1,6 +1,7 @@
 package com.atlassian.sal.fisheye.appconfig;
 
 import java.io.IOException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -60,6 +61,11 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
     public String getSiteURL()
     {
         return AppConfig.getsConfig().getSiteURL();
+    }
+
+    public File getInstanceDirectory()
+    {
+        return AppConfig.getInstanceDir();
     }
 
     public void createRepository(final String repName, final String description, final String svnUrl,
