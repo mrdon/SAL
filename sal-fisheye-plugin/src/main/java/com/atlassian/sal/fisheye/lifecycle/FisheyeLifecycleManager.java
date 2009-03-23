@@ -10,6 +10,7 @@ public class FisheyeLifecycleManager extends DefaultLifecycleManager
 
     public FisheyeLifecycleManager(final FisheyeAccessor fisheyeAccessor)
     {
+        super(listeners);
         this.fisheyeAccessor = fisheyeAccessor;
     }
 

@@ -5,6 +5,10 @@ import com.atlassian.sal.core.lifecycle.DefaultLifecycleManager;
 
 public class CrowdLifecycleManager extends DefaultLifecycleManager
 {
+    public CrowdLifecycleManager()
+    {
+        super(listeners);
+    }
 
     public boolean isApplicationSetUp()
 	{
