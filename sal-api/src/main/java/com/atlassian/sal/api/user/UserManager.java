@@ -10,11 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 public interface UserManager
 {
     /**
-     * Returns the username of the currently logged in user or null if no user can be found.
+     * Returns the username of the currently logged in user or null if no user can be found.  If possible, please use
+     * {@link #getRemoteUsername(HttpServletRequest)}.
      * @return The user name of the logged in user or null
-     * @deprecated use {@link getRemoteUsername(javax.servlet.ServletRequest)}
      */
-    @Deprecated
     String getRemoteUsername();
 
     /**
