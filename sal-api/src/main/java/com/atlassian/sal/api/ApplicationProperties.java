@@ -1,6 +1,7 @@
 package com.atlassian.sal.api;
 
 import java.util.Date;
+import java.util.Set;
 import java.io.File;
 
 /**
@@ -15,10 +16,10 @@ public interface ApplicationProperties
     String getBaseUrl();
 
     /**
-     * Returns one of JIRA, Confluence or FishEye
-     * @return one of JIRA, Confluence or FishEye
+     * @return the displayable name of the application
+     * @since 2.0.0
      */
-    String getApplicationName();
+    String getDisplayName();
 
     /**
      * Returns the version of the application
@@ -44,4 +45,5 @@ public interface ApplicationProperties
      * @since 2.2.0
      */
     File getHomeDirectory();
+
 }

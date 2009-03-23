@@ -17,7 +17,7 @@ public class RefimplApplicationProperties implements ApplicationProperties
         return System.getProperty("baseurl", "http://localhost:8080/atlassian-plugins-refimpl");
     }
 
-    public String getApplicationName()
+    public String getDisplayName()
     {
         return "RefImpl";
     }

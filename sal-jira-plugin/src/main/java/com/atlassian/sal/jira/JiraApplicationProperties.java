@@ -24,7 +24,7 @@ public class JiraApplicationProperties implements ApplicationProperties
         return applicationProperties.getDefaultBackedString(APKeys.JIRA_BASEURL);
     }
 
-    public String getApplicationName()
+    public String getDisplayName()
     {
         return "JIRA";
     }

@@ -25,7 +25,7 @@ public class CrowdApplicationProperties implements ApplicationProperties
         return clientProperties.getBaseURL();
     }
 
-    public String getApplicationName()
+    public String getDisplayName()
     {
         return ApplicationType.CROWD.getDisplayName();
     }

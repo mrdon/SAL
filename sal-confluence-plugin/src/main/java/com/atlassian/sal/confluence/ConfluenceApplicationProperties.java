@@ -21,7 +21,7 @@ public class ConfluenceApplicationProperties implements ApplicationProperties
         return settingsManager.getGlobalSettings().getBaseUrl();
     }
 
-    public String getApplicationName()
+    public String getDisplayName()
     {
         return "Confluence";
     }

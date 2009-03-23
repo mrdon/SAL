@@ -51,7 +51,7 @@ public class TestJiraSearchProvider
         MockitoAnnotations.initMocks(this);
 
         when(mockApplicationProperties.getBaseUrl()).thenReturn("http://jira.atlassian.com");
-        when(mockApplicationProperties.getApplicationName()).thenReturn("JIRA");
+        when(mockApplicationProperties.getDisplayName()).thenReturn("JIRA");
 
         keys = new ArrayList<String>();
 

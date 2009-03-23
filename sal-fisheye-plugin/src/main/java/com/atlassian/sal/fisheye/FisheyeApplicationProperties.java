@@ -29,7 +29,7 @@ public class FisheyeApplicationProperties implements ApplicationProperties
         return StringUtils.removeEnd(siteURL, "/");
     }
 
-    public String getApplicationName()
+    public String getDisplayName()
     {
         return "FishEye";
     }
