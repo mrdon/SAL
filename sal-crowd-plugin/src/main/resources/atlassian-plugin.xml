@@ -50,5 +50,11 @@
     <component key="threadLocalDelegateExecutorFactory" class="com.atlassian.sal.crowd.executor.CrowdThreadLocalDelegateExecutorFactory" name="Fisheye Thread Local Delegate Executor Factory" public="true">
         <interface>com.atlassian.sal.api.executor.ThreadLocalDelegateExecutorFactory</interface>
     </component>
+    
+    <component key="licenseHandler" class="com.atlassian.sal.crowd.license.CrowdLicenseHandler" name="License Handler" public="true">
+        <interface>com.atlassian.sal.api.license.LicenseHandler</interface>
+    </component>
+
+    
 
 </atlassian-plugin>
