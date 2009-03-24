@@ -65,4 +65,8 @@
     	<interface>com.atlassian.sal.api.search.query.SearchQueryParser</interface>
 	</component>
 
+     <component key="pluginScheduler" class="com.atlassian.sal.core.scheduling.TimerPluginScheduler" public="true" >
+        <interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
+    </component>
+
 </atlassian-plugin>
