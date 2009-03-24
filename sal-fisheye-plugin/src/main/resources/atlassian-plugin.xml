@@ -48,15 +48,8 @@
         <interface>com.atlassian.sal.api.project.ProjectManager</interface>
     </component>
 
-    <!--  fisheye api -->    
-    <component key="fisheyeAccessor" class="com.atlassian.sal.fisheye.appconfig.FisheyeAccessorFactoryBean" public="true">
-        <interface>com.atlassian.sal.fisheye.appconfig.FisheyeAccessor</interface>
-    </component>
-    <component key="fisheyeCommitAccessor" class="com.atlassian.sal.fisheye.appconfig.FisheyeCommitAccessorFactoryBean" public="true">
-        <interface>com.atlassian.sal.fisheye.appconfig.FisheyeCommitAccessor</interface>
-    </component>
-    <component key="fisheyeUserManagerAccessor" class="com.atlassian.sal.fisheye.appconfig.FisheyeUserManagerAccessorFactoryBean">
-        <interface>com.atlassian.sal.fisheye.appconfig.FisheyeUserManagerAccessor</interface>
+    <component key="loginUriProvider" class="com.atlassian.sal.confluence.auth.FisheyeLoginUriProvider" name="Fisheye Login Uri Provider" public="true">
+        <interface>com.atlassian.sal.api.auth.LoginUriProvider</interface>
     </component>
     
     <component key="authenticationListener" class="com.atlassian.sal.core.auth.SeraphAuthenticationListener" public="true">
@@ -66,5 +59,17 @@
     <component key="authenticationController" class="com.atlassian.sal.core.auth.SeraphAuthenticationController" public="true">
         <interface>com.atlassian.sal.api.auth.AuthenticationController</interface>
     </component>
+
+    <!--  fisheye 'api' -->    
+    <component key="fisheyeAccessor" class="com.atlassian.sal.fisheye.appconfig.FisheyeAccessorFactoryBean" public="true">
+        <interface>com.atlassian.sal.fisheye.appconfig.FisheyeAccessor</interface>
+    </component>
+    <component key="fisheyeCommitAccessor" class="com.atlassian.sal.fisheye.appconfig.FisheyeCommitAccessorFactoryBean" public="true">
+        <interface>com.atlassian.sal.fisheye.appconfig.FisheyeCommitAccessor</interface>
+    </component>
+    <component key="fisheyeUserManagerAccessor" class="com.atlassian.sal.fisheye.appconfig.FisheyeUserManagerAccessorFactoryBean">
+        <interface>com.atlassian.sal.fisheye.appconfig.FisheyeUserManagerAccessor</interface>
+    </component>
+
 
 </atlassian-plugin>
