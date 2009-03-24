@@ -3,16 +3,12 @@
     <parent>
         <groupId>com.atlassian.sal</groupId>
         <artifactId>sal-refimpl-plugins</artifactId>
-        <version>2.1-SNAPSHOT</version>
+        <version>2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>sal-refimpl-pluginsettings-plugin</artifactId>
     <name>Shared Application Access Layer Reference Implementation PluginSettings Plugin</name>
     <packaging>bundle</packaging>
-
-    <properties>
-        <atlassian.plugin.key>com.atlassian.sal.refimpl.pluginsettings</atlassian.plugin.key>
-    </properties>
 
     <build>
         <plugins>
@@ -22,9 +18,10 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-	                    <Import-Package>com.atlassian.sal.api.pluginsettings,org.apache.log4j</Import-Package>
+                        <Bundle-SymbolicName>com.atlassian.sal.refimpl.pluginsettings</Bundle-SymbolicName>
+	                    <Import-Package>com.atlassian.sal.api.pluginsettings,org.apache.commons.lang,org.apache.log4j</Import-Package>
 	                    <Private-Package>com.atlassian.sal.refimpl.pluginsettings,com.atlassian.sal.core.pluginsettings</Private-Package>
-                            <Spring-Context>*;timeout:=60</Spring-Context>                                                
+                        <Spring-Context>*;timeout:=60</Spring-Context>
                     </instructions>
                 </configuration>
             </plugin>

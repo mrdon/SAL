@@ -3,16 +3,12 @@
     <parent>
         <groupId>com.atlassian.sal</groupId>
         <artifactId>sal-refimpl-plugins</artifactId>
-        <version>2.1-SNAPSHOT</version>
+        <version>2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>sal-refimpl-transaction-plugin</artifactId>
     <name>Shared Application Access Layer Reference Implementation Transaction Plugin</name>
     <packaging>bundle</packaging>
-
-    <properties>
-        <atlassian.plugin.key>com.atlassian.sal.refimpl.transaction</atlassian.plugin.key>
-    </properties>
 
     <build>
         <plugins>
@@ -22,13 +18,14 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Bundle-SymbolicName>com.atlassian.sal.refimpl.transaction</Bundle-SymbolicName>
                         <Import-Package>
                             com.atlassian.sal.api.transaction,com.atlassian.sal.spi
                         </Import-Package>
                         <Private-Package>
-                            com.atlassian.sal.core.transaction,com.atlassian.sal.refimpl
+                            com.atlassian.sal.refimpl,com.atlassian.sal.core.transaction
                         </Private-Package>
-                        <Spring-Context>*;timeout:=60</Spring-Context>                                                
+                        <Spring-Context>*;timeout:=60</Spring-Context>
                     </instructions>
                 </configuration>
             </plugin>
@@ -43,8 +40,10 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.sal</groupId>
-            <artifactId>sal-spring</artifactId>
+            <artifactId>sal-spi</artifactId>
             <version>${pom.version}</version>
+            <scope>provided</scope>
         </dependency>
+
     </dependencies>
 </project>

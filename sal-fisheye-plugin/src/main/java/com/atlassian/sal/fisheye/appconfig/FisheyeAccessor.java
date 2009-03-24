@@ -1,7 +1,11 @@
 package com.atlassian.sal.fisheye.appconfig;
 
+import com.cenqua.crucible.actions.admin.project.ProjectData;
+import com.cenqua.crucible.configuration.metrics.XMLValidationException;
+
 import java.util.Collection;
 import java.util.List;
+import java.io.File;
 
 public interface FisheyeAccessor
 {
@@ -15,9 +19,18 @@ public interface FisheyeAccessor
 
     /* Other stuff */
     String getSiteURL();
+    File getInstanceDirectory();
     void setLicense(String license) throws FisheyeAccessorException;
     boolean isApplicationSetUp();
+    void addSysadminGroup(String systemAdmins) throws FisheyeAccessorException;
+    Collection<String> getUsersInGroup(String groupname) throws FisheyeAccessorException;
 
+    /* Crucible project administration */
+    // These can't use the SPI ProjectData objects because they don't contain the data that needs to be updated
+    void updateProject(ProjectData projectData);
+    ProjectData getProjectByKey(String key);
+    int updateCrucibleMetrics(String xml) throws FisheyeAccessorException;
+    String getCrucibleMetrics();
 
     interface Linker
     {
@@ -50,9 +63,5 @@ public interface FisheyeAccessor
         }
 
     }
-
-
-
-
 
 }

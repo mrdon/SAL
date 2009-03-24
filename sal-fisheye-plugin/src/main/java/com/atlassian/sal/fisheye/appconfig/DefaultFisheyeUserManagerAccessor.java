@@ -8,6 +8,7 @@ import com.cenqua.crucible.filters.CrucibleFilter;
 import com.cenqua.fisheye.AppConfig;
 import com.cenqua.fisheye.LicensePolicyException;
 import com.cenqua.fisheye.rep.DbException;
+import com.cenqua.fisheye.user.FEUser;
 import com.cenqua.fisheye.user.UserLogin;
 
 public class DefaultFisheyeUserManagerAccessor implements FisheyeUserManagerAccessor
@@ -26,8 +27,15 @@ public class DefaultFisheyeUserManagerAccessor implements FisheyeUserManagerAcce
 
     public boolean isSystemAdmin(final String username)
     {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not implemented in fisheye yet");
+        try
+        {
+            return getUserManager().hasSysAdminPrivileges(username);
+        } catch (final DbException e)
+        {
+            log.error("Database error while checking user '" + username + "' for sysadmin permissions.", e);
+        }
+        return false;
+
     }
 
     public boolean isUserInGroup(final String username, final String groupname)
@@ -80,6 +88,11 @@ public class DefaultFisheyeUserManagerAccessor implements FisheyeUserManagerAcce
             log.error("Illegal State Exception while trying to get the remote user's name: ",ise);
         }
         return null;
+    }
+
+    public FEUser getUser(final String username) throws DbException
+    {
+        return getUserManager().getUser(username);
     }
 
 }

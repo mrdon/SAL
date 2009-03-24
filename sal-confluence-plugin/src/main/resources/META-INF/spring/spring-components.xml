@@ -27,8 +27,8 @@
     </osgi:list>
 
     <bean id="salLifecycleManager" class="com.atlassian.sal.confluence.lifecycle.ConfluenceLifecycleManager">
-        <property name="pluginEventManager" ref="pluginEventManager"/>
-        <property name="listeners" ref="lifecycleAwareImpls"/>
+        <constructor-arg ref="pluginEventManager"/>
+        <constructor-arg ref="lifecycleAwareImpls"/>
     </bean>
 
     <osgi:service id="salLifecycleManager_osgiService" ref="salLifecycleManager">

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.lang.Validate;
 
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
@@ -16,7 +17,14 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
 {
 	private boolean started = false;
 	private static final Logger log = Logger.getLogger(DefaultLifecycleManager.class);
-	private List<LifecycleAware> listeners;
+	private final List<LifecycleAware> listeners;
+
+    public DefaultLifecycleManager(PluginEventManager pluginEventManager, List<LifecycleAware> listeners)
+    {
+        Validate.notNull(listeners, "The list of lifecycle aware listeners must be specified");
+        this.listeners = listeners;
+        pluginEventManager.register(this);
+    }
 
     /**
 	 * This method will be invoked by PluginEventManager when PluginFrameworkStartedEvent event occurs.
@@ -80,19 +88,4 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
 		}
 	}
 
-    /**
-     * @param listeners the listeners to set
-     */
-    public void setListeners(final List<LifecycleAware> listeners)
-    {
-        this.listeners = listeners;
-    }
-
-    /**
-     * @return the listeners
-     */
-    public void setPluginEventManager(final PluginEventManager pluginEventManager)
-    {
-        pluginEventManager.register(this);
-    }
 }

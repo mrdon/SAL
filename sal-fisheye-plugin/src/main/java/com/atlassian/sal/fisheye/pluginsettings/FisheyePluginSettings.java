@@ -40,10 +40,14 @@ public class FisheyePluginSettings extends AbstractStringPluginSettings
     protected Object removeActual(String key)
     {
         int index = findPropertyType(key.toString());
+        Object val = null;
         if (index > -1)
+        {
+            val = propertiesType.getPropertyArray()[index];
             propertiesType.removeProperty(index);
+        }
         storeConfig();
-        return key;
+        return val;
     }
 
     protected void putActual(String key, String s)

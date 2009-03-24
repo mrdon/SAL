@@ -70,7 +70,7 @@ public class TestConfluenceSearchProvider extends TestCase
 
         final ApplicationProperties applicationProperties = mock(ApplicationProperties.class);
         doReturn("http://www.atlassian.com/wiki").when(applicationProperties).getBaseUrl();
-        doReturn("Confluence").when(applicationProperties).getApplicationName();
+        doReturn("Confluence").when(applicationProperties).getDisplayName();
 
 		final ConfluenceSearchProvider searchProvider = new ConfluenceSearchProvider(new DefaultPredefinedSearchBuilder(), searchManagerMock, new DefaultSearchQueryParser(), mock(UserAccessor.class), applicationProperties);
         final SearchResults results = searchProvider.search(null, "test");

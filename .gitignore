@@ -1,2 +1,6 @@
-*/target
-*/*/target
+target
+*.iml
+*.ipr
+*.iws
+*~
+*.log

@@ -8,14 +8,28 @@ import java.lang.reflect.Proxy;
 import org.springframework.beans.factory.FactoryBean;
 
 import com.cenqua.fisheye.AppConfig;
+import com.cenqua.crucible.model.managers.ProjectManager;
+import com.cenqua.crucible.actions.admin.project.ProjectDataFactory;
+import com.atlassian.sal.api.component.ComponentLocator;
+import com.atlassian.crucible.spi.TxTemplate;
 
 public class FisheyeAccessorFactoryBean implements FactoryBean
 {
     private static final ClassLoader FISHEYE_HOST_CLASSLOADER = AppConfig.class.getClassLoader();
 
+    @SuppressWarnings("UnusedDeclaration")
+    public FisheyeAccessorFactoryBean(ComponentLocator componentLocator)
+    {
+        // Ensures ComponentLocator is initialised first
+    }
+
     public Object getObject() throws Exception
     {
-        return wrapService(new Class[]{FisheyeAccessor.class}, new DefaultFisheyeAccessor(), FISHEYE_HOST_CLASSLOADER);
+        ProjectManager projectManager = ComponentLocator.getComponent(ProjectManager.class);
+        ProjectDataFactory projectDataFactory = ComponentLocator.getComponent(ProjectDataFactory.class);
+        TxTemplate txTemplate = ComponentLocator.getComponent(TxTemplate.class);
+        return wrapService(new Class[]{FisheyeAccessor.class}, new DefaultFisheyeAccessor(projectManager,
+            projectDataFactory, txTemplate), FISHEYE_HOST_CLASSLOADER);
     }
 
     public Class<?> getObjectType()
@@ -29,9 +43,9 @@ public class FisheyeAccessorFactoryBean implements FactoryBean
     }
 
     /**
-     * Copied from DefaultComponentRegistrar.java
-     * Wraps the service in a dynamic proxy that ensures all methods are executed with the passed class loader
-     * as the context class loader
+     * Copied from DefaultComponentRegistrar.java Wraps the service in a dynamic proxy that ensures all methods are
+     * executed with the passed class loader as the context class loader
+     *
      * @param interfaces The interfaces to proxy
      * @param service The instance to proxy
      * @param contextClassLoader
@@ -49,10 +63,12 @@ public class FisheyeAccessorFactoryBean implements FactoryBean
                 {
                     thread.setContextClassLoader(contextClassLoader);
                     return method.invoke(service, objects);
-                } catch (final InvocationTargetException e)
+                }
+                catch (final InvocationTargetException e)
                 {
                     throw e.getTargetException();
-                } finally
+                }
+                finally
                 {
                     thread.setContextClassLoader(originalContextClassLoader);
                 }

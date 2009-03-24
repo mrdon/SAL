@@ -2,8 +2,10 @@ package com.atlassian.sal.crowd.user;
 
 import com.atlassian.crowd.service.UserService;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserResolutionException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 
 /**
  * Crowd implementation of the UserManager
@@ -37,10 +39,22 @@ public class DefaultUserManager implements UserManager
         return userService.authenticate(username, password);
     }
 
+    public Principal resolve(final String username) throws UserResolutionException
+    {
+        try
+        {
+            return userService.resolve(username);
+
+        }
+        catch (org.springframework.dao.DataAccessException e)
+        {
+            throw new UserResolutionException("Failed to find user with name <" + username + ">", e);
+        }
+    }
+
     public String getRemoteUsername(final HttpServletRequest request)
     {
         // TODO Implement SAL-16
         return getRemoteUsername();
     }
 }
-

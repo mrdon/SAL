@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Properties;
 
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
+import org.apache.commons.lang.Validate;
 
 /**
  * PluginSettings implementation for datastores that only support Strings.  Handles converting Strings into Lists and
@@ -23,6 +24,7 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     @SuppressWarnings("unchecked")
 	public Object put(String key, Object val)
     {
+        Validate.notNull(key, "The plugin settings key cannot be null");
         if (val == null)
             return removeActual(key);
 
@@ -62,7 +64,7 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
 
     public Object get(String key)
     {
-
+        Validate.notNull(key, "The plugin settings key cannot be null");
         final String val = getActual(key);
         if (val != null && val.startsWith("#"+PROPERTIES_IDENTIFIER))
         {
@@ -91,11 +93,18 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
 
     protected abstract void putActual(String key, String val);
     protected abstract String getActual(String key);
+
+    /**
+     * Do the removal
+     * @param key The key to remove
+     * @return The value that was removed
+     */
     protected abstract Object removeActual(String key);
 
 
     public Object remove(String key)
     {
+        Validate.notNull(key, "The plugin settings key cannot be null");
         return put(key, null);
     }
 }

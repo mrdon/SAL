@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Enumeration;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
@@ -24,14 +25,15 @@ import com.atlassian.sal.core.message.AbstractI18nResolver;
  */
 public class RefimplI18nResolver extends AbstractI18nResolver
 {
-    private final Map<String, Iterable<ResourceBundle>> pluginResourceBundles = new HashMap<String, Iterable<ResourceBundle>>();
-    
+    private final Map<String, Iterable<ResourceBundle>> pluginResourceBundles =
+        new HashMap<String, Iterable<ResourceBundle>>();
+
     public RefimplI18nResolver(PluginAccessor pluginAccessor, PluginEventManager pluginEventManager)
     {
         pluginEventManager.register(this);
         addPluginResourceBundles(pluginAccessor.getPlugins());
     }
-    
+
     public String resolveText(String key, Serializable[] arguments)
     {
         String message = null;
@@ -56,18 +58,62 @@ public class RefimplI18nResolver extends AbstractI18nResolver
         return message;
     }
 
+    public Map<String, String> getAllTranslationsForPrefix(String prefix, Locale locale)
+    {
+        if (prefix == null)
+        {
+            throw new NullPointerException("prefix must not be null");
+        }
+        if (locale == null)
+        {
+            throw new NullPointerException("locale must not be null");
+        }
+        Map<String, String> translationsWithPrefix = new HashMap<String, String>();
+        for (Iterable<ResourceBundle> bundles : pluginResourceBundles.values())
+        {
+            addMatchingTranslationsToMap(prefix, locale, bundles, translationsWithPrefix);
+        }
+        return translationsWithPrefix;
+    }
+
+    private void addMatchingTranslationsToMap(String prefix, Locale locale, Iterable<ResourceBundle> bundles,
+                                              Map<String, String> translationsWithPrefix)
+    {
+        for (ResourceBundle bundle : bundles)
+        {
+            if (bundle.getLocale().equals(locale))
+            {
+                addMatchingTranslationsToMap(prefix, bundle, translationsWithPrefix);
+            }
+        }
+    }
+
+    private void addMatchingTranslationsToMap(String prefix, ResourceBundle bundle,
+                                              Map<String, String> translationsWithPrefix)
+    {
+        Enumeration enumeration = bundle.getKeys();
+        while (enumeration.hasMoreElements())
+        {
+            String key = (String) enumeration.nextElement();
+            if (key.startsWith(prefix))
+            {
+                translationsWithPrefix.put(key, bundle.getString(key));
+            }
+        }
+    }
+
     @PluginEventListener
     public void pluginEnabled(PluginEnabledEvent event)
     {
         addPluginResourceBundles(event.getPlugin());
     }
-    
+
     @PluginEventListener
     public void pluginDisabled(PluginDisabledEvent event)
     {
         removePluginResourceBundles(event.getPlugin());
     }
-    
+
     private void addPluginResourceBundles(Iterable<Plugin> plugins)
     {
         for (Plugin plugin : plugins)
@@ -91,7 +137,12 @@ public class RefimplI18nResolver extends AbstractI18nResolver
                 // ignore, move on to next one
             }
         }
-        pluginResourceBundles.put(plugin.getKey(), bundles);
+        addPluginResourceBundles(plugin.getKey(), bundles);
+    }
+
+    void addPluginResourceBundles(String pluginKey, List<ResourceBundle> bundles)
+    {
+        pluginResourceBundles.put(pluginKey, bundles);
     }
 
     private void removePluginResourceBundles(Plugin plugin)

@@ -1,4 +1,4 @@
-<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" system="true" pluginsVersion="2">
+<atlassian-plugin key="com.atlassian.sal.refimpl.component" name="${project.name}" system="true" pluginsVersion="2">
     <plugin-info>
         <description>${project.description}</description>
         <version>${pom.version}</version>
@@ -9,6 +9,11 @@
                class="com.atlassian.sal.refimpl.component.RefImplComponentLocator"
                system="true" public="true">
         <interface>com.atlassian.sal.api.component.ComponentLocator</interface>
+    </component>
+
+    <!-- Yes, this doesn't belong, but the refimpl plugins will be combined into one sometime in 2.0 -->
+    <component key="pluginScheduler" class="com.atlassian.sal.core.scheduling.TimerPluginScheduler" public="true" >
+        <interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
     </component>
 </atlassian-plugin>
 

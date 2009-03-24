@@ -1,14 +1,16 @@
 package com.atlassian.sal.testresources.net;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.atlassian.sal.api.net.Request;
+import com.atlassian.sal.api.net.Response;
 import com.atlassian.sal.api.net.ResponseException;
 import com.atlassian.sal.api.net.ResponseHandler;
-import com.atlassian.sal.api.net.Response;
 import com.atlassian.sal.api.net.auth.Authenticator;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Arrays;
 
 /**
  * Mock request that provides getters to all the information that is passed in, and also setters for the
@@ -23,8 +25,9 @@ public class MockRequest implements Request<MockRequest>
     private int soTimeout;
     private String requestBody;
     private String requestContentType;
-    private List<String> requestParameters = new ArrayList<String>();
-    private List<Authenticator> authenticators = new ArrayList<Authenticator>();
+    private final Map<String, List<String>> headers = new HashMap<String, List<String>>();
+    private final List<String> requestParameters = new ArrayList<String>();
+    private final List<Authenticator> authenticators = new ArrayList<Authenticator>();
     private boolean trustedTokenAuthentication;
     private String trustedTokenUser;
     private String basicUser;
@@ -34,49 +37,67 @@ public class MockRequest implements Request<MockRequest>
     private Response response;
     private String responseBody;
 
-    public MockRequest(MethodType methodType, String url)
+    public MockRequest(final MethodType methodType, final String url)
     {
         this.methodType = methodType;
         this.url = url;
     }
 
-    public MockRequest setConnectionTimeout(int connectionTimeout)
+    public MockRequest setConnectionTimeout(final int connectionTimeout)
     {
         this.connectionTimeout = connectionTimeout;
         return this;
     }
 
-    public MockRequest setSoTimeout(int soTimeout)
+    public MockRequest setSoTimeout(final int soTimeout)
     {
         this.soTimeout = soTimeout;
         return this;
     }
 
-    public MockRequest setUrl(String url)
+    public MockRequest setUrl(final String url)
     {
         this.url = url;
         return this;
     }
 
-    public MockRequest setRequestBody(String requestBody)
+    public MockRequest setRequestBody(final String requestBody)
     {
         this.requestBody = requestBody;
         return this;
     }
 
-    public MockRequest setRequestContentType(String contentType)
+    public MockRequest setRequestContentType(final String contentType)
     {
         this.requestContentType = contentType;
         return this;
     }
 
-    public MockRequest addRequestParameters(String... params)
+    public MockRequest addRequestParameters(final String... params)
     {
         requestParameters.addAll(Arrays.asList(params));
         return this;
     }
 
-    public MockRequest addAuthentication(Authenticator authenticator)
+    public MockRequest addHeader(final String headerName, final String headerValue)
+    {
+        List<String> list = headers.get(headerName);
+        if (list == null)
+        {
+        	list = new ArrayList<String>();
+        	headers.put(headerName, list);
+        }
+        list.add(headerValue);
+        return this;
+    }
+
+    public MockRequest setHeader(final String headerName, final String headerValue)
+    {
+    	headers.put(headerName, new ArrayList<String>(Arrays.asList(headerValue)));
+        return this;
+    }
+
+    public MockRequest addAuthentication(final Authenticator authenticator)
     {
         authenticators.add(authenticator);
         return this;
@@ -88,28 +109,28 @@ public class MockRequest implements Request<MockRequest>
         return this;
     }
 
-    public MockRequest addTrustedTokenAuthentication(String username)
+    public MockRequest addTrustedTokenAuthentication(final String username)
     {
         trustedTokenAuthentication = true;
         trustedTokenUser = username;
         return this;
     }
 
-    public MockRequest addBasicAuthentication(String username, String password)
+    public MockRequest addBasicAuthentication(final String username, final String password)
     {
         basicUser = username;
         basicPassword = password;
         return this;
     }
 
-    public MockRequest addSeraphAuthentication(String username, String password)
+    public MockRequest addSeraphAuthentication(final String username, final String password)
     {
         seraphUser = username;
         seraphPassword = password;
         return this;
     }
 
-    public void execute(ResponseHandler responseHandler) throws ResponseException
+    public void execute(final ResponseHandler responseHandler) throws ResponseException
     {
         if (response == null)
         {
@@ -157,6 +178,16 @@ public class MockRequest implements Request<MockRequest>
     {
         return requestParameters;
     }
+    
+    public Map<String, List<String>> getHeaders()
+    {
+    	return headers;
+    }
+    
+    public List<String> getHeader(final String headerName)
+    {
+    	return headers.get(headerName);
+    }
 
     public List<Authenticator> getAuthenticators()
     {
@@ -198,12 +229,12 @@ public class MockRequest implements Request<MockRequest>
         return response;
     }
 
-    public void setResponse(Response response)
+    public void setResponse(final Response response)
     {
         this.response = response;
     }
 
-    public void setResponseBody(String responseBody)
+    public void setResponseBody(final String responseBody)
     {
         this.responseBody = responseBody;
     }

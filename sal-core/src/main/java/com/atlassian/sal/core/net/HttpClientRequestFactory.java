@@ -10,8 +10,8 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.atlassian.sal.api.net.Request.MethodType;
 import com.atlassian.sal.api.net.RequestFactory;
+import com.atlassian.sal.api.net.Request.MethodType;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.core.trusted.CertificateFactory;
 
@@ -22,7 +22,7 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
     private final CertificateFactory certificateFactory;
     private final UserManager userManager;
 
-    public HttpClientRequestFactory(CertificateFactory certificateFactory, UserManager userManager)
+    public HttpClientRequestFactory(final CertificateFactory certificateFactory, final UserManager userManager)
     {
         this.certificateFactory = certificateFactory;
         this.userManager = userManager;
@@ -41,7 +41,7 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
     /* (non-Javadoc)
      * @see com.atlassian.sal.api.net.RequestFactory#createMethod(com.atlassian.sal.api.net.Request.MethodType, java.lang.String)
      */
-    public HttpClientRequest createRequest(MethodType methodType, String url)
+    public HttpClientRequest createRequest(final MethodType methodType, final String url)
     {
         final HttpClient httpClient = getHttpClient(url);
         return new HttpClientRequest(httpClient, methodType, url, certificateFactory, userManager);
@@ -51,7 +51,7 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
      * @param url The URL
      * @return The HTTP client
      */
-    protected HttpClient getHttpClient(String url)
+    protected HttpClient getHttpClient(final String url)
     {
         final HttpClient httpClient = new HttpClient();
         configureProxy(httpClient, url);
@@ -65,7 +65,7 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
      * @param client the client to which parameters are applied
      * @param connectionParameters the parameters which will be applied
      */
-    protected void configureConnectionParameters(HttpClient httpClient)
+    protected void configureConnectionParameters(final HttpClient httpClient)
     {
         final HttpConnectionManagerParams params = httpClient.getHttpConnectionManager().getParams();
         params.setSoTimeout(DEFAULT_SOCKET_TIMEOUT);
@@ -76,7 +76,7 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
      * @param client The client to configure the proxy of
      * @param remoteUrl The remote URL
      */
-    protected void configureProxy(HttpClient client, String remoteUrl)
+    protected void configureProxy(final HttpClient client, final String remoteUrl)
     {
         final String proxyHost = System.getProperty("http.proxyHost");
 
@@ -122,7 +122,7 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
         return System.getProperty("http.proxyUser") != null;
     }
 
-    private boolean isNonProxyHost(String host)
+    private boolean isNonProxyHost(final String host)
     {
         final String httpNonProxyHosts = System.getProperty("http.nonProxyHosts");
         if (StringUtils.isBlank(httpNonProxyHosts))
@@ -145,5 +145,10 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
             }
         }
         return false;
+    }
+    
+    public boolean supportsHeader()
+    {
+    	return true;
     }
 }

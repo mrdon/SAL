@@ -23,15 +23,8 @@ public class CrowdPluginSettingsTest extends TestCase
 	{
 		final SALPropertyDAO mockDAO = mock(SALPropertyDAO.class);
 		CrowdPluginSettings crowdPluginSettings = new CrowdPluginSettings(null, mockDAO);
-		// 1. null key, null propertyName, null value. Null value will remove that property
-		crowdPluginSettings.put(null, null);
-		verify(mockDAO).remove("null","null");
 
-		// 2. null key, null propertyName, not null value. 
-		crowdPluginSettings.put(null, "hello");
-		verify(mockDAO).saveOrUpdate(new SALProperty("null","null","hello"));	// note that SALProperty#equals ignores "hello" anyway
-
-		// 3. null key, not null propertyName, not null value. 
+		// 3. not null key, not null propertyName, not null value.
 		crowdPluginSettings.put("hi", "hello");
 		verify(mockDAO).saveOrUpdate(new SALProperty("null","hi","hello"));	// note that SALProperty#equals ignores "hello" anyway
 
@@ -46,12 +39,8 @@ public class CrowdPluginSettingsTest extends TestCase
 		final SALPropertyDAO mockDAO = mock(SALPropertyDAO.class);
 		CrowdPluginSettings crowdPluginSettings = new CrowdPluginSettings(null, mockDAO);
 		final SALProperty someSalProperty = new SALProperty(null, null, null);
-		// 1. null key, null propertyName. 
-		doReturn(someSalProperty).when(mockDAO).find("null","null");
-		crowdPluginSettings.get(null);
-		verify(mockDAO).find("null","null");
-		
-		// 2. null key, not null propertyName 
+
+        // 2. not null key, not null propertyName
 		doReturn(someSalProperty).when(mockDAO).find("null","hi");
 		crowdPluginSettings.get("hi");
 		verify(mockDAO).find("null","hi");

@@ -5,10 +5,7 @@
         </description>
         <vendor name="Atlassian Software Systems" url="http://www.atlassian.com"/>
         <version>${pom.version}</version>
-        <bundle-instructions>
-            <Require-Bundle>system.bundle</Require-Bundle>
-        </bundle-instructions>
-    </plugin-info>
+   	</plugin-info>
 
     <servlet key="ctk" class="com.atlassian.sal.ctk.CtkServlet">
         <url-pattern>/ctk*</url-pattern>
@@ -30,4 +27,5 @@
     <component key="lifecycleTest" class="com.atlassian.sal.ctk.test.LifecycleAwareTest" public="true">
         <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
     </component>
+
 </atlassian-plugin>

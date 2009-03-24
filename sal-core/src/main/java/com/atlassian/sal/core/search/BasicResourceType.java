@@ -13,7 +13,7 @@ public class BasicResourceType implements ResourceType
 
     public BasicResourceType(ApplicationProperties applicationProperties, String type)
     {
-        this.name = applicationProperties.getApplicationName();
+        this.name = applicationProperties.getDisplayName();
         this.url = applicationProperties.getBaseUrl();
         this.type = type;
     }

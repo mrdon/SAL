@@ -12,7 +12,7 @@
     <component key="transactionTemplate" class="com.atlassian.sal.core.transaction.HostContextTransactionTemplate" public="true" >
         <interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>
     </component>
-    
+
     <component key="certificateFactory" class="com.atlassian.sal.crowd.trusted.CrowdCertificateFactory" name="Certificate Factory" public="true">
         <interface>com.atlassian.sal.core.trusted.CertificateFactory</interface>
     </component>
@@ -34,5 +34,53 @@
     </component>
 
     <listener key="applicationReadyListener" class="com.atlassian.sal.crowd.lifecycle.ApplicationReadyListener" />
+
+    <component key="loginUriProvider" class="com.atlassian.sal.crowd.auth.CrowdLoginUriProvider" name="Crowd Login Uri Provider" public="true">
+        <interface>com.atlassian.sal.api.auth.LoginUriProvider</interface>
+    </component>
     
+    <component key="authenticationListener" class="com.atlassian.sal.core.auth.SeraphAuthenticationListener" public="true">
+        <interface>com.atlassian.sal.api.auth.AuthenticationListener</interface>
+    </component>
+    
+    <component key="authenticationController" class="com.atlassian.sal.core.auth.SeraphAuthenticationController" public="true">
+        <interface>com.atlassian.sal.api.auth.AuthenticationController</interface>
+    </component>
+
+    <component key="threadLocalDelegateExecutorFactory" class="com.atlassian.sal.crowd.executor.CrowdThreadLocalDelegateExecutorFactory" name="Fisheye Thread Local Delegate Executor Factory" public="true">
+        <interface>com.atlassian.sal.api.executor.ThreadLocalDelegateExecutorFactory</interface>
+    </component>
+    
+    <component key="licenseHandler" class="com.atlassian.sal.crowd.license.CrowdLicenseHandler" name="License Handler" public="true">
+        <interface>com.atlassian.sal.api.license.LicenseHandler</interface>
+    </component>
+
+    <component key="searchProvider" class="com.atlassian.sal.crowd.search.CrowdSearchProvider" name="Crowd search provider" public="true">
+    	<interface>com.atlassian.sal.api.search.SearchProvider</interface>
+	</component>
+
+    <component key="searchQueryParser" class="com.atlassian.sal.core.search.query.DefaultSearchQueryParser" name="Search Query Parser" public="true">
+    	<interface>com.atlassian.sal.api.search.query.SearchQueryParser</interface>
+	</component>
+
+     <component key="pluginScheduler" class="com.atlassian.sal.core.scheduling.TimerPluginScheduler" public="true" >
+        <interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
+    </component>
+
+    <component key="projectManager" class="com.atlassian.sal.crowd.project.CrowdProjectManager" name="Crowd Project Manager" public="true">
+    	<interface>com.atlassian.sal.api.project.ProjectManager</interface>
+	</component>
+
+    <component key="localeResolver" class="com.atlassian.sal.core.message.SystemDefaultLocaleResolver" name="System Default Locale Resolver" public="true">
+        <interface>com.atlassian.sal.api.message.LocaleResolver</interface>
+    </component>
+
+    <component key="threadLocalDelegateExecutorFactory" class="com.atlassian.sal.crowd.executor.CrowdThreadLocalDelegateExecutorFactory" name="Crowd Thread Local Delegate Executor Factory" public="true">
+    	<interface>com.atlassian.sal.api.executor.ThreadLocalDelegateExecutorFactory</interface>
+	</component>
+
+    <component key="i18nResolver" class="com.atlassian.sal.crowd.message.CrowdI18nResolver" public="true" name="I18n Resolver" >
+        <interface>com.atlassian.sal.api.message.I18nResolver</interface>
+	</component>
+
 </atlassian-plugin>

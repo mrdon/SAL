@@ -1,23 +1,23 @@
 package com.atlassian.sal.fisheye.user;
 
+import java.security.Principal;
+
 import javax.servlet.http.HttpServletRequest;
 
-import com.atlassian.sal.api.pluginsettings.PluginSettings;
-import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserResolutionException;
 import com.atlassian.sal.fisheye.appconfig.FisheyeUserManagerAccessor;
+import com.cenqua.fisheye.rep.DbException;
 
 /**
  * FishEye implementation of the UserManager
  */
 public class DefaultUserManager implements UserManager
 {
-    private final PluginSettingsFactory pluginSettingsFactory;
     private final FisheyeUserManagerAccessor fisheyeUserManagerAccessor;
 
-    DefaultUserManager(final PluginSettingsFactory pluginSettingsfactory, final FisheyeUserManagerAccessor fisheyeUserManagerAccessor)
+    public DefaultUserManager(final FisheyeUserManagerAccessor fisheyeUserManagerAccessor)
     {
-        this.pluginSettingsFactory = pluginSettingsfactory;
         this.fisheyeUserManagerAccessor = fisheyeUserManagerAccessor;
     }
 
@@ -28,28 +28,7 @@ public class DefaultUserManager implements UserManager
 
     public boolean isSystemAdmin(final String username)
     {
-        // TODO: replace with:
-        // return fisheyeUserManagerAccessor.isSystemAdmin(username);
-
-        if (username == null)
-        {
-            return false;
-        }
-
-        final PluginSettings pluginSettings = pluginSettingsFactory.createGlobalSettings();
-        final String sysadminGroups = (String) pluginSettings.get("sysadmin-groups");
-        if (sysadminGroups == null)
-        {
-            return false;
-        }
-        for (final String sysadminGroup : sysadminGroups.split(","))
-        {
-            if (isUserInGroup(username, sysadminGroup))
-            {
-                return true;
-            }
-        }
-        return false;
+        return fisheyeUserManagerAccessor.isSystemAdmin(username);
     }
 
     public boolean isUserInGroup(final String username, final String group)
@@ -62,9 +41,30 @@ public class DefaultUserManager implements UserManager
         return fisheyeUserManagerAccessor.authenticate(username, password);
     }
 
-   public String getRemoteUsername(final HttpServletRequest request)
-   {
-       return fisheyeUserManagerAccessor.getRemoteUsername(request);
+    public String getRemoteUsername(final HttpServletRequest request)
+    {
+        return fisheyeUserManagerAccessor.getRemoteUsername(request);
+    }
+
+    public Principal resolve(final String username) throws UserResolutionException
+    {
+        try
+        {
+            if (fisheyeUserManagerAccessor.getUser(username) == null)
+            {
+                return null;
+            }
+        } catch (final DbException e)
+        {
+            throw new UserResolutionException("Exception resolving user  '" + username + "'.", e);
+        }
+        return new Principal()
+        {
+            public String getName()
+            {
+                return username;
+            }
+        };
     }
 
 }

@@ -3,16 +3,12 @@
     <parent>
         <groupId>com.atlassian.sal</groupId>
         <artifactId>sal-refimpl-plugins</artifactId>
-        <version>2.1-SNAPSHOT</version>
+        <version>2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>sal-refimpl-search-plugin</artifactId>
     <name>Shared Application Access Layer Reference Implementation Search Plugin</name>
     <packaging>bundle</packaging>
-
-    <properties>
-        <atlassian.plugin.key>com.atlassian.sal.refimpl.search</atlassian.plugin.key>
-    </properties>
 
     <build>
         <plugins>
@@ -22,6 +18,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Bundle-SymbolicName>com.atlassian.sal.refimpl.search</Bundle-SymbolicName>
 	                    <Import-Package>
 	                       com.atlassian.sal.api.search,com.atlassian.sal.api.search.query,
 	                       com.atlassian.sal.api.search.parameter,
@@ -31,7 +28,7 @@
 	                       com.atlassian.sal.refimpl.search,com.atlassian.sal.refimpl.search.query,
 	                       com.atlassian.sal.refimpl.search.parameter,com.atlassian.sal.core.search
                         </Private-Package>
-                        <Spring-Context>*;timeout:=60</Spring-Context>                                                
+                        <Spring-Context>*;timeout:=60</Spring-Context>
                     </instructions>
                 </configuration>
             </plugin>

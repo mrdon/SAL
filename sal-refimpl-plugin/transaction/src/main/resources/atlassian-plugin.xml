@@ -1,4 +1,4 @@
-<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" system="true" pluginsVersion="2">
+<atlassian-plugin key="com.atlassian.sal.refimpl.transaction" name="${project.name}" system="true" pluginsVersion="2">
     <plugin-info>
         <description>${project.description}</description>
         <version>${pom.version}</version>
@@ -15,4 +15,5 @@
         <interface>com.atlassian.sal.spi.HostContextAccessor</interface>
     </component>
 </atlassian-plugin>
+
 

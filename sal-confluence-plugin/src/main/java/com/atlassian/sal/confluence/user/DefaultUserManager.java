@@ -1,18 +1,28 @@
 package com.atlassian.sal.confluence.user;
 
+import java.security.Principal;
+
 import javax.servlet.http.HttpServletRequest;
 
+import com.atlassian.confluence.security.Permission;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserResolutionException;
 import com.atlassian.user.User;
 
 /** Authenticates a user against UserAccessor in Confluence. */
 public class DefaultUserManager implements UserManager
 {
-    private UserAccessor userAccessor;
-    private PermissionManager permissionManager;
+    private final UserAccessor userAccessor;
+    private final PermissionManager permissionManager;
+
+    public DefaultUserManager(final UserAccessor userAccessor, final PermissionManager permissionManager)
+    {
+        this.userAccessor = userAccessor;
+        this.permissionManager = permissionManager;
+    }
 
     public String getRemoteUsername()
     {
@@ -27,7 +37,9 @@ public class DefaultUserManager implements UserManager
     public boolean isSystemAdmin(final String username)
     {
         final User user = userAccessor.getUser(username);
-        return user != null && permissionManager.isConfluenceAdministrator(user);
+        return user != null &&
+            ( permissionManager.hasPermission(user, Permission.ADMINISTER, PermissionManager.TARGET_SYSTEM)
+              || userAccessor.isSuperUser(user));
     }
 
     public boolean authenticate(final String username, final String password)
@@ -48,19 +60,24 @@ public class DefaultUserManager implements UserManager
         return userAccessor.hasMembership(group, username);
     }
 
-    public void setUserAccessor(final UserAccessor userAccessor)
-    {
-        this.userAccessor = userAccessor;
-    }
-
-    public void setPermissionManager(final PermissionManager permissionManager)
-    {
-        this.permissionManager = permissionManager;
-    }
-
     public String getRemoteUsername(final HttpServletRequest request)
     {
         // TODO Implement SAL-16
         return getRemoteUsername();
+    }
+
+    public Principal resolve(final String username) throws UserResolutionException
+    {
+        if (userAccessor.getUser(username) == null)
+        {
+            return null;
+        }
+        return new Principal()
+        {
+            public String getName()
+            {
+                return username;
+            }
+        };
     }
 }

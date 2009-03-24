@@ -1,6 +1,7 @@
 package com.atlassian.sal.fisheye.appconfig;
 
 import java.io.IOException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -18,14 +19,37 @@ import com.cenqua.fisheye.config1.RepSecurityType;
 import com.cenqua.fisheye.config1.RepositoryType;
 import com.cenqua.fisheye.config1.SvnRepType;
 import com.cenqua.fisheye.license.LicenseException;
+import com.cenqua.fisheye.rep.DbException;
 import com.cenqua.fisheye.rep.RepositoryHandle;
+import com.cenqua.fisheye.user.AdminUserConfig;
 import com.cenqua.fisheye.util.XmlbeansUtil;
 import com.cenqua.fisheye.web.admin.actions.svn.SvnSymbolicHelper;
+import com.cenqua.crucible.actions.admin.project.ProjectData;
+import com.cenqua.crucible.actions.admin.project.ProjectDataFactory;
+import com.cenqua.crucible.model.managers.ProjectManager;
+import com.cenqua.crucible.model.Project;
+import com.cenqua.crucible.configuration.metrics.MetricsManager;
+import com.cenqua.crucible.configuration.metrics.XMLValidationException;
+import com.atlassian.crucible.spi.TxTemplate;
+import com.atlassian.crucible.spi.TxCallback;
+import org.springframework.transaction.TransactionStatus;
 
 public class DefaultFisheyeAccessor implements FisheyeAccessor
 {
     private static final int REPO_CHILD_INDENT = 6;
     private static final int REPO_INDENT = 2;
+
+    private final ProjectManager projectManager;
+    private final ProjectDataFactory projectDataFactory;
+    private final TxTemplate txTemplate;
+
+    public DefaultFisheyeAccessor(ProjectManager projectManager, ProjectDataFactory projectDataFactory,
+        TxTemplate txTemplate)
+    {
+        this.projectManager = projectManager;
+        this.projectDataFactory = projectDataFactory;
+        this.txTemplate = txTemplate;
+    }
 
     public boolean repositoryExists(final String repName)
     {
@@ -39,7 +63,13 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
         return AppConfig.getsConfig().getSiteURL();
     }
 
-    public void createRepository(final String repName, final String description, final String svnUrl, final String svnUsername, final String svnPassword, final List<Linker> linkers) throws FisheyeAccessorException
+    public File getInstanceDirectory()
+    {
+        return AppConfig.getInstanceDir();
+    }
+
+    public void createRepository(final String repName, final String description, final String svnUrl,
+        final String svnUsername, final String svnPassword, final List<Linker> linkers) throws FisheyeAccessorException
     {
         try
         {
@@ -82,7 +112,8 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
             final RepositoryManager rm = AppConfig.getsConfig().getRepositoryManager();
             rm.reloadList();
             rm.runRepository(repName);
-        } catch (final Exception e)
+        }
+        catch (final Exception e)
         {
             throw new FisheyeAccessorException("Error creating fisheye repository: " + e.getMessage(), e);
         }
@@ -101,19 +132,23 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
         }
         catch (final IndexOutOfBoundsException e)
         {
-            throw new FisheyeAccessorException("Error retrieving repository '" + repName + "' for id '" + id + "'. Unable to delete.", e);
+            throw new FisheyeAccessorException(
+                "Error retrieving repository '" + repName + "' for id '" + id + "'. Unable to delete.", e);
         }
         catch (final IOException e)
         {
-            throw new FisheyeAccessorException("Error saving fisheye config when deleting repository '" + repName + "'.");
+            throw new FisheyeAccessorException(
+                "Error saving fisheye config when deleting repository '" + repName + "'.");
         }
         catch (final ConfigException e)
         {
-            throw new FisheyeAccessorException("Error reloading fisheye config when deleting repository '" + repName + "'.");
+            throw new FisheyeAccessorException(
+                "Error reloading fisheye config when deleting repository '" + repName + "'.");
         }
     }
 
-    public void setRepositoryLinkers(final String repositoryName, final List<Linker> linkers) throws FisheyeAccessorException
+    public void setRepositoryLinkers(final String repositoryName, final List<Linker> linkers)
+        throws FisheyeAccessorException
     {
         try
         {
@@ -121,7 +156,8 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
             final RepositoryType repositoryType = getRepositoryType(repositoryName);
             if (repositoryType == null)
             {
-                throw new FisheyeAccessorException("Error setting up repository linkers. Repository " + repositoryName + " not found");
+                throw new FisheyeAccessorException(
+                    "Error setting up repository linkers. Repository " + repositoryName + " not found");
             }
 
             // add all default linkers
@@ -136,7 +172,8 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
             repositoryType.setLinker(linkerType);
 
             // some extra magic for linkers to work
-            final RepositoryHandle repositoryHandle = AppConfig.getsConfig().getRepositoryManager().getRepository(repositoryName);
+            final RepositoryHandle repositoryHandle = AppConfig.getsConfig().getRepositoryManager().getRepository(
+                repositoryName);
             repositoryHandle.getCfg().setupLinker();
 
             // save the config
@@ -145,10 +182,12 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
             // refresh config
             final RepositoryManager rm = AppConfig.getsConfig().getRepositoryManager();
             rm.reloadList();
-        } catch (final IOException e)
+        }
+        catch (final IOException e)
         {
             throw new FisheyeAccessorException("Error setting up repository linkers: " + e, e);
-        } catch (final ConfigException e)
+        }
+        catch (final ConfigException e)
         {
             throw new FisheyeAccessorException("Error setting up repository linkers: " + e, e);
         }
@@ -170,7 +209,8 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
 
     private RepositoryType getRepositoryType(final String repositoryName)
     {
-        final RepositoryType[] repositories = AppConfig.getsConfig().getConfigDocument().getConfig().getRepositoryArray();
+        final RepositoryType[] repositories =
+            AppConfig.getsConfig().getConfigDocument().getConfig().getRepositoryArray();
         for (final RepositoryType repository : repositories)
         {
             if (repository.getName().equals(repositoryName))
@@ -189,9 +229,11 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
             final RepSecurityType security = cfg.getRepositoryDefaults().getSecurity();
             security.setAllowAnon(enable);
             AppConfig.getsConfig().saveConfig();
-        } catch (final IOException e)
+        }
+        catch (final IOException e)
         {
-            throw new FisheyeAccessorException("Error " + (enable?"enabling":"disabling") +" anonymous access to fisheye repositories. " + e, e);
+            throw new FisheyeAccessorException(
+                "Error " + (enable ? "enabling" : "disabling") + " anonymous access to fisheye repositories. " + e, e);
         }
     }
 
@@ -221,7 +263,8 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
         // this code is copied from TotalityFilter.requresSetup() method
         final RootConfig rootConfig = AppConfig.getsConfig();
         final AdminConfig acfg = rootConfig.getAdminConfig();
-        final boolean requiresSetup = !acfg.haveDoneInitialSetup() || (rootConfig.getLicense() == null) || rootConfig.getLicense().isTerminated();
+        final boolean requiresSetup =
+            !acfg.haveDoneInitialSetup() || (rootConfig.getLicense() == null) || rootConfig.getLicense().isTerminated();
         return !requiresSetup;
     }
 
@@ -235,5 +278,85 @@ public class DefaultFisheyeAccessor implements FisheyeAccessor
             results.add(handle.getName());
         }
         return results;
+    }
+
+    public void updateProject(final ProjectData projectData)
+    {
+        txTemplate.execute(new TxCallback<Object>()
+        {
+            public Object doInTransaction(TransactionStatus transactionStatus) throws Exception
+            {
+                projectDataFactory.updateProject(projectManager, projectData);
+                return null;
+            }
+        });
+    }
+
+    public ProjectData getProjectByKey(String key)
+    {
+        Project project = projectManager.getProjectByKey(key);
+        if (project == null)
+        {
+            return null;
+        }
+
+        return new ProjectData(project);
+    }
+
+    public int updateCrucibleMetrics(final String xml) throws FisheyeAccessorException
+    {
+        try
+        {
+            return txTemplate.execute(new TxCallback<Integer>()
+            {
+                public Integer doInTransaction(TransactionStatus transactionStatus) throws Exception
+                {
+                    return MetricsManager.INSTANCE.storeNewConfig(xml, false);
+                }
+            });
+        }
+        catch (RuntimeException re)
+        {
+            if (re.getCause() instanceof XMLValidationException)
+            {
+                throw new FisheyeAccessorException("XML failed validation", re);
+            }
+            else
+            {
+                throw new FisheyeAccessorException("Error updating Crucible metrics", re);
+            }
+        }
+    }
+
+    public String getCrucibleMetrics()
+    {
+        return MetricsManager.INSTANCE.getConfigDef(MetricsManager.INSTANCE.getLatestVersion()).getXml();
+    }
+
+    public void addSysadminGroup(final String groupname) throws FisheyeAccessorException
+    {
+        try
+        {
+            final AdminUserConfig adminUserManager = AppConfig.getsConfig().getAdminUserManager();
+            adminUserManager.addGroup(groupname);
+            AppConfig.getsConfig().saveConfig();
+        }
+        catch (final IOException e)
+        {
+            throw new FisheyeAccessorException("IOException occured while trying to add sysadmin group: " + groupname,
+                e);
+        }
+    }
+
+    public Collection<String> getUsersInGroup(final String groupname) throws FisheyeAccessorException
+    {
+        try
+        {
+            return AppConfig.getsConfig().getUserManager().getUsersInGroup(groupname);
+        }
+        catch (final DbException e)
+        {
+            throw new FisheyeAccessorException("Exception occured while retrieving users for group: " + groupname, e);
+        }
     }
 }

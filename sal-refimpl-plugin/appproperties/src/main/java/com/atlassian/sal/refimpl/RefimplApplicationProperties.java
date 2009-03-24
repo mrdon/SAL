@@ -3,6 +3,7 @@ package com.atlassian.sal.refimpl;
 import com.atlassian.sal.api.ApplicationProperties;
 
 import java.util.Date;
+import java.io.File;
 
 /**
  * Implementation of ApplicationProperties for http://localhost
@@ -16,7 +17,7 @@ public class RefimplApplicationProperties implements ApplicationProperties
         return System.getProperty("baseurl", "http://localhost:8080/atlassian-plugins-refimpl");
     }
 
-    public String getApplicationName()
+    public String getDisplayName()
     {
         return "RefImpl";
     }
@@ -34,5 +35,10 @@ public class RefimplApplicationProperties implements ApplicationProperties
     public String getBuildNumber()
     {
         return "123";
+    }
+
+    public File getHomeDirectory()
+    {
+        return new File(System.getProperty("java.tmp.dir"));
     }
 }
