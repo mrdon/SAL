@@ -2,6 +2,8 @@ package com.atlassian.sal.api.lifecycle;
 
 /**
  * Interface to be used to trigger lifecycle events
+ *
+ * @since 2.0
  */
 public interface LifecycleManager
 {
@@ -12,8 +14,7 @@ public interface LifecycleManager
     void start();
 
     /**
-     * Returns true if application is set up and ready to run.
-     * @return
+     * @return true if application is set up and ready to run
      */
     boolean isApplicationSetUp();
 }

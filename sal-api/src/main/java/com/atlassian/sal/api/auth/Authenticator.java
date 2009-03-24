@@ -10,10 +10,16 @@ import com.atlassian.sal.api.message.Message;
 /**
  * Authenticates requests
  *
- * @since 2.0.0
+ * @since 2.0
  */
 public interface Authenticator
 {
+    /**
+     * Authenticates a request
+     * @param request The request
+     * @param response The response
+     * @return The result of the authentication
+     */
     Result authenticate(HttpServletRequest request, HttpServletResponse response);
 
     /**

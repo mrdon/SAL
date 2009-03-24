@@ -28,5 +28,4 @@
         <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
     </component>
 
-    <resource
 </atlassian-plugin>

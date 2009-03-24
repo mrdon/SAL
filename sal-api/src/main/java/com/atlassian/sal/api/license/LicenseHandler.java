@@ -2,6 +2,8 @@ package com.atlassian.sal.api.license;
 
 /**
  * Interface into the license system for the individual application
+ *
+ * @since 2.0
  */
 public interface LicenseHandler
 {

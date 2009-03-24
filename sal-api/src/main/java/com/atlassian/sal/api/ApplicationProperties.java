@@ -5,43 +5,41 @@ import java.util.Date;
 
 /**
  * Component for looking up application properties specific to their web interface
+ *
+ * @since 2.0
  */
 public interface ApplicationProperties
 {
     /**
      * Get the base URL of the current application.
+     *
      * @return the current application's base URL
      */
     String getBaseUrl();
 
     /**
      * @return the displayable name of the application
-     * @since 2.0.0
      */
     String getDisplayName();
 
     /**
-     * Returns the version of the application
-     * @since 2.0.0
+     * @return the version of the application
      */
     String getVersion();
 
     /**
-     * Returns the build date of the application
-     * @since 2.0.0
+     * @return the build date of the application
      */
     Date getBuildDate();
 
     /**
-     * Returns the build number of the application
-     * @since 2.0.0
+     * @return the build number of the application
      */
     String getBuildNumber();
 
 
     /**
      * @return the home directory of the application or null if none is defined
-     * @since 2.2.0
      */
     File getHomeDirectory();
 

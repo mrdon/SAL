@@ -7,6 +7,8 @@ import java.util.Map;
 /**
  * This interface is responsible for resolving a message or key/argument pairs to
  * their internationalized message.
+ *
+ * @since 2.0
  */
 public interface I18nResolver
 {
@@ -38,16 +40,14 @@ public interface I18nResolver
     /**
 	 * Creates an instance of Message.
 	 * 
-     * @param key
-     * @param arguments
-     * @return
+     * @param key The message key
+     * @param arguments The arguments to interpolate
+     * @return The message
      */
     Message createMessage(String key, Serializable... arguments);
     
     /**
-     * Creates an instance of MessageCollection.
-     * 
-     * @return
+     * @return an instance of MessageCollection.
      */
     MessageCollection createMessageCollection();
 

@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * This interface is responsible for resolving the current locale.
+ *
+ * @since 2.0
  */
 public interface LocaleResolver
 {

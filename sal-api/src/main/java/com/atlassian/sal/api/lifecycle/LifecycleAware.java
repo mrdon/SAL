@@ -2,6 +2,8 @@ package com.atlassian.sal.api.lifecycle;
 
 /**
  * Marks a class that wants to execute code on certain application-level lifecycle stages
+ *
+ * @since 2.0
  */
 public interface LifecycleAware
 {

@@ -5,49 +5,52 @@ import java.util.Map;
 
 /**
  * Represents the response when calling {@link Request#execute(ResponseHandler)}
+ *
+ * @since 2.0
  */
 public interface Response
 {
-	/**
-	 * @return status code of the request.
-	 */
-	int getStatusCode();
+    /**
+     * @return status code of the request.
+     */
+    int getStatusCode();
 
-	/**
-	 * @return the response body of the request.
-	 * @throws ResponseException
-	 */
-	String getResponseBodyAsString() throws ResponseException;
+    /**
+     * @return the response body of the request.
+     * @throws ResponseException If the response cannot be retrieved
+     */
+    String getResponseBodyAsString() throws ResponseException;
 
-	/**
-	 * @return the response body of the request.
-	 * @throws ResponseException
-	 */
-	InputStream getResponseBodyAsStream() throws ResponseException;
+    /**
+     * @return the response body of the request.
+     * @throws ResponseException If the response cannot be retrieved
+     */
+    InputStream getResponseBodyAsStream() throws ResponseException;
 
-	/**
-	 * @return status test of the response
-	 */
-	String getStatusText();
+    /**
+     * @return status test of the response
+     */
+    String getStatusText();
 
-	/**
-	 * @return true if network returned a status code in the 200 range or 300 range
-	 */
-	boolean isSuccessful();
+    /**
+     * @return true if network returned a status code in the 200 range or 300 range
+     */
+    boolean isSuccessful();
 
     /**
      * Get's the header by the given name
      *
      * @param name The name of the header
      * @return The value of the header.  This will include all values, comma seperated, if multiple header fields with
-     * the given name were specified, as per RFC2616.
+     *         the given name were specified, as per RFC2616.
      */
     String getHeader(String name);
 
     /**
      * Get a map of all the headers
+     *
      * @return A map of header names to header values.  The header values will include all values, comma seperated, if
-     * multiple header fields with the given name were specified, as per RFC2616.
+     *         multiple header fields with the given name were specified, as per RFC2616.
      */
     Map<String, String> getHeaders();
 }

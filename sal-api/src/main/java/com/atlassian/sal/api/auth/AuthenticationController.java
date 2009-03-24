@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Allows the host application to communicate about when authentication should be performed
  * and users allowed to login.
- * 
- * @since 2.0.0
+ *
+ * @since 2.0
  */
 public interface AuthenticationController
 {
@@ -25,9 +25,9 @@ public interface AuthenticationController
      * Check whether the given principal can log into the application for the current request.
      *
      * @param principal the identified principal
-     * @param request the current {@link HttpServletRequest}
+     * @param request   the current {@link HttpServletRequest}
      * @return {@code true} if the principal is allowed to login for the given request, {@code false}
-     * otherwise.
+     *         otherwise.
      */
     boolean canLogin(Principal principal, HttpServletRequest request);
 }
