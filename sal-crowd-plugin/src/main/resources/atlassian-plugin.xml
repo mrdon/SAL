@@ -35,7 +35,7 @@
 
     <listener key="applicationReadyListener" class="com.atlassian.sal.crowd.lifecycle.ApplicationReadyListener" />
 
-    <component key="loginUriProvider" class="com.atlassian.sal.confluence.auth.CrowdLoginUriProvider" name="Crowd Login Uri Provider" public="true">
+    <component key="loginUriProvider" class="com.atlassian.sal.crowd.auth.CrowdLoginUriProvider" name="Crowd Login Uri Provider" public="true">
         <interface>com.atlassian.sal.api.auth.LoginUriProvider</interface>
     </component>
     
@@ -47,5 +47,8 @@
         <interface>com.atlassian.sal.api.auth.AuthenticationController</interface>
     </component>
 
+    <component key="threadLocalDelegateExecutorFactory" class="com.atlassian.sal.crowd.executor.CrowdThreadLocalDelegateExecutorFactory" name="Fisheye Thread Local Delegate Executor Factory" public="true">
+        <interface>com.atlassian.sal.api.executor.ThreadLocalDelegateExecutorFactory</interface>
+    </component>
 
 </atlassian-plugin>
