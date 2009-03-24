@@ -6,7 +6,7 @@ import com.atlassian.crowd.manager.license.CrowdLicenseManager;
 /**
  * Crowd license handler that stores the license
  *
- * @since 2.0.0
+ * @since 2.0
  */
 public class CrowdLicenseHandler implements LicenseHandler
 {
