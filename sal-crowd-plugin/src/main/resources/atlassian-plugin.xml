@@ -69,4 +69,8 @@
         <interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
     </component>
 
+    <component key="projectManager" class="com.atlassian.sal.crowd.project.CrowdProjectManager" name="Crowd Project Manager" public="true">
+    	<interface>com.atlassian.sal.api.project.ProjectManager</interface>
+	</component>
+
 </atlassian-plugin>
