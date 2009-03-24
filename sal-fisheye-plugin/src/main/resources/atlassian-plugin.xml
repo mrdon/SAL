@@ -55,11 +55,11 @@
         <interface>com.atlassian.sal.api.auth.LoginUriProvider</interface>
     </component>
     
-    <component key="authenticationListener" class="com.atlassian.sal.core.auth.SeraphAuthenticationListener" public="true">
+    <component key="authenticationListener" class="com.atlassian.sal.fisheye.auth.FisheyeAuthenticationListener" public="true">
         <interface>com.atlassian.sal.api.auth.AuthenticationListener</interface>
     </component>
     
-    <component key="authenticationController" class="com.atlassian.sal.core.auth.SeraphAuthenticationController" public="true">
+    <component key="authenticationController" class="com.atlassian.sal.fisheye.auth.FisheyeAuthenticationController" public="true">
         <interface>com.atlassian.sal.api.auth.AuthenticationController</interface>
     </component>
 
