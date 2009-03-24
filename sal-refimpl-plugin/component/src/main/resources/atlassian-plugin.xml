@@ -10,5 +10,10 @@
                system="true" public="true">
         <interface>com.atlassian.sal.api.component.ComponentLocator</interface>
     </component>
+
+    <!-- Yes, this doesn't belong, but the refimpl plugins will be combined into one sometime in 2.0 -->
+    <component key="pluginScheduler" class="com.atlassian.sal.core.scheduling.TimerPluginScheduler" public="true" >
+        <interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
+    </component>
 </atlassian-plugin>
 
