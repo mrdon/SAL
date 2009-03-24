@@ -68,7 +68,9 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
 
 	protected void notifyOnStart()
 	{
-	    // calling listeners.iterator() will dynamically update list to get currently installed LifecycleAware components.
+        Validate.notNull(listeners, "The list of LifecycleAware implementations hasn't been set yet and so the manager cannot start.");
+        
+        // calling listeners.iterator() will dynamically update list to get currently installed LifecycleAware components.
 		for (final LifecycleAware entry : listeners)
 		{
 			notifyLifecycleAwareOfStart(entry);
