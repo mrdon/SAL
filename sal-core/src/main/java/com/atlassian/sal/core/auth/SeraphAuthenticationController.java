@@ -8,6 +8,7 @@ import com.atlassian.sal.api.auth.AuthenticationController;
 import com.atlassian.sal.core.util.Assert;
 import com.atlassian.seraph.auth.RoleMapper;
 import com.atlassian.seraph.filter.BaseLoginFilter;
+import com.atlassian.seraph.config.SecurityConfigFactory;
 
 /**
  * Implementation of the {@link AuthenticationController} to integrate with Atlassian Seraph.
@@ -17,11 +18,11 @@ public class SeraphAuthenticationController implements AuthenticationController
     private final RoleMapper roleMapper;
 
     /**
-     * @param roleMapper the configured Seraph {@link RoleMapper} for the application.
      * @throws IllegalArgumentException if the roleMapper is <code>null</code>.
      */
-    public SeraphAuthenticationController(final RoleMapper roleMapper)
+    public SeraphAuthenticationController()
     {
+        RoleMapper roleMapper = SecurityConfigFactory.getInstance().getRoleMapper();
         this.roleMapper = Assert.notNull(roleMapper, "roleMapper");
     }
 
