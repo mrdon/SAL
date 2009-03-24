@@ -54,9 +54,4 @@ public abstract class AbstractI18nResolver implements I18nResolver
 	{
 		return new DefaultMessageCollection();
 	}
-
-    public Map<String, String> getAllTranslationsForPrefix(final String prefix, final Locale locale)
-    {
-        throw new UnsupportedOperationException("This application does not support this method call yet!");
-    }
 }

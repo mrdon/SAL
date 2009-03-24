@@ -8,6 +8,7 @@ import com.atlassian.sal.core.message.AbstractI18nResolver;
 
 import java.io.Serializable;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  */
@@ -39,5 +40,10 @@ public class ConfluenceI18nResolver extends AbstractI18nResolver
     public void setLocaleManager(LocaleManager localeManager)
     {
         this.localeManager = localeManager;
+    }
+
+    public Map<String, String> getAllTranslationsForPrefix(final String prefix, final Locale locale)
+    {
+        throw new UnsupportedOperationException("This application does not support this method call yet!");
     }
 }

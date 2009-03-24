@@ -5,6 +5,8 @@ import java.net.URI;
 /**
  * Provides the {@code URI} to redirect users to for them to login before they can
  * authorize consumer requests to access their data.
+ *
+ * @since 2.0.0
  */
 public interface LoginUriProvider
 {

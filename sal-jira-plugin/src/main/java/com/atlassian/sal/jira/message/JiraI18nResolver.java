@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
 
@@ -92,5 +94,10 @@ public class JiraI18nResolver extends AbstractI18nResolver
 
 		list.addAll(i18nResourceDescriptors);
 		return list;
+    }
+
+    public Map<String, String> getAllTranslationsForPrefix(final String prefix, final Locale locale)
+    {
+        throw new UnsupportedOperationException("This application does not support this method call yet!");
     }
 }

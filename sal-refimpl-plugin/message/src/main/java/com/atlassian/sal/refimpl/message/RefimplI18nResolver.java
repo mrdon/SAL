@@ -58,7 +58,6 @@ public class RefimplI18nResolver extends AbstractI18nResolver
         return message;
     }
 
-    @Override
     public Map<String, String> getAllTranslationsForPrefix(String prefix, Locale locale)
     {
         if (prefix == null)

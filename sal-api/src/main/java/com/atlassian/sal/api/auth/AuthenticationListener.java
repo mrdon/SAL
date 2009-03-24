@@ -5,6 +5,8 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Allows the underlying framework to take some actions on authentication events.
+ *
+ * @since 2.0.0
  */
 public interface AuthenticationListener
 {

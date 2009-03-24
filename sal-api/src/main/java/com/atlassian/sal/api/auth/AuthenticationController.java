@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Allows the host application to communicate about when authentication should be performed
  * and users allowed to login.
+ * 
+ * @since 2.0.0
  */
 public interface AuthenticationController
 {

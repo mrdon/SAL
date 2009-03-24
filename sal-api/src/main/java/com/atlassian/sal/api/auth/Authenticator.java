@@ -9,6 +9,8 @@ import com.atlassian.sal.api.message.Message;
 
 /**
  * Authenticates requests
+ *
+ * @since 2.0.0
  */
 public interface Authenticator
 {
