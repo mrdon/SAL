@@ -44,7 +44,7 @@
         <dependency>
             <artifactId>atlassian-jira</artifactId>
             <groupId>com.atlassian.jira</groupId>
-            <version>${jira.version}</version>
+            <version>${legacyjira.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
