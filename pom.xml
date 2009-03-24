@@ -21,7 +21,7 @@
         <confluence.version>2.10.2</confluence.version>
         <crowd.version>1.6.2</crowd.version>
         <legacyjira.version>3.13</legacyjira.version>
-        <jira.version>4.0-SNAPSHOT</jira.version>
+        <jira.version>4.0-20090324.081034-1901</jira.version>
     </properties>
 
     <modules>
