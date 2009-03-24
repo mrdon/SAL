@@ -30,7 +30,7 @@
         <module>sal-core</module>
         <module>sal-spring</module>
         <module>sal-confluence-plugin</module>
-        <module>sal-jira-plugin</module>
+        <module>sal-legacyjira-plugin</module>
         <module>sal-fisheye-plugin</module>
         <module>sal-crowd-plugin</module>
         <module>sal-ctk-plugin</module>
