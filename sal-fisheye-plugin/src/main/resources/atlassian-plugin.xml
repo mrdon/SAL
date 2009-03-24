@@ -63,7 +63,7 @@
         <interface>com.atlassian.sal.api.auth.AuthenticationController</interface>
     </component>
 
-    <component key="threadLocalDelegateExecutorFactory" class="com.atlassian.sal.fisheye.executor.FisheyeThreadLocalDelegateExecutorFactory" name="Fisheye Thread Local Delegate Executor Factory" public="true">
+    <component key="threadLocalDelegateExecutorFactory" class="com.atlassian.sal.fisheye.executor.FishEyeThreadLocalDelegateExecutorFactory" name="Fisheye Thread Local Delegate Executor Factory" public="true">
         <interface>com.atlassian.sal.api.executor.ThreadLocalDelegateExecutorFactory</interface>
     </component>
 
