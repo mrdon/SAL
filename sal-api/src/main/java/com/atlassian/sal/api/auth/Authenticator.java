@@ -51,15 +51,7 @@ public interface Authenticator
         {
             if (status == null)
             {
-                throw new IllegalArgumentException("status");
-            }
-            if (message == null)
-            {
-                throw new IllegalArgumentException("message");
-            }
-            if (principal == null)
-            {
-                throw new IllegalArgumentException("principal");
+                throw new NullPointerException("status");
             }
             this.status = status;
             this.message = message;
