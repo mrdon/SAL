@@ -35,4 +35,14 @@
 
     <listener key="applicationReadyListener" class="com.atlassian.sal.crowd.lifecycle.ApplicationReadyListener" />
 
+    
+    <component key="authenticationListener" class="com.atlassian.sal.core.auth.SeraphAuthenticationListener" public="true">
+        <interface>com.atlassian.sal.api.auth.AuthenticationListener</interface>
+    </component>
+    
+    <component key="authenticationController" class="com.atlassian.sal.core.auth.SeraphAuthenticationController" public="true">
+        <interface>com.atlassian.sal.api.auth.AuthenticationController</interface>
+    </component>
+
+
 </atlassian-plugin>
