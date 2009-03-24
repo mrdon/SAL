@@ -79,4 +79,8 @@
     	<interface>com.atlassian.sal.api.executor.ThreadLocalDelegateExecutorFactory</interface>
 	</component>
 
+    <component key="i18nResolver" class="com.atlassian.sal.crowd.message.CrowdI18nResolver" public="true" name="I18n Resolver" >
+        <interface>com.atlassian.sal.api.message.I18nResolver</interface>
+	</component>
+
 </atlassian-plugin>
