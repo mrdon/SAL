@@ -19,7 +19,6 @@
 					<instructions>
 						<Bundle-SymbolicName>com.atlassian.sal.confluence</Bundle-SymbolicName>
 						<Private-Package>com.atlassian.sal.confluence*</Private-Package>
-						<Export-Package>com.atlassian.sal.api*,</Export-Package>
 						<Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
 						<Embed-Directory>META-INF/lib</Embed-Directory>
