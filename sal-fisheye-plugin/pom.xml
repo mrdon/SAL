@@ -20,7 +20,6 @@
                 <configuration>
                     <instructions>
                     <Bundle-SymbolicName>com.atlassian.sal.fisheye</Bundle-SymbolicName>
-                    <Import-Package>com.atlassian.seraph.auth*;resolution:=optional,*</Import-Package>
                     <Private-Package>com.atlassian.sal.fisheye*</Private-Package>
 					<Export-Package>com.atlassian.sal.api*,com.atlassian.sal.fisheye.appconfig</Export-Package>
                     <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
@@ -36,12 +35,6 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>com.atlassian.seraph</groupId>
-				<artifactId>atlassian-seraph</artifactId>
-				<version>0.38.3</version>
-				<scope>provided</scope>
-			</dependency>
 	        <dependency>
 	            <groupId>commons-lang</groupId>
 	            <artifactId>commons-lang</artifactId>
