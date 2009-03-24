@@ -37,7 +37,6 @@ public class JiraI18nResolver extends AbstractI18nResolver
         return bean.getText(key, arguments);
     }
 
-    @Override
     public Map<String, String> getAllTranslationsForPrefix(final String prefix, final Locale locale)
     {
         Assertions.notNull("prefix", prefix);

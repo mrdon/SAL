@@ -9,9 +9,9 @@ import java.util.List;
 
 public class CrowdLifecycleManager extends DefaultLifecycleManager
 {
-    public CrowdLifecycleManager(PluginEventManager pluginEventManager, List<LifecycleAware> listeners)
+    public CrowdLifecycleManager(PluginEventManager pluginEventManager)
     {
-        super(pluginEventManager, listeners);
+        super(pluginEventManager);
     }
 
     public boolean isApplicationSetUp()

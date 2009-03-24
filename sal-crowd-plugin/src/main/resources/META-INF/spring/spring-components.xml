@@ -28,7 +28,7 @@
 
     <bean id="salLifecycleManager" class="com.atlassian.sal.crowd.lifecycle.CrowdLifecycleManager">
         <constructor-arg ref="pluginEventManager"/>
-        <constructor-arg ref="lifecycleAwareImpls"/>
+        <property name="lifecycleAwareListeners" ref="lifecycleAwareImpls"/>
     </bean>
 
     <osgi:service id="salLifecycleManager_osgiService" ref="salLifecycleManager">

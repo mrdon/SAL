@@ -17,12 +17,11 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
 {
 	private boolean started = false;
 	private static final Logger log = Logger.getLogger(DefaultLifecycleManager.class);
-	private final List<LifecycleAware> listeners;
+	private List<LifecycleAware> listeners;
 
-    public DefaultLifecycleManager(PluginEventManager pluginEventManager, List<LifecycleAware> listeners)
+    public DefaultLifecycleManager(PluginEventManager pluginEventManager)
     {
         Validate.notNull(listeners, "The list of lifecycle aware listeners must be specified");
-        this.listeners = listeners;
         pluginEventManager.register(this);
     }
 
@@ -88,4 +87,8 @@ public abstract class DefaultLifecycleManager implements LifecycleManager
 		}
 	}
 
+    public void setLifecycleAwareListeners(List<LifecycleAware> listeners)
+    {
+        this.listeners = listeners;
+    }
 }

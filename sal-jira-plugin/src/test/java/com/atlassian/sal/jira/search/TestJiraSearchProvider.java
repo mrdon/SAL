@@ -283,7 +283,7 @@ public class TestJiraSearchProvider extends TestCase
                 ApplicationProperties mockApplicationProperties = (ApplicationProperties) mockWebPropertiesControl.getMock();
                 mockApplicationProperties.getBaseUrl();
                 mockWebPropertiesControl.setDefaultReturnValue("http://jira.atlassian.com");
-                mockApplicationProperties.getApplicationName();
+                mockApplicationProperties.getDisplayName();
                 mockWebPropertiesControl.setDefaultReturnValue("JIRA");
                 mockWebPropertiesControl.replay();
 

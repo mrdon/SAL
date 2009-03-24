@@ -4,6 +4,7 @@ import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserResolutionException;
 import com.atlassian.seraph.auth.DefaultAuthenticator;
 import com.opensymphony.user.EntityNotFoundException;
 import com.opensymphony.user.User;
@@ -11,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.security.Principal;
 
 /**
  * OSUser based user operations
@@ -65,6 +67,24 @@ public class DefaultUserManager implements UserManager
         }
 
         return false;
+    }
+
+    public Principal resolve(final String username) throws UserResolutionException
+    {
+        try
+        {
+            getUser(username);
+        } catch (final EntityNotFoundException e)
+        {
+            return null;
+        }
+        return new Principal()
+        {
+            public String getName()
+            {
+                return username;
+            }
+        };
     }
 
     /**

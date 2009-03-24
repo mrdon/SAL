@@ -5,6 +5,7 @@ import com.atlassian.jira.util.velocity.VelocityRequestContextFactory;
 import com.atlassian.sal.api.ApplicationProperties;
 
 import java.util.Date;
+import java.io.File;
 
 /**
  * JIRA implementation of WebProperties
@@ -23,7 +24,7 @@ public class JiraApplicationProperties implements ApplicationProperties
         return velocityRequestContextFactory.getJiraVelocityRequestContext().getCanonicalBaseUrl();
     }
 
-    public String getApplicationName()
+    public String getDisplayName()
     {
         return "JIRA";
     }
@@ -41,5 +42,10 @@ public class JiraApplicationProperties implements ApplicationProperties
     public String getBuildNumber()
     {
         return BuildUtils.getCurrentBuildNumber();
+    }
+
+    public File getHomeDirectory()
+    {
+        throw new UnsupportedOperationException();
     }
 }

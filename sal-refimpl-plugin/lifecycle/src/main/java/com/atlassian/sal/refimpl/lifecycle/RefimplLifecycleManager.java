@@ -11,7 +11,7 @@ public class RefimplLifecycleManager extends DefaultLifecycleManager
 {
     public RefimplLifecycleManager(PluginEventManager mgr)
     {
-        super(mgr, new LinkedList<LifecycleAware>());
+        super(mgr);
     }
     
     public boolean isApplicationSetUp()

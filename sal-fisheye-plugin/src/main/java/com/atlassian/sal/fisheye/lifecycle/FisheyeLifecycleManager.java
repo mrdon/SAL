@@ -12,10 +12,9 @@ public class FisheyeLifecycleManager extends DefaultLifecycleManager
 
     private final FisheyeAccessor fisheyeAccessor;
 
-    public FisheyeLifecycleManager(final FisheyeAccessor fisheyeAccessor, PluginEventManager pluginEventManager,
-                                   List<LifecycleAware> listeners)
+    public FisheyeLifecycleManager(final FisheyeAccessor fisheyeAccessor, PluginEventManager pluginEventManager)
     {
-        super(pluginEventManager, listeners);
+        super(pluginEventManager);
         this.fisheyeAccessor = fisheyeAccessor;
     }
 
