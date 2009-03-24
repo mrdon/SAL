@@ -22,7 +22,8 @@
 	                    <Import-Package>
 	                        com.atlassian.sal.api.upgrade,com.atlassian.plugin,
 	                        com.atlassian.sal.api.pluginsettings,com.atlassian.sal.api.transaction,
-	                        com.atlassian.sal.api.lifecycle, com.atlassian.sal.api.message, org.apache.log4j
+	                        com.atlassian.sal.api.lifecycle, com.atlassian.sal.api.message, org.apache.log4j,
+                            javax.servlet.http
                         </Import-Package>
 	                    <Private-Package>
 	                        com.atlassian.sal.refimpl.upgrade,com.atlassian.sal.core.upgrade,

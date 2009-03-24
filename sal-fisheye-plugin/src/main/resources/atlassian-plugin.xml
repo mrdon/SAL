@@ -47,6 +47,9 @@
     <component key="projectManager" class="com.atlassian.sal.fisheye.project.FisheyeProjectManager"  public="true">
         <interface>com.atlassian.sal.api.project.ProjectManager</interface>
     </component>
+    <component key="localeResolver" class="com.atlassian.sal.core.message.SystemDefaultLocaleResolver" name="System Default Locale Resolver" public="true">
+        <interface>com.atlassian.sal.api.message.LocaleResolver</interface>
+    </component>
 
     <component key="loginUriProvider" class="com.atlassian.sal.fisheye.auth.FisheyeLoginUriProvider" name="Fisheye Login Uri Provider" public="true">
         <interface>com.atlassian.sal.api.auth.LoginUriProvider</interface>

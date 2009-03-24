@@ -73,7 +73,7 @@
     	<interface>com.atlassian.sal.api.project.ProjectManager</interface>
 	</component>
 
-    <component key="localeResolver" class="com.atlassian.sal.crowd.message.CrowdLocaleResolver" name="Crowd Locale Resolver" public="true">
+    <component key="localeResolver" class="com.atlassian.sal.core.message.SystemDefaultLocaleResolver" name="System Default Locale Resolver" public="true">
         <interface>com.atlassian.sal.api.message.LocaleResolver</interface>
     </component>
 
