@@ -2,6 +2,7 @@ package com.atlassian.sal.crowd.message;
 
 import com.atlassian.crowd.util.I18nHelper;
 import com.atlassian.sal.core.message.AbstractI18nResolver;
+import com.atlassian.sal.api.component.ComponentLocator;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
@@ -17,11 +18,12 @@ public class CrowdI18nResolver extends AbstractI18nResolver
 {
     private final I18nHelper helper;
 
-    public CrowdI18nResolver(I18nHelper helper)
+    public CrowdI18nResolver()
     {
-        this.helper = helper;
+        this.helper = ComponentLocator.getComponent(I18nHelper.class);
     }
 
+    @Override
     public String resolveText(String key, Serializable[] arguments)
     {
         return MessageFormat.format(helper.getText(key), (Object[]) arguments);
