@@ -1,25 +1,27 @@
 package com.atlassian.sal.refimpl.message;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.ListResourceBundle;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.elements.ResourceDescriptor;
 import com.atlassian.plugin.event.PluginEventManager;
+import com.atlassian.plugin.event.events.PluginEnabledEvent;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class RefimplI18nResolverTest
 {
-    private static final String PLUGIN_KEY = "plugin.key";
-
     private static final String PREFIX = "com.atlassian.sal.message.test.";
 
     private static final String KEY_WITH_PREFIX_AT_START_1 = PREFIX + "key1";
@@ -43,7 +45,7 @@ public class RefimplI18nResolverTest
     private static final String US_VALUE_FOR_KEY_WITH_PREFIX_NOT_AT_START_2 = "Hello, Sydney";
     private static final String US_VALUE_FOR_KEY_WITH_PREFIX_AT_START_2 = "Hello, everyone";
 
-    private static final ResourceBundle bundleUS1 = new ListResourceBundle()
+    private static final ResourceBundle bundle1_en_US = new ListResourceBundle()
     {
         @Override public Locale getLocale()
         {
@@ -60,7 +62,8 @@ public class RefimplI18nResolverTest
                 };
         }
     };
-    private static final ResourceBundle bundleUS2 = new ListResourceBundle()
+
+    private static final ResourceBundle bundle2_en_US = new ListResourceBundle()
     {
         @Override public Locale getLocale()
         {
@@ -77,7 +80,8 @@ public class RefimplI18nResolverTest
                 };
         }
     };
-    private static final ResourceBundle bundleFR = new ListResourceBundle()
+
+    private static final ResourceBundle bundle1_fr_FR = new ListResourceBundle()
     {
         @Override public Locale getLocale()
         {
@@ -96,10 +100,41 @@ public class RefimplI18nResolverTest
         }
     };
 
-    PluginAccessor pluginAccessor = mock(PluginAccessor.class);
+    private static final ResourceBundleResolver resourceBundleResolver = new ResourceBundleResolver()
+    {
+        public ResourceBundle getBundle(String baseName, Locale locale, ClassLoader classLoader)
+        {
+            if (baseName.equals("bundle1"))
+            {
+                if (locale.equals(bundle1_en_US.getLocale()))
+                {
+                    return bundle1_en_US;
+                }
+                else if (locale.equals(bundle1_fr_FR.getLocale()))
+                {
+                    return bundle1_fr_FR;
+                }
+            }
+            else if (baseName.equals("bundle2"))
+            {
+                if (locale.equals(bundle2_en_US.getLocale()))
+                {
+                    return bundle2_en_US;
+                }
+            }
+            throw new MissingResourceException("Can't find bundle for base name " + baseName + ", locale " + locale,
+                                               baseName + "_" + locale,"");
+        }
+    };
 
-    PluginEventManager pluginEventManager = mock(PluginEventManager.class);
-    private RefimplI18nResolver resolver = new RefimplI18nResolver(pluginAccessor, pluginEventManager);
+    private final PluginAccessor pluginAccessor = mock(PluginAccessor.class);
+    private final PluginEventManager pluginEventManager = mock(PluginEventManager.class);
+    private final Plugin plugin = mock(Plugin.class);
+    private final ResourceDescriptor bundleResourceDescriptor1 = mockResourceDescriptor("bundle1");
+    private final ResourceDescriptor bundleResourceDescriptor2 = mockResourceDescriptor("bundle2"); 
+
+    private RefimplI18nResolver resolver =
+        new RefimplI18nResolver(pluginAccessor, pluginEventManager, resourceBundleResolver);
 
     @Test
     public void getAllTranslationsForPrefixWithNoResourceBundlesAvailableReturnsEmptyMap()
@@ -110,7 +145,8 @@ public class RefimplI18nResolverTest
     @Test
     public void getAllTranslationsForPrefixWithMatchingPrefixAndLocaleReturnsMatches()
     {
-        resolver.addPluginResourceBundles(PLUGIN_KEY, Arrays.asList(bundleUS1, bundleFR));
+        when(plugin.getResourceDescriptors("i18n")).thenReturn(Arrays.asList(bundleResourceDescriptor1));
+        resolver.pluginEnabled(new PluginEnabledEvent(plugin));
 
         Map<String, String> expectations = new HashMap<String, String>();
         expectations.put(KEY_WITH_PREFIX_AT_START_1, US_VALUE_FOR_KEY_WITH_PREFIX_AT_START_1);
@@ -121,7 +157,8 @@ public class RefimplI18nResolverTest
     @Test
     public void getAllTranslationsForPrefixWithMatchingPrefixAndNonMatchingLocaleReturnsEmptyMap()
     {
-        resolver.addPluginResourceBundles(PLUGIN_KEY, Arrays.asList(bundleUS1, bundleFR));
+        when(plugin.getResourceDescriptors("i18n")).thenReturn(Arrays.asList(bundleResourceDescriptor1));
+        resolver.pluginEnabled(new PluginEnabledEvent(plugin));
 
         assertTrue(resolver.getAllTranslationsForPrefix(PREFIX, Locale.GERMANY).isEmpty());
     }
@@ -129,7 +166,8 @@ public class RefimplI18nResolverTest
     @Test
     public void getAllTranslationsForPrefixWithNonMatchingPrefixAndMatchingLocaleReturnsEmptyMap()
     {
-        resolver.addPluginResourceBundles(PLUGIN_KEY, Arrays.asList(bundleUS1, bundleFR));
+        when(plugin.getResourceDescriptors("i18n")).thenReturn(Arrays.asList(bundleResourceDescriptor1));
+        resolver.pluginEnabled(new PluginEnabledEvent(plugin));
 
         assertTrue(resolver.getAllTranslationsForPrefix(PREFIX + "nomatch", Locale.US).isEmpty());
     }
@@ -137,7 +175,9 @@ public class RefimplI18nResolverTest
     @Test
     public void getAllTranslationsForPrefixWithMultipleMatchingBundlesInOnePluginReturnsAllMatches()
     {
-        resolver.addPluginResourceBundles(PLUGIN_KEY, Arrays.asList(bundleUS1, bundleFR, bundleUS2));
+        when(plugin.getResourceDescriptors("i18n"))
+            .thenReturn(Arrays.asList(bundleResourceDescriptor1, bundleResourceDescriptor2));
+        resolver.pluginEnabled(new PluginEnabledEvent(plugin));
 
         Map<String, String> expectations = new HashMap<String, String>();
         expectations.put(KEY_WITH_PREFIX_AT_START_1, US_VALUE_FOR_KEY_WITH_PREFIX_AT_START_1);
@@ -149,8 +189,12 @@ public class RefimplI18nResolverTest
     @Test
     public void getAllTranslationsForPrefixWithMultipleMatchingBundlesInDifferentPluginsReturnsAllMatches()
     {
-        resolver.addPluginResourceBundles(PLUGIN_KEY, Arrays.asList(bundleUS1, bundleFR));
-        resolver.addPluginResourceBundles("other." + PLUGIN_KEY, Collections.singletonList(bundleUS2));
+        when(plugin.getResourceDescriptors("i18n")).thenReturn(Arrays.asList(bundleResourceDescriptor1));
+        Plugin plugin2 = mock(Plugin.class);
+        when(plugin2.getResourceDescriptors("i18n")).thenReturn(Arrays.asList(bundleResourceDescriptor2));
+
+        resolver.pluginEnabled(new PluginEnabledEvent(plugin));
+        resolver.pluginEnabled(new PluginEnabledEvent(plugin2));
 
         Map<String, String> expectations = new HashMap<String, String>();
         expectations.put(KEY_WITH_PREFIX_AT_START_1, US_VALUE_FOR_KEY_WITH_PREFIX_AT_START_1);
@@ -162,14 +206,17 @@ public class RefimplI18nResolverTest
     @Test(expected = NullPointerException.class)
     public void getAllTranslationsWithNullPrefixThrowsNullPointerException()
     {
-        resolver.addPluginResourceBundles(PLUGIN_KEY, Arrays.asList(bundleUS1, bundleFR));
+        when(plugin.getResourceDescriptors("i18n")).thenReturn(Arrays.asList(bundleResourceDescriptor1));
+        resolver.pluginEnabled(new PluginEnabledEvent(plugin));
         resolver.getAllTranslationsForPrefix(null, Locale.US);
     }
 
     @Test
     public void getAllTranslationsWithEmptyPrefixReturnsAllTranslationsInMatchingLocales()
     {
-        resolver.addPluginResourceBundles(PLUGIN_KEY, Arrays.asList(bundleUS1, bundleFR, bundleUS2));
+        when(plugin.getResourceDescriptors("i18n"))
+            .thenReturn(Arrays.asList(bundleResourceDescriptor1, bundleResourceDescriptor2));
+        resolver.pluginEnabled(new PluginEnabledEvent(plugin));
 
         Map<String, String> expectations = new HashMap<String, String>();
         expectations.put(KEY_WITH_PREFIX_AT_START_1, US_VALUE_FOR_KEY_WITH_PREFIX_AT_START_1);
@@ -185,7 +232,15 @@ public class RefimplI18nResolverTest
     @Test(expected = NullPointerException.class)
     public void getAllTranslationsWithNullLocaleThrowsNullPointerException()
     {
-        resolver.addPluginResourceBundles(PLUGIN_KEY, Arrays.asList(bundleUS1, bundleFR));
+        when(plugin.getResourceDescriptors("i18n")).thenReturn(Arrays.asList(bundleResourceDescriptor1));
+        resolver.pluginEnabled(new PluginEnabledEvent(plugin));
         resolver.getAllTranslationsForPrefix(PREFIX, null);
+    }
+
+    private static ResourceDescriptor mockResourceDescriptor(String location)
+    {
+        ResourceDescriptor resourceDescriptor = mock(ResourceDescriptor.class);
+        when(resourceDescriptor.getLocation()).thenReturn(location);
+        return resourceDescriptor;
     }
 }

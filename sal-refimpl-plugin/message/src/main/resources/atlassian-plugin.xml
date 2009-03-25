@@ -15,5 +15,10 @@
                system="true" public="true">
         <interface>com.atlassian.sal.api.message.LocaleResolver</interface>
     </component>
+
+    <component key="resourceBundleResolver" name="Resource Bundle Resolver"
+               class="com.atlassian.sal.refimpl.message.ResourceBundleResolverImpl">
+        <interface>com.atlassian.sal.refimpl.message.ResourceBundleResolver</interface>
+    </component>
 </atlassian-plugin>
 

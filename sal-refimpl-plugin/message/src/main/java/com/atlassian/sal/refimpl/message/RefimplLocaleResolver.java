@@ -40,6 +40,7 @@ public class RefimplLocaleResolver implements LocaleResolver
         final Set<Locale> ret = new HashSet<Locale>();
         ret.add(new Locale("en", "AU"));
         ret.add(Locale.US);
+        ret.add(Locale.ENGLISH);
         ret.add(Locale.FRENCH);
         ret.add(Locale.GERMAN);
         return ret;

@@ -25,24 +25,29 @@ import com.atlassian.sal.core.message.AbstractI18nResolver;
  */
 public class RefimplI18nResolver extends AbstractI18nResolver
 {
-    private final Map<String, Iterable<ResourceBundle>> pluginResourceBundles =
-        new HashMap<String, Iterable<ResourceBundle>>();
+    private final Map<Plugin, Iterable<String>> pluginResourceBundleNames =
+        new HashMap<Plugin, Iterable<String>>();
 
-    public RefimplI18nResolver(PluginAccessor pluginAccessor, PluginEventManager pluginEventManager)
+    private final ResourceBundleResolver resolver;
+
+    public RefimplI18nResolver(PluginAccessor pluginAccessor, PluginEventManager pluginEventManager,
+                               ResourceBundleResolver resolver)
     {
         pluginEventManager.register(this);
         addPluginResourceBundles(pluginAccessor.getPlugins());
+        this.resolver = assertNotNull(resolver, "resolver");
     }
 
     public String resolveText(String key, Serializable[] arguments)
     {
         String message = null;
-        for (Iterable<ResourceBundle> bundles : pluginResourceBundles.values())
+        for (Plugin plugin : pluginResourceBundleNames.keySet())
         {
-            for (ResourceBundle bundle : bundles)
+            for (String bundleName : pluginResourceBundleNames.get(plugin))
             {
                 try
                 {
+                    ResourceBundle bundle = getBundle(bundleName, Locale.getDefault(), plugin);
                     message = MessageFormat.format(bundle.getString(key), (Object[]) arguments);
                 }
                 catch (MissingResourceException e)
@@ -60,30 +65,36 @@ public class RefimplI18nResolver extends AbstractI18nResolver
 
     public Map<String, String> getAllTranslationsForPrefix(String prefix, Locale locale)
     {
-        if (prefix == null)
-        {
-            throw new NullPointerException("prefix must not be null");
-        }
-        if (locale == null)
-        {
-            throw new NullPointerException("locale must not be null");
-        }
+        assertNotNull(prefix, "prefix");
+        assertNotNull(locale, "locale");
+
         Map<String, String> translationsWithPrefix = new HashMap<String, String>();
-        for (Iterable<ResourceBundle> bundles : pluginResourceBundles.values())
+        for (Plugin plugin : pluginResourceBundleNames.keySet())
         {
-            addMatchingTranslationsToMap(prefix, locale, bundles, translationsWithPrefix);
+
+            addMatchingTranslationsToMap(prefix, locale, plugin, pluginResourceBundleNames.get(plugin),
+                                         translationsWithPrefix);
         }
         return translationsWithPrefix;
     }
 
-    private void addMatchingTranslationsToMap(String prefix, Locale locale, Iterable<ResourceBundle> bundles,
+    private void addMatchingTranslationsToMap(String prefix, Locale locale, Plugin plugin,
+                                              Iterable<String> bundleNames,
                                               Map<String, String> translationsWithPrefix)
     {
-        for (ResourceBundle bundle : bundles)
+        for (String bundleName : bundleNames)
         {
-            if (bundle.getLocale().equals(locale))
+            try
             {
-                addMatchingTranslationsToMap(prefix, bundle, translationsWithPrefix);
+                ResourceBundle bundle = getBundle(bundleName, locale, plugin);
+                if (bundle != null)
+                {
+                    addMatchingTranslationsToMap(prefix, bundle, translationsWithPrefix);
+                }
+            }
+            catch (MissingResourceException e)
+            {
+                // OK, just ignore
             }
         }
     }
@@ -124,29 +135,36 @@ public class RefimplI18nResolver extends AbstractI18nResolver
 
     private void addPluginResourceBundles(Plugin plugin)
     {
-        List<ResourceBundle> bundles = new LinkedList<ResourceBundle>();
+        List<String> bundleNames = new LinkedList<String>();
         Iterable<ResourceDescriptor> descriptors = plugin.getResourceDescriptors("i18n");
         for (ResourceDescriptor descriptor : descriptors)
         {
-            try
-            {
-                bundles.add(ResourceBundle.getBundle(descriptor.getLocation(), Locale.getDefault(), plugin.getClassLoader()));
-            }
-            catch (MissingResourceException e)
-            {
-                // ignore, move on to next one
-            }
+            bundleNames.add(descriptor.getLocation());
         }
-        addPluginResourceBundles(plugin.getKey(), bundles);
+        addPluginResourceBundles(plugin, bundleNames);
     }
 
-    void addPluginResourceBundles(String pluginKey, List<ResourceBundle> bundles)
+    private void addPluginResourceBundles(Plugin plugin, List<String> bundleNames)
     {
-        pluginResourceBundles.put(pluginKey, bundles);
+        pluginResourceBundleNames.put(plugin, bundleNames);
     }
 
     private void removePluginResourceBundles(Plugin plugin)
     {
-        pluginResourceBundles.remove(plugin.getKey());
+        pluginResourceBundleNames.remove(plugin);
+    }
+
+    private ResourceBundle getBundle(String bundleName, Locale locale, Plugin plugin)
+    {
+        return resolver.getBundle(bundleName, locale, plugin.getClassLoader());
+    }
+
+    private static <T> T assertNotNull(T object, String name)
+    {
+        if (object == null)
+        {
+            throw new NullPointerException(name + " must not be null");
+        }
+        return object;
     }
 }
