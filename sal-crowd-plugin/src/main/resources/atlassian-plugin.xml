@@ -13,7 +13,7 @@
         <interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>
     </component>
 
-    <component key="certificateFactory" class="com.atlassian.sal.crowd.trusted.CrowdCertificateFactory" name="Certificate Factory" public="true">
+    <component key="certificateFactory" class="com.atlassian.sal.crowd.trusted.CrowdCertificateFactory" name="Certificate Factory">
         <interface>com.atlassian.sal.core.trusted.CertificateFactory</interface>
     </component>
 
@@ -34,7 +34,7 @@
     </component>
 
     <listener key="applicationReadyListener" class="com.atlassian.sal.crowd.lifecycle.ApplicationReadyListener" />
-
+                                    
     <component key="loginUriProvider" class="com.atlassian.sal.crowd.auth.CrowdLoginUriProvider" name="Crowd Login Uri Provider" public="true">
         <interface>com.atlassian.sal.api.auth.LoginUriProvider</interface>
     </component>

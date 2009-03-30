@@ -19,8 +19,8 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>com.atlassian.sal.crowd</Bundle-SymbolicName>
-                        <Private-Package>com.atlassian.sal.crowd*</Private-Package>
-                        <Export-Package>com.atlassian.sal.api*,</Export-Package>
+                        <Private-Package>com.atlassian.sal.core.*,com.atlassian.sal.crowd.*</Private-Package>
+                        <Export-Package/>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Embed-Directory>META-INF/lib</Embed-Directory>
@@ -52,6 +52,12 @@
                 <version>3.0</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>com.atlassian.sal</groupId>
+                <artifactId>sal-api</artifactId>
+                <version>${pom.version}</version>
+                <scope>provided</scope>
+        </dependency>
         </dependencies>
     </dependencyManagement>
     
