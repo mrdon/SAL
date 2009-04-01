@@ -1,7 +1,5 @@
 package com.atlassian.sal.confluence.license;
 
-import java.util.Date;
-
 import com.atlassian.config.ApplicationConfiguration;
 import com.atlassian.config.ConfigurationException;
 import com.atlassian.confluence.event.events.admin.LicenceUpdatedEvent;
@@ -9,15 +7,13 @@ import com.atlassian.confluence.setup.ConfluenceBootstrapConstants;
 import com.atlassian.confluence.util.GeneralUtil;
 import com.atlassian.confluence.util.UserChecker;
 import com.atlassian.event.EventManager;
-import com.atlassian.license.License;
-import com.atlassian.license.LicenseException;
-import com.atlassian.license.LicenseManager;
-import com.atlassian.license.LicensePair;
-import com.atlassian.license.LicenseUtils;
+import com.atlassian.license.*;
 import com.atlassian.license.decoder.LicenseDecoder;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.license.LicenseHandler;
 import com.opensymphony.util.TextUtils;
+
+import java.util.Date;
 
 /**
  * Sets the license for Confluence
@@ -53,7 +49,7 @@ public class ConfluenceLicenseHandler implements LicenseHandler
         {
             //log.warn("The license you specified was invalid.");
             //addFieldError("licenseString", getText("license.invalid.error", new Object[] {e.getMessage()}));
-            return;
+            throw new IllegalArgumentException("Specified license was invalid.");
         }
 
         final License updatedLicense = LicenseDecoder.getLicense(pair, ConfluenceBootstrapConstants.DEFAULT_LICENSE_REGISTRY_KEY);
@@ -63,7 +59,7 @@ public class ConfluenceLicenseHandler implements LicenseHandler
             //log.warn("The license you specified was invalid.");
             //addFieldError("licenseString", getText("license.invalid.and.not.updated"));
             //return ERROR;
-            return;
+            throw new IllegalArgumentException("Specified license was invalid.");
         }
 
         final Date supportPeriodEndDate = new Date(LicenseUtils.getSupportPeriodEnd(updatedLicense));
@@ -74,7 +70,7 @@ public class ConfluenceLicenseHandler implements LicenseHandler
             //log.warn("The license you specified was invalid.");
             //addFieldError("licenseString", getText("confluence.support.for.license.ended", new Object[] {supportPeriodEndDateString}));
             //return ERROR;
-            return;
+            throw new IllegalArgumentException("Specified license was invalid.");
         }
 
         if (TextUtils.stringSet(partnerErrorMessage))
@@ -82,7 +78,7 @@ public class ConfluenceLicenseHandler implements LicenseHandler
             //log.fatal("License does not match partner");
             //addFieldError("licenseString", partnerErrorMessage);
             //return ERROR;
-            return;
+            throw new IllegalArgumentException("License does not match partner.");
         }
 
         LicenseManager.getInstance().setLicense(licenseString, ConfluenceBootstrapConstants.DEFAULT_LICENSE_REGISTRY_KEY);

@@ -19,6 +19,8 @@ public class CrowdLicenseHandler implements LicenseHandler
 
     public void setLicense(String license)
     {
+        // @TODO if license is barfed throw new IllegalArgumentException("Specified license was invalid.");
+
         licenseManager.storeLicense(license);
     }
 }

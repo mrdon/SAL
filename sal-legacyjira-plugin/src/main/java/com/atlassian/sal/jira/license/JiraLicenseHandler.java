@@ -15,6 +15,9 @@ public class JiraLicenseHandler implements LicenseHandler
      */
     public void setLicense(String license)
     {
-        JiraLicenseUtils.setLicense(license);
+        if (JiraLicenseUtils.setLicense(license) == null)
+        {
+            throw new IllegalArgumentException("Specified license was invalid.");
+        }
     }
 }

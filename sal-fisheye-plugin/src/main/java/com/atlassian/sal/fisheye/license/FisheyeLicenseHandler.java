@@ -27,6 +27,7 @@ public class FisheyeLicenseHandler implements LicenseHandler
         } catch (final FisheyeAccessorException e)
         {
             log.error(e,e);
+            throw new IllegalArgumentException("Specified license was invalid."); // @TODO Need to check if this is true or not
         }
     }
 }
