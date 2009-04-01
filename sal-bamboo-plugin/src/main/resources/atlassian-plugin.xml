@@ -1,0 +1,63 @@
+<atlassian-plugin key="com.atlassian.sal.bamboo" name="${project.name}" system="true" pluginsVersion="2">
+  <plugin-info>
+    <description>${project.description}</description>
+    <version>${pom.version}</version>
+    <vendor name="Atlassian Software Systems Pty Ltd" url="http://www.atlassian.com"/>
+  </plugin-info>
+
+  <!--Components from SAL-CORE-->
+
+  <component key="pluginScheduler" class="com.atlassian.sal.core.scheduling.TimerPluginScheduler" public="true">
+    <interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
+  </component>
+
+  <component key="transactionTemplate" class="com.atlassian.sal.core.transaction.HostContextTransactionTemplate" public="true">
+    <interface>com.atlassian.sal.api.transaction.TransactionTemplate</interface>
+  </component>
+
+ <component key="componentLocator" class="com.atlassian.sal.core.component.DefaultComponentLocator" public="true">
+   <interface>com.atlassian.sal.api.component.ComponentLocator</interface>
+ </component>
+
+  <component key="requestFactory" class="com.atlassian.sal.core.net.HttpClientRequestFactory" name="Request Factory" public="true">
+    <interface>com.atlassian.sal.api.net.RequestFactory</interface>
+  </component>
+
+  <!--Components Specific to Bamboo-->
+  <component key="pluginSettingsFactory" class="com.atlassian.sal.bamboo.pluginsettings.BambooPluginSettingsFactory" name="Plugin Settings Factory" public="true">
+    <interface>com.atlassian.sal.api.pluginsettings.PluginSettingsFactory</interface>
+  </component>
+
+  <component key="applicationProperties" class="com.atlassian.sal.bamboo.BambooApplicationProperties" name="Bamboo Application Properties" public="true">
+    <interface>com.atlassian.sal.api.ApplicationProperties</interface>
+  </component>
+
+  <component key="salUserManager" class="com.atlassian.sal.bamboo.user.BambooSalUserManager" name="User Manager" public="true">
+    <interface>com.atlassian.sal.api.user.UserManager</interface>
+  </component>
+
+  <component key="licenseHandler" class="com.atlassian.sal.bamboo.license.BambooLicenseHandler" name="License Handler" public="true">
+    <interface>com.atlassian.sal.api.license.LicenseHandler</interface>
+  </component>
+
+  <component key="bambooProjectManager" class="com.atlassian.sal.bamboo.project.BambooProjectManager" name="Bamboo Project Handler" public="true">
+    <interface>com.atlassian.sal.api.project.ProjectManager</interface>
+  </component>
+
+  <component key="i18nResolver" class="com.atlassian.sal.bamboo.message.BambooI18nResolver" name="Bamboo I18n Resolver" public="true">
+    <interface>com.atlassian.sal.api.message.I18nResolver</interface>
+  </component>
+
+  <component key="localeResolver" class="com.atlassian.sal.bamboo.message.BambooLocaleResolver" name="Bamboo Locale Resolver" public="true">
+    <interface>com.atlassian.sal.api.message.LocaleResolver</interface>
+  </component>
+
+  <component key="searchProvider" class="com.atlassian.sal.bamboo.search.BambooSearchProvider" name="Bamboo Search Provider" public="true">
+    <interface>com.atlassian.sal.api.search.SearchProvider</interface>
+  </component>
+
+  <component key="certificateFactory" class="com.atlassian.sal.bamboo.trusted.BambooCertificateFactory" name="Bamboo Certificate Factory" public="true">
+    <interface>com.atlassian.sal.core.trusted.CertificateFactory</interface>
+  </component>
+
+</atlassian-plugin>

@@ -1,7 +1,7 @@
 package com.atlassian.sal.api.pluginsettings;
 
 /**
- * Provides access to settings globally or per project/space/repository
+ * Provides access to settings globally or per project/space/repository/build-plan
  * <p/>
  * The following types are supported:
  * <ul>

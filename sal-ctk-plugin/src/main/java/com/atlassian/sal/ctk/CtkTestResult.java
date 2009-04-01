@@ -33,7 +33,7 @@ public class CtkTestResult
     public String toHtml()
     {
         final StringBuilder sb = new StringBuilder();
-        sb.append("<tr");
+        sb.append("<tr>");
         sb.append("<td class=\"").append(result==Result.PASS ? "pass" : result==Result.FAIL ? "fail" : Result.WARN).append("\">").append(result).append("</td>");
         sb.append("<td>").append(testClass).append("</td>");
         sb.append("<td>").append(message).append("</td>");

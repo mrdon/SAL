@@ -29,7 +29,7 @@ public class CtkServlet extends HttpServlet
 
         out.print("<html><head><title>CTK Test Results</title><style>.PASS{background-color: green;} .FAIL{background-color: red;}.WARN{background-color: yellow;}</style></head>");
         out.print("<body><h1>CTK Results</h1>");
-        out.print("<table><tr><th>Result</th><th>Test Group</th><th>Message</th></tr>");
+        out.print("<table id='ctkResults'><tr><th>Result</th><th>Test Group</th><th>Message</th></tr>");
         for (final CtkTestResult result : results)
         {
             out.print(result.toHtml());
