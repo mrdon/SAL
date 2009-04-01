@@ -12,9 +12,9 @@ import java.util.Collection;
 public interface ProjectManager
 {
     /**
-     * Get all project keys
+     * Get all project keys. This should ignore any permission checking.
      *
-     * @return All the project keys or an empty collection if it cannot be provided by the current application
+     * @return All the project keys or an empty collection if it cannot be provided by the current application. Empty collection if none found.
      */
     Collection<String> getAllProjectKeys();
 }

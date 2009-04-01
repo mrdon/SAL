@@ -11,6 +11,7 @@ public interface LicenseHandler
      * Sets the license string for the currently running application
      *
      * @param license The license string
+     * @throws IllegalArgumentException if the license string is not a valid license
      */
     void setLicense(String license);
 }
