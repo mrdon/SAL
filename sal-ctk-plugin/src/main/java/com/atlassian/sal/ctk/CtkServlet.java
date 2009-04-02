@@ -25,6 +25,7 @@ public class CtkServlet extends HttpServlet
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException
     {
         final List<CtkTestResult> results = suite.execute();
+        resp.setContentType("text/html");
         final PrintWriter out = resp.getWriter();
 
         out.print("<html><head><title>CTK Test Results</title><style>.PASS{background-color: green;} .FAIL{background-color: red;}.WARN{background-color: yellow;}</style></head>");
