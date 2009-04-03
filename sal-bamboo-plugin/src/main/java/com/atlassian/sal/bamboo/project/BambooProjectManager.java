@@ -17,7 +17,7 @@ public class BambooProjectManager implements ProjectManager
     // ------------------------------------------------------------------------------------------------------- Constants
     // ------------------------------------------------------------------------------------------------- Type Properties
     // ---------------------------------------------------------------------------------------------------- Dependencies
-    BuildManager buildManager;
+    private final BuildManager buildManager;
     // ---------------------------------------------------------------------------------------------------- Constructors
 
     public BambooProjectManager(BuildManager buildManager)
@@ -31,7 +31,7 @@ public class BambooProjectManager implements ProjectManager
     public Collection<String> getAllProjectKeys()
     {
         Collection<String> buildKeys = new ArrayList<String>();
-        Collection<Build> builds = buildManager.getAllBuildsForRead();
+        Collection<Build> builds = buildManager.getAllBuilds(); // should ignore permissions.
         for (Build build : builds)
         {
             buildKeys.add(build.getKey());

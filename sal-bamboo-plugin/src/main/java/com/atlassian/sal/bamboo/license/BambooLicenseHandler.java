@@ -10,7 +10,7 @@ public class BambooLicenseHandler implements LicenseHandler
     // ------------------------------------------------------------------------------------------------------- Constants
     // ------------------------------------------------------------------------------------------------- Type Properties
     // ---------------------------------------------------------------------------------------------------- Dependencies
-    BambooLicenseManager bambooLicenseManager;
+    private final BambooLicenseManager bambooLicenseManager;
     // ---------------------------------------------------------------------------------------------------- Constructors
 
     public BambooLicenseHandler(BambooLicenseManager bambooLicenseManager)
@@ -21,16 +21,15 @@ public class BambooLicenseHandler implements LicenseHandler
     // -------------------------------------------------------------------------------------------------- Action Methods
     // -------------------------------------------------------------------------------------------------- Public Methods
 
-    public void setLicense(String s)
+    public void setLicense(String license)
     {
-        boolean licenseValid = bambooLicenseManager.authenticateLicense(s);
+        boolean licenseValid = bambooLicenseManager.authenticateLicense(license);
         if (licenseValid)
         {
-            bambooLicenseManager.setLicense(s);
+            bambooLicenseManager.setLicense(license);
         }
         else
         {
-            log.error("Did not set the Bamboo license, license Invalid.");
             throw new IllegalArgumentException("Did not set the Bamboo license, license Invalid.");
         }
     }
