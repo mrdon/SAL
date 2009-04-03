@@ -31,10 +31,13 @@ public class BambooProjectManager implements ProjectManager
     public Collection<String> getAllProjectKeys()
     {
         Collection<String> buildKeys = new ArrayList<String>();
-        Collection<Build> builds = buildManager.getAllBuilds(); // should ignore permissions.
-        for (Build build : builds)
+        Collection<Build> builds = buildManager.getAllBuilds(); // will ignore permissions.
+        if (builds != null)
         {
-            buildKeys.add(build.getKey());
+            for (Build build : builds)
+            {
+                buildKeys.add(build.getKey());
+            }
         }
         return buildKeys;
     }
