@@ -39,6 +39,6 @@ public class RefimplApplicationProperties implements ApplicationProperties
 
     public File getHomeDirectory()
     {
-        return new File(System.getProperty("java.tmp.dir"));
+        return new File(System.getProperty("java.io.tmpdir"));
     }
 }
