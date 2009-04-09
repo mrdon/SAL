@@ -67,7 +67,7 @@
         <interface>com.atlassian.sal.api.message.LocaleResolver</interface>
     </component>
 
-    <component key="loginUriProvider" class="com.atlassian.sal.confluence.auth.ConfluenceLoginUriProvider" name="Confluence Login Uri Provider" public="true">
+    <component key="loginUriProvider" class="com.atlassian.sal.core.auth.SeraphLoginUriProvider" name="Confluence Login Uri Provider" public="true">
     	<interface>com.atlassian.sal.api.auth.LoginUriProvider</interface>
 	</component>
     
