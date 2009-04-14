@@ -9,6 +9,9 @@ import com.atlassian.sal.core.message.DefaultMessage;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Search is not currently available in Bamboo so this is stubbed out.
+ */
 public class BambooSearchProvider implements SearchProvider
 {
     private static final Logger log = Logger.getLogger(BambooSearchProvider.class);
@@ -19,7 +22,7 @@ public class BambooSearchProvider implements SearchProvider
     // ----------------------------------------------------------------------------------------------- Interface Methods
     // -------------------------------------------------------------------------------------------------- Action Methods
     // -------------------------------------------------------------------------------------------------- Public Methods
-    public SearchResults search(String s, String s1)
+    public SearchResults search(String username, String searchQuery)
     {
         List<Message> errors = new ArrayList<Message>();
         errors.add(new DefaultMessage("Searching in Bamboo is not yet supported"));

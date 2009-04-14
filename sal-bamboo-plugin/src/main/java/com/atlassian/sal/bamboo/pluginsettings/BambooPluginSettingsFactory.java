@@ -25,8 +25,6 @@ public class BambooPluginSettingsFactory implements PluginSettingsFactory
         this.bandanaManager = bandanaManager;
         this.buildManager = buildManager;
     }
-    // ----------------------------------------------------------------------------------------------- Interface Methods
-    // -------------------------------------------------------------------------------------------------- Action Methods
     // -------------------------------------------------------------------------------------------------- Public Methods
 
     public PluginSettings createSettingsForKey(String key)
@@ -34,9 +32,15 @@ public class BambooPluginSettingsFactory implements PluginSettingsFactory
         if (key != null)
         {
             Build build = buildManager.getBuildByKey(key);
-            // @todo what do we do if key is invalid
-            BambooBandanaContext context = new PlanAwareBandanaContext(build.getId());
-            return new BambooPluginSettings(bandanaManager, context);
+            if (build != null)
+            {
+                BambooBandanaContext context = new PlanAwareBandanaContext(build.getId());
+                return new BambooPluginSettings(bandanaManager, context);
+            }
+            else
+            {
+                throw new IllegalArgumentException("Could no create Plugin Settings no build with key \"" + key + "\" exists.");
+            }
         }
         else
         {
@@ -48,8 +52,6 @@ public class BambooPluginSettingsFactory implements PluginSettingsFactory
     {
         return createSettingsForKey(null);
     }
-
-
 
     // ------------------------------------------------------------------------------------------------- Helper Methods
     // -------------------------------------------------------------------------------------- Basic Accessors / Mutators

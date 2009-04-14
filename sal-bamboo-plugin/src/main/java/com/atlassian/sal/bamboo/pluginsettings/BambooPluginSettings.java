@@ -33,7 +33,7 @@ public class BambooPluginSettings implements PluginSettings
     {
         if ((val instanceof Properties) || (val instanceof List) || (val instanceof String) || (val == null))
         {
-            final Object removed = bandanaManager.getValue(ctx, key);
+            final Object removed = bandanaManager.getValue(ctx, key, false);
             bandanaManager.setValue(ctx, key, val);
             return removed;
         }
@@ -45,7 +45,7 @@ public class BambooPluginSettings implements PluginSettings
 
     public Object get(final String key)
     {
-        return bandanaManager.getValue(ctx, key);
+        return bandanaManager.getValue(ctx, key, false);
     }
 
     public Object remove(final String key)
