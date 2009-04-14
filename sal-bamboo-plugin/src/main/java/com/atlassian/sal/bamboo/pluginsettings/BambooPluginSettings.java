@@ -14,19 +14,15 @@ public class BambooPluginSettings implements PluginSettings
     // ------------------------------------------------------------------------------------------------------- Constants
     // ------------------------------------------------------------------------------------------------- Type Properties
     private final BambooBandanaContext ctx;
-
     // ---------------------------------------------------------------------------------------------------- Dependencies
     private final BandanaManager bandanaManager;
     // ---------------------------------------------------------------------------------------------------- Constructors
-
 
     public BambooPluginSettings(final BandanaManager bandanaManager, final BambooBandanaContext ctx)
     {
         this.bandanaManager = bandanaManager;
         this.ctx = ctx;
     }
-    // ----------------------------------------------------------------------------------------------- Interface Methods
-    // -------------------------------------------------------------------------------------------------- Action Methods
     // -------------------------------------------------------------------------------------------------- Public Methods
 
     public Object put(final String key, final Object val)
