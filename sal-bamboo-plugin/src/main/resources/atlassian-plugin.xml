@@ -23,6 +23,10 @@
     <interface>com.atlassian.sal.api.net.RequestFactory</interface>
   </component>
 
+  <component key="searchQueryParser" class="com.atlassian.sal.core.search.query.DefaultSearchQueryParser" name="Search Query Parser" public="true">
+    <interface>com.atlassian.sal.api.search.query.SearchQueryParser</interface>
+  </component>
+
   <!--Components Specific to Bamboo-->
   <component key="pluginSettingsFactory" class="com.atlassian.sal.bamboo.pluginsettings.BambooPluginSettingsFactory" name="Plugin Settings Factory" public="true">
     <interface>com.atlassian.sal.api.pluginsettings.PluginSettingsFactory</interface>
