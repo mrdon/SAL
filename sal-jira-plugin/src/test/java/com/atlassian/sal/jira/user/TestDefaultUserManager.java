@@ -2,12 +2,16 @@ package com.atlassian.sal.jira.user;
 
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.sal.jira.MockProviderAccessor;
 import com.opensymphony.user.EntityNotFoundException;
 import com.opensymphony.user.User;
 import junit.framework.Assert;
 import junit.framework.TestCase;
-import org.easymock.MockControl;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.easymock.classextension.EasyMock.createMock;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -21,38 +25,33 @@ public class TestDefaultUserManager extends TestCase
         MockProviderAccessor mpa = new MockProviderAccessor();
         User mockUser = new User("tommy", mpa);
 
-        final MockControl mockJiraAuthenticationContextControl = MockControl.createControl(JiraAuthenticationContext.class);
-        final JiraAuthenticationContext mockJiraAuthenticationContext = (JiraAuthenticationContext) mockJiraAuthenticationContextControl.getMock();
-        mockJiraAuthenticationContext.getUser();
-        mockJiraAuthenticationContextControl.setReturnValue(null);
-        mockJiraAuthenticationContext.getUser();
-        mockJiraAuthenticationContextControl.setReturnValue(mockUser);
+        final JiraAuthenticationContext mockJiraAuthenticationContext = createMock(JiraAuthenticationContext.class);
+        expect(mockJiraAuthenticationContext.getUser()).andReturn(null);
+        expect(mockJiraAuthenticationContext.getUser()).andReturn(mockUser);
 
-        mockJiraAuthenticationContextControl.replay();
-        DefaultUserManager defaultUserManager = new DefaultUserManager(null, mockJiraAuthenticationContext);
+        replay(mockJiraAuthenticationContext);
+        DefaultUserManager defaultUserManager = new DefaultUserManager(null, mockJiraAuthenticationContext, null);
         String username = defaultUserManager.getRemoteUsername();
         assertNull(username);
 
         username = defaultUserManager.getRemoteUsername();
         assertEquals("tommy", username);
 
-        mockJiraAuthenticationContextControl.verify();
+        verify(mockJiraAuthenticationContext);
     }
 
     public void testIsSystemAdminNoUser()
     {
-        DefaultUserManager defaultUserManager = new DefaultUserManager(null, null)
-        {
-            //package level protected for testing
-            User getUser(String username) throws EntityNotFoundException
-            {
-                Assert.assertEquals("tommy", username);
-                throw new EntityNotFoundException("tommy not found!");
-            }
-        };
+        final UserUtil mockUserUtil = createMock(UserUtil.class);
+        expect(mockUserUtil.getUser("tommy")).andReturn(null);
+        replay(mockUserUtil);
+
+        DefaultUserManager defaultUserManager = new DefaultUserManager(null, null, mockUserUtil);
 
         boolean systemAdmin = defaultUserManager.isSystemAdmin("tommy");
         assertFalse(systemAdmin);
+
+        verify(mockUserUtil);
     }
 
     public void testIsSystemAdminNoPermissions()
@@ -60,26 +59,19 @@ public class TestDefaultUserManager extends TestCase
         MockProviderAccessor mpa = new MockProviderAccessor();
         final User mockUser = new User("tommy", mpa);
 
-        final MockControl mockGlobalPermissionManagerControl = MockControl.createControl(GlobalPermissionManager.class);
-        final GlobalPermissionManager mockGlobalPermissionManager = (GlobalPermissionManager) mockGlobalPermissionManagerControl.getMock();
+        final GlobalPermissionManager mockGlobalPermissionManager = createMock(GlobalPermissionManager.class);
+        expect(mockGlobalPermissionManager.hasPermission(44, mockUser)).andReturn(false);
 
-        mockGlobalPermissionManager.hasPermission(44, mockUser);
-        mockGlobalPermissionManagerControl.setReturnValue(false);
-        mockGlobalPermissionManagerControl.replay();
+        final UserUtil mockUserUtil = createMock(UserUtil.class);
+        expect(mockUserUtil.getUser("tommy")).andReturn(mockUser);
+        replay(mockUserUtil, mockGlobalPermissionManager);
 
-        DefaultUserManager defaultUserManager = new DefaultUserManager(mockGlobalPermissionManager, null)
-        {
-            //package level protected for testing
-            User getUser(String username) throws EntityNotFoundException
-            {
-                Assert.assertEquals("tommy", username);
-                return mockUser;
-            }
-        };
+        DefaultUserManager defaultUserManager = new DefaultUserManager(mockGlobalPermissionManager, null, mockUserUtil);
 
         boolean systemAdmin = defaultUserManager.isSystemAdmin("tommy");
         assertFalse(systemAdmin);
-        mockGlobalPermissionManagerControl.verify();
+
+        verify(mockUserUtil, mockGlobalPermissionManager);
     }
 
     public void testIsSystemAdmin()
@@ -87,14 +79,14 @@ public class TestDefaultUserManager extends TestCase
         MockProviderAccessor mpa = new MockProviderAccessor();
         final User mockUser = new User("tommy", mpa);
 
-        final MockControl mockGlobalPermissionManagerControl = MockControl.createControl(GlobalPermissionManager.class);
-        final GlobalPermissionManager mockGlobalPermissionManager = (GlobalPermissionManager) mockGlobalPermissionManagerControl.getMock();
+        final GlobalPermissionManager mockGlobalPermissionManager = createMock(GlobalPermissionManager.class);
+        expect(mockGlobalPermissionManager.hasPermission(44, mockUser)).andReturn(true);
 
-        mockGlobalPermissionManager.hasPermission(44, mockUser);
-        mockGlobalPermissionManagerControl.setReturnValue(true);
-        mockGlobalPermissionManagerControl.replay();
+        final UserUtil mockUserUtil = createMock(UserUtil.class);
+        expect(mockUserUtil.getUser("tommy")).andReturn(mockUser);
+        replay(mockUserUtil, mockGlobalPermissionManager);
 
-        DefaultUserManager defaultUserManager = new DefaultUserManager(mockGlobalPermissionManager, null)
+        DefaultUserManager defaultUserManager = new DefaultUserManager(mockGlobalPermissionManager, null, mockUserUtil)
         {
             //package level protected for testing
             User getUser(String username) throws EntityNotFoundException
@@ -106,7 +98,8 @@ public class TestDefaultUserManager extends TestCase
 
         boolean systemAdmin = defaultUserManager.isSystemAdmin("tommy");
         assertTrue(systemAdmin);
-        mockGlobalPermissionManagerControl.verify();
+
+        verify(mockUserUtil, mockGlobalPermissionManager);
     }
 
     public void testGetRemoteUserRequest()
@@ -114,47 +107,34 @@ public class TestDefaultUserManager extends TestCase
         MockProviderAccessor mpa = new MockProviderAccessor();
         final User mockUser = new User("tommy", mpa);
 
-        MockControl mockHttpSessionControl = MockControl.createControl(HttpSession.class);
-        HttpSession mockHttpSession = (HttpSession) mockHttpSessionControl.getMock();
-        mockHttpSession.getAttribute("seraph_defaultauthenticator_user");
-        mockHttpSessionControl.setReturnValue(mockUser);
-        mockHttpSessionControl.replay();
+        final HttpSession mockHttpSession = createMock(HttpSession.class);
+        expect(mockHttpSession.getAttribute("seraph_defaultauthenticator_user")).andReturn(mockUser);
 
-        MockControl mockHttpServletRequestControl = MockControl.createControl(HttpServletRequest.class);
-        HttpServletRequest mockHttpServletRequest = (HttpServletRequest) mockHttpServletRequestControl.getMock();
-        mockHttpServletRequest.getSession(false);
-        mockHttpServletRequestControl.setReturnValue(mockHttpSession);
-        mockHttpServletRequestControl.replay();
+        final HttpServletRequest mockHttpServletRequest = createMock(HttpServletRequest.class);
+        expect(mockHttpServletRequest.getSession(false)).andReturn(mockHttpSession);
+        replay(mockHttpSession, mockHttpServletRequest);
 
-        DefaultUserManager defaultUserManager = new DefaultUserManager(null, null);
+        DefaultUserManager defaultUserManager = new DefaultUserManager(null, null, null);
         final String remoteUsername = defaultUserManager.getRemoteUsername(mockHttpServletRequest);
         assertEquals("tommy", remoteUsername);
 
-        mockHttpSessionControl.verify();
-        mockHttpServletRequestControl.verify();
+        verify(mockHttpServletRequest, mockHttpSession);
     }
 
     public void testGetRemoteUserRequestNoUser()
     {
+        final HttpSession mockHttpSession = createMock(HttpSession.class);
+        expect(mockHttpSession.getAttribute("seraph_defaultauthenticator_user")).andReturn(null);
 
-        MockControl mockHttpSessionControl = MockControl.createControl(HttpSession.class);
-        HttpSession mockHttpSession = (HttpSession) mockHttpSessionControl.getMock();
-        mockHttpSession.getAttribute("seraph_defaultauthenticator_user");
-        mockHttpSessionControl.setReturnValue(null);
-        mockHttpSessionControl.replay();
+        final HttpServletRequest mockHttpServletRequest = createMock(HttpServletRequest.class);
+        expect(mockHttpServletRequest.getSession(false)).andReturn(mockHttpSession);
+        replay(mockHttpSession, mockHttpServletRequest);
 
-        MockControl mockHttpServletRequestControl = MockControl.createControl(HttpServletRequest.class);
-        HttpServletRequest mockHttpServletRequest = (HttpServletRequest) mockHttpServletRequestControl.getMock();
-        mockHttpServletRequest.getSession(false);
-        mockHttpServletRequestControl.setReturnValue(mockHttpSession);
-        mockHttpServletRequestControl.replay();
-
-        DefaultUserManager defaultUserManager = new DefaultUserManager(null, null);
+        DefaultUserManager defaultUserManager = new DefaultUserManager(null, null, null);
         final String remoteUsername = defaultUserManager.getRemoteUsername(mockHttpServletRequest);
         assertNull(remoteUsername);
 
-        mockHttpSessionControl.verify();
-        mockHttpServletRequestControl.verify();
+        verify(mockHttpServletRequest, mockHttpSession);
     }
 }
 

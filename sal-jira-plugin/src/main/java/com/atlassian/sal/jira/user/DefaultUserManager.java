@@ -3,16 +3,16 @@ package com.atlassian.sal.jira.user;
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.Permissions;
+import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserResolutionException;
 import com.atlassian.seraph.auth.DefaultAuthenticator;
-import com.opensymphony.user.EntityNotFoundException;
 import com.opensymphony.user.User;
 import org.apache.log4j.Logger;
 
+import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.security.Principal;
 
 /**
  * OSUser based user operations
@@ -22,12 +22,14 @@ public class DefaultUserManager implements UserManager
     private static final Logger log = Logger.getLogger(DefaultUserManager.class);
     private final GlobalPermissionManager globalPermissionManager;
     private final JiraAuthenticationContext authenticationContext;
+    private final UserUtil userUtil;
 
     public DefaultUserManager(final GlobalPermissionManager globalPermissionManager,
-        final JiraAuthenticationContext authenticationContext)
+        final JiraAuthenticationContext authenticationContext, final UserUtil userUtil)
     {
         this.globalPermissionManager = globalPermissionManager;
         this.authenticationContext = authenticationContext;
+        this.userUtil = userUtil;
     }
 
     public String getRemoteUsername()
@@ -42,49 +44,27 @@ public class DefaultUserManager implements UserManager
 
     public boolean isSystemAdmin(final String username)
     {
-        try
-        {
-            final User user = getUser(username);
-            return globalPermissionManager.hasPermission(Permissions.SYSTEM_ADMIN, user);
-        }
-        catch (final EntityNotFoundException e)
-        {
-            //no user found.  Therefore no admin permission.
-            return false;
-        }
+        final User user = userUtil.getUser(username);
+        return user != null && globalPermissionManager.hasPermission(Permissions.SYSTEM_ADMIN, user);
     }
 
     public boolean authenticate(final String username, final String password)
     {
-        try
+        final User user = userUtil.getUser(username);
+        if(user != null)
         {
-            final User user = getUser(username);
             return user.authenticate(password);
         }
-        catch (final EntityNotFoundException e)
+        else
         {
-            log.debug("Could not find user to authenticate: " + e);
+            log.debug("Could not find user to authenticate with username '" + username +"'");
+            return false;
         }
-
-        return false;
     }
 
     public Principal resolve(final String username) throws UserResolutionException
     {
-        try
-        {
-            getUser(username);
-        } catch (final EntityNotFoundException e)
-        {
-            return null;
-        }
-        return new Principal()
-        {
-            public String getName()
-            {
-                return username;
-            }
-        };
+        return userUtil.getUser(username);
     }
 
     /**
@@ -96,20 +76,8 @@ public class DefaultUserManager implements UserManager
      */
     public boolean isUserInGroup(final String username, final String group)
     {
-        try
-        {
-            return getUser(username).inGroup(group);
-        }
-        catch (final EntityNotFoundException enfe)
-        {
-            return false;
-        }
-    }
-
-    //package level protected for testing
-    User getUser(final String username) throws EntityNotFoundException
-    {
-        return com.opensymphony.user.UserManager.getInstance().getUser(username);
+        final User user = userUtil.getUser(username);
+        return user != null && user.inGroup(group);
     }
 
     public String getRemoteUsername(final HttpServletRequest request)
