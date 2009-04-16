@@ -24,24 +24,18 @@ public class BambooSalUserManager implements UserManager
 {
     private static final Logger log = Logger.getLogger(BambooSalUserManager.class);
     // ------------------------------------------------------------------------------------------------------- Constants
-    public static final String USER_TOKEN_KEY = "USER_TOKEN_KEY";
-
     // ------------------------------------------------------------------------------------------------- Type Properties
     // ---------------------------------------------------------------------------------------------------- Dependencies
     private BambooUserManager bambooUserManager;
     private BambooPermissionManager bambooPermissionManager;
-    private TransactionTemplate transactionTemplate;
 
     // ---------------------------------------------------------------------------------------------------- Constructors
 
-    public BambooSalUserManager(BambooUserManager bambooUserManager, BambooPermissionManager bambooPermissionManager, TransactionTemplate transactionTemplate)
+    public BambooSalUserManager(BambooUserManager bambooUserManager, BambooPermissionManager bambooPermissionManager)
     {
         this.bambooUserManager = bambooUserManager;
         this.bambooPermissionManager = bambooPermissionManager;
-        this.transactionTemplate = transactionTemplate;
     }
-    // ----------------------------------------------------------------------------------------------- Interface Methods
-    // -------------------------------------------------------------------------------------------------- Action Methods
     // -------------------------------------------------------------------------------------------------- Public Methods
 
     public String getRemoteUsername()
@@ -49,7 +43,7 @@ public class BambooSalUserManager implements UserManager
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null)
         {
-            authentication.getName();
+            return authentication.getName();
         }
         return null;
     }
@@ -76,18 +70,12 @@ public class BambooSalUserManager implements UserManager
         final UserDetails userDetails = bambooUserManager.loadUserByUsername(username);
         if (userDetails != null)
         {
-            final Authentication auth = (Authentication) transactionTemplate.execute(new TransactionCallback()
-            {
-                public Object doInTransaction()
-                {
-                    return new PrincipalAcegiUserToken(USER_TOKEN_KEY, userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities(), userDetails);
-
-                }
-            });
-
-            return bambooPermissionManager.hasPermission(auth, "ADMINISTRATION", GlobalApplicationSecureObject.INSTANCE);
+            return bambooPermissionManager.hasPermission(username, "ADMINISTRATION", GlobalApplicationSecureObject.INSTANCE);
         }
-        return false;
+        else
+        {
+            return false;
+        }
     }
 
     public Principal resolve(String username) throws UserResolutionException
