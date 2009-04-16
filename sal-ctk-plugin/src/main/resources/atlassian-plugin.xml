@@ -23,6 +23,7 @@
     <component-import key="transactionTemplate" interface="com.atlassian.sal.api.transaction.TransactionTemplate" />
     <component-import key="salUserManager" interface="com.atlassian.sal.api.user.UserManager" />
     <component-import key="pluginUpgradeManager" interface="com.atlassian.sal.api.upgrade.PluginUpgradeManager" />
+    <component-import key="threadLocalDelegateExecutorFactory" interface="com.atlassian.sal.api.executor.ThreadLocalDelegateExecutorFactory" />
 
     <component key="lifecycleTest" class="com.atlassian.sal.ctk.test.LifecycleAwareTest" public="true">
         <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>

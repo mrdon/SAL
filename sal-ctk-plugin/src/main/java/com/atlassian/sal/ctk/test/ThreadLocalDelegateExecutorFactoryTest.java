@@ -9,9 +9,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Callable;
 
+import org.springframework.stereotype.Component;
+
 /**
  * The thread local delegate executor factory should at least transfer the user state
  */
+@Component
 public class ThreadLocalDelegateExecutorFactoryTest implements CtkTest
 {
     private final ThreadLocalDelegateExecutorFactory threadLocalDelegateExecutorFactory;
