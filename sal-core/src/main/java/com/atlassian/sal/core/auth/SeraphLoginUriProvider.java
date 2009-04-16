@@ -1,5 +1,6 @@
 package com.atlassian.sal.core.auth;
 
+import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.seraph.config.SecurityConfigFactory;
 
@@ -10,13 +11,20 @@ import java.net.URLEncoder;
 
 public class SeraphLoginUriProvider implements LoginUriProvider
 {
+    private final ApplicationProperties applicationProperties;
+
+    public SeraphLoginUriProvider(ApplicationProperties applicationProperties)
+    {
+        this.applicationProperties = applicationProperties;
+    }
+
     public URI getLoginUri(final URI returnUri)
     {
         final String linkLoginURL = SecurityConfigFactory.getInstance().getLinkLoginURL();
         try
         {
             final String newUrl = linkLoginURL.replace("${originalurl}", URLEncoder.encode(returnUri.toString(), "UTF-8"));
-            return new URI(newUrl);
+            return new URI(applicationProperties.getBaseUrl() + newUrl);
         }
         catch (final URISyntaxException e)
         {
