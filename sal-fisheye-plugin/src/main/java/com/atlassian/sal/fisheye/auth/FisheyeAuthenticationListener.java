@@ -2,6 +2,9 @@ package com.atlassian.sal.fisheye.auth;
 
 import com.atlassian.sal.api.auth.AuthenticationListener;
 import com.atlassian.sal.api.auth.Authenticator;
+import com.atlassian.sal.fisheye.appconfig.FisheyeUserManagerAccessor;
+import com.cenqua.fisheye.user.UserManager;
+import com.cenqua.fisheye.user.UserLogin;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,23 +16,28 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class FisheyeAuthenticationListener implements AuthenticationListener
 {
+    private final FisheyeUserManagerAccessor uma;
+
+    public FisheyeAuthenticationListener(FisheyeUserManagerAccessor uma)
+    {
+        this.uma = uma;
+    }
+
     public void authenticationSuccess(Authenticator.Result result, HttpServletRequest request, HttpServletResponse response)
     {
-        throw new UnsupportedOperationException();
+        String name = result.getPrincipal().getName();
+        uma.loginUserForThisRequest(name, request);
     }
 
     public void authenticationFailure(Authenticator.Result result, HttpServletRequest request, HttpServletResponse response)
     {
-        throw new UnsupportedOperationException();
     }
 
     public void authenticationError(Authenticator.Result result, HttpServletRequest request, HttpServletResponse response)
     {
-        throw new UnsupportedOperationException();
     }
 
     public void authenticationNotAttempted(HttpServletRequest request, HttpServletResponse response)
     {
-        throw new UnsupportedOperationException();
     }
 }

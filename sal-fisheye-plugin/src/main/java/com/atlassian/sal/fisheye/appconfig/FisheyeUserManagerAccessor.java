@@ -20,4 +20,10 @@ public interface FisheyeUserManagerAccessor
 
     FEUser getUser(String username) throws DbException;
 
+    /**
+     * This method will force FishEye to consider the given username logged-in
+     * for the current request.
+     * THINK CAREFULLY ABOUT CALLING THIS METHOD as (e.g.) no password checking is done.
+     */
+    void loginUserForThisRequest(String username, HttpServletRequest request);
 }

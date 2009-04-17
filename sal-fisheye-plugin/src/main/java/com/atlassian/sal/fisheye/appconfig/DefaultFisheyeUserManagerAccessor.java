@@ -10,6 +10,7 @@ import com.cenqua.fisheye.LicensePolicyException;
 import com.cenqua.fisheye.rep.DbException;
 import com.cenqua.fisheye.user.FEUser;
 import com.cenqua.fisheye.user.UserLogin;
+import com.cenqua.fisheye.user.UserManager;
 
 public class DefaultFisheyeUserManagerAccessor implements FisheyeUserManagerAccessor
 {
@@ -95,4 +96,15 @@ public class DefaultFisheyeUserManagerAccessor implements FisheyeUserManagerAcce
         return getUserManager().getUser(username);
     }
 
+    public void loginUserForThisRequest(String username, HttpServletRequest request) {
+        try {
+            UserLogin user = getUserManager().createTrustedUserLogin(username, true, false);
+            request.setAttribute(UserManager.USER_ATTR_KEY, user);
+        } catch (LicensePolicyException e) {
+            log.error("License problem authenticating request", e);
+        } catch (DbException e) {
+            log.error("Problem authenticating request", e);
+        }
+
+    }
 }
