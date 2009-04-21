@@ -24,6 +24,9 @@
     <component-import key="salUserManager" interface="com.atlassian.sal.api.user.UserManager" />
     <component-import key="pluginUpgradeManager" interface="com.atlassian.sal.api.upgrade.PluginUpgradeManager" />
     <component-import key="threadLocalDelegateExecutorFactory" interface="com.atlassian.sal.api.executor.ThreadLocalDelegateExecutorFactory" />
+    <component-import key="authenticationController" interface="com.atlassian.sal.api.auth.AuthenticationController" />
+    <component-import key="authenticationListener" interface="com.atlassian.sal.api.auth.AuthenticationListener" />
+    <component-import key="loginUriProvider" interface="com.atlassian.sal.api.auth.LoginUriProvider" />
 
     <component key="lifecycleTest" class="com.atlassian.sal.ctk.test.LifecycleAwareTest" public="true">
         <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>

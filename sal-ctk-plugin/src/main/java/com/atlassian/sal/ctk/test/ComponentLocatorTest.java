@@ -29,6 +29,7 @@ public class ComponentLocatorTest implements CtkTest
         } catch (final UnsupportedOperationException ex)
         {
             results.fail("ComponentLocator operations should be supported");
+            ex.printStackTrace();
         }
     }
 }
