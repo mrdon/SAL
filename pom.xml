@@ -16,8 +16,8 @@
     <properties>
         <plugins.version>2.1.1</plugins.version>
         <jdkLevel>1.5</jdkLevel>
-        <fisheye-jar.version>1.6.5.2-359</fisheye-jar.version>
-        <atlassian-fisheye-api.version>1.6.5.2-359</atlassian-fisheye-api.version>
+        <fisheye-jar.version>1.7-M6-382</fisheye-jar.version>
+        <atlassian-fisheye-api.version>1.7-M6-382</atlassian-fisheye-api.version>
         <confluence.version>2.10.2</confluence.version>
         <bamboo.version>2.3-SNAPSHOT</bamboo.version>
         <crowd.version>1.6.2</crowd.version>

@@ -1,17 +1,16 @@
 package com.atlassian.sal.fisheye.appconfig;
 
+import com.atlassian.fisheye.spi.TxTemplate;
+import com.atlassian.sal.api.component.ComponentLocator;
+import com.cenqua.crucible.actions.admin.project.ProjectDataFactory;
+import com.cenqua.crucible.model.managers.ProjectManager;
+import com.cenqua.fisheye.AppConfig;
+import org.springframework.beans.factory.FactoryBean;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-
-import org.springframework.beans.factory.FactoryBean;
-
-import com.cenqua.fisheye.AppConfig;
-import com.cenqua.crucible.model.managers.ProjectManager;
-import com.cenqua.crucible.actions.admin.project.ProjectDataFactory;
-import com.atlassian.sal.api.component.ComponentLocator;
-import com.atlassian.crucible.spi.TxTemplate;
 
 public class FisheyeAccessorFactoryBean implements FactoryBean
 {

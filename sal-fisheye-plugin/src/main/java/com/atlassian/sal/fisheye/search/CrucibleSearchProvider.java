@@ -1,14 +1,5 @@
 package com.atlassian.sal.fisheye.search;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.search.SearchMatch;
 import com.atlassian.sal.api.search.SearchProvider;
@@ -16,8 +7,8 @@ import com.atlassian.sal.api.search.SearchResults;
 import com.atlassian.sal.api.search.parameter.SearchParameter;
 import com.atlassian.sal.api.search.query.SearchQuery;
 import com.atlassian.sal.api.search.query.SearchQueryParser;
-import com.atlassian.sal.core.search.BasicSearchMatch;
 import com.atlassian.sal.core.search.BasicResourceType;
+import com.atlassian.sal.core.search.BasicSearchMatch;
 import com.cenqua.crucible.model.Principal;
 import com.cenqua.crucible.model.Review;
 import com.cenqua.crucible.model.managers.ReviewManager;
@@ -29,6 +20,14 @@ import com.cenqua.fisheye.LicensePolicyException;
 import com.cenqua.fisheye.rep.DbException;
 import com.cenqua.fisheye.user.UserManager;
 import com.cenqua.fisheye.util.NaturalComparator;
+import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Implements Crucible search.  Only reviews that the user has permission to view will be returned with the search
@@ -87,7 +86,7 @@ public class CrucibleSearchProvider implements SearchProvider
             return true;
         }
 
-        return projectKey.equals(review.getProject().getKey());
+        return projectKey.equals(review.getProject().getProjKey());
     }
 
     private List<Integer> getReviewIds(String searchQuery, String projectKey, String username)

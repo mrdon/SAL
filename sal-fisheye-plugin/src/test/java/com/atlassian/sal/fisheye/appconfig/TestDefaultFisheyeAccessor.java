@@ -1,15 +1,16 @@
 package com.atlassian.sal.fisheye.appconfig;
 
-import com.cenqua.crucible.model.managers.ProjectManager;
-import com.cenqua.crucible.model.Project;
-import com.cenqua.crucible.actions.admin.project.ProjectDataFactory;
-import com.cenqua.crucible.actions.admin.project.ProjectData;
-import com.atlassian.crucible.spi.TxTemplate;
 import com.atlassian.crucible.spi.TxCallback;
+import com.atlassian.fisheye.spi.TxTemplate;
+import com.cenqua.crucible.actions.admin.project.ProjectData;
+import com.cenqua.crucible.actions.admin.project.ProjectDataFactory;
+import com.cenqua.crucible.model.Project;
+import com.cenqua.crucible.model.managers.ProjectManager;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Mockito.*;
-import static junit.framework.Assert.*;
 
 public class TestDefaultFisheyeAccessor
 {
