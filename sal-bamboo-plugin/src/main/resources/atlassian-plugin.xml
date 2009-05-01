@@ -27,6 +27,18 @@
     <interface>com.atlassian.sal.api.search.query.SearchQueryParser</interface>
   </component>
 
+  <component key="authenticationController" class="com.atlassian.sal.core.auth.SeraphAuthenticationController" name="Seraph Authentication Controller" public="true">
+    <interface>com.atlassian.sal.api.auth.AuthenticationController</interface>
+  </component>
+
+  <component key="authenticationListener" class="com.atlassian.sal.core.auth.SeraphAuthenticationListener" name="Seraph Authentication Listener" public="true">
+    <interface>com.atlassian.sal.api.auth.AuthenticationListener</interface>
+  </component>
+
+  <component key="loginUriProvider" class="com.atlassian.sal.core.auth.SeraphLoginUriProvider" name="Seraph Login URI Provider" public="true">
+    <interface>com.atlassian.sal.api.auth.LoginUriProvider</interface>
+  </component>
+
   <!--Components Specific to Bamboo-->
   <component key="pluginSettingsFactory" class="com.atlassian.sal.bamboo.pluginsettings.BambooPluginSettingsFactory" name="Plugin Settings Factory" public="true">
     <interface>com.atlassian.sal.api.pluginsettings.PluginSettingsFactory</interface>
