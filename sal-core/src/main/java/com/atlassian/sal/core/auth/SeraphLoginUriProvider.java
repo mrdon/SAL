@@ -20,19 +20,19 @@ public class SeraphLoginUriProvider implements LoginUriProvider
 
     public URI getLoginUri(final URI returnUri)
     {
-        final String linkLoginURL = SecurityConfigFactory.getInstance().getLinkLoginURL();
+        final String loginURL = SecurityConfigFactory.getInstance().getLoginURL();
         try
         {
-            final String newUrl = linkLoginURL.replace("${originalurl}", URLEncoder.encode(returnUri.toString(), "UTF-8"));
+            final String newUrl = loginURL.replace("${originalurl}", URLEncoder.encode(returnUri.toString(), "UTF-8"));
             return new URI(applicationProperties.getBaseUrl() + newUrl);
         }
         catch (final URISyntaxException e)
         {
-            throw new RuntimeException("Error getting login uri. LoginUrl = " + linkLoginURL + ", ReturnUri = " + returnUri, e);
+            throw new RuntimeException("Error getting login uri. LoginUrl = " + loginURL + ", ReturnUri = " + returnUri, e);
         }
         catch (final UnsupportedEncodingException e)
         {
-            throw new RuntimeException("Error getting login uri. LoginUrl = " + linkLoginURL + ", ReturnUri = " + returnUri, e);
+            throw new RuntimeException("Error getting login uri. LoginUrl = " + loginURL + ", ReturnUri = " + returnUri, e);
         }
     }
 }
