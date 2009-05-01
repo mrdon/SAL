@@ -12,6 +12,8 @@ public class BambooI18nResolver extends AbstractI18nResolver
 {
     private static final Logger log = Logger.getLogger(BambooI18nResolver.class);
     // ------------------------------------------------------------------------------------------------------- Constants
+    private static final String DEFAULT_BUNDLE = "com.atlassian.bamboo.ww2.BambooActionSupport";
+
     // ------------------------------------------------------------------------------------------------- Type Properties
     // ---------------------------------------------------------------------------------------------------- Dependencies
     private final TextProvider textProvider;
@@ -39,9 +41,30 @@ public class BambooI18nResolver extends AbstractI18nResolver
         }
     }
 
+    // @TODO This is a crap version of the translator that doesn't allow plugins to plugin their own messages
     public Map<String, String> getAllTranslationsForPrefix(String prefix, Locale locale)
     {
-        throw new UnsupportedOperationException("This application does not support this method call yet!");
+        final Map<String, String> messages = new HashMap<String, String>();
+        final ResourceBundle bundle = textProvider.getTexts(DEFAULT_BUNDLE);
+        if (bundle != null)
+        {
+            final Enumeration<String> keys = bundle.getKeys();
+            while (keys.hasMoreElements())
+            {
+                String key = keys.nextElement();
+                if (key.startsWith(prefix))
+                {
+                    messages.put(key, bundle.getString(key));
+                }
+            }
+        }
+        else
+        {
+            // Pretty sure this never happens...
+            log.warn("Unable to find bundle " + DEFAULT_BUNDLE + ". No i18n messages will be returned");
+        }
+
+        return messages;
     }
 
     // ------------------------------------------------------------------------------------------------- Helper Methods
