@@ -66,18 +66,8 @@ public class DefaultUserManager implements UserManager
         return getRemoteUsername();
     }
 
-    public Principal resolve(final String username) throws UserResolutionException
+    public User resolve(final String username) throws UserResolutionException
     {
-        if (userAccessor.getUser(username) == null)
-        {
-            return null;
-        }
-        return new Principal()
-        {
-            public String getName()
-            {
-                return username;
-            }
-        };
+        return userAccessor.getUser(username);
     }
 }
