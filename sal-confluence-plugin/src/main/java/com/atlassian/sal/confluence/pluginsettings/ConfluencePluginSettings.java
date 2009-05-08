@@ -6,27 +6,38 @@ import java.util.Properties;
 import com.atlassian.bandana.BandanaManager;
 import com.atlassian.confluence.setup.bandana.ConfluenceBandanaContext;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
+import com.atlassian.sal.api.transaction.TransactionTemplate;
+import com.atlassian.sal.api.transaction.TransactionCallback;
 import org.apache.commons.lang.Validate;
 
 public class ConfluencePluginSettings implements PluginSettings
 {
     private final BandanaManager bandanaManager;
     private final ConfluenceBandanaContext ctx;
+    private final TransactionTemplate txTemplate;
 
-    public ConfluencePluginSettings(final BandanaManager bandanaManager, final ConfluenceBandanaContext ctx)
+    public ConfluencePluginSettings(final BandanaManager bandanaManager, final ConfluenceBandanaContext ctx, TransactionTemplate txTemplate)
     {
         this.bandanaManager = bandanaManager;
         this.ctx = ctx;
+        this.txTemplate = txTemplate;
     }
 
     public Object put(final String key, final Object val)
     {
+
         Validate.notNull(key, "The plugin settings key cannot be null");
     	if ((val instanceof Properties) || (val instanceof List)  || (val instanceof String) || (val == null))
 		{
-    		final Object removed = bandanaManager.getValue(ctx, key);
-    		bandanaManager.setValue(ctx, key, val);
-    		return removed;
+            return txTemplate.execute(new TransactionCallback()
+            {
+                public Object doInTransaction()
+                {
+                    final Object removed = bandanaManager.getValue(ctx, key);
+                    bandanaManager.setValue(ctx, key, val);
+                    return removed;
+                }
+            });
 		}
     	else
 		{
@@ -37,12 +48,26 @@ public class ConfluencePluginSettings implements PluginSettings
     public Object get(final String key)
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
-        return bandanaManager.getValue(ctx, key);
+
+        return txTemplate.execute(new TransactionCallback()
+        {
+            public Object doInTransaction()
+            {
+                return bandanaManager.getValue(ctx, key);
+            }
+        });
+
     }
 
     public Object remove(final String key)
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
-        return put(key, null);
+        return txTemplate.execute(new TransactionCallback()
+        {
+            public Object doInTransaction()
+            {
+                return put(key, null);
+            }
+        });
     }
 }
