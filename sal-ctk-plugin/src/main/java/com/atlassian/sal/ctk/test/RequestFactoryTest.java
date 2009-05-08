@@ -46,6 +46,6 @@ public class RequestFactoryTest implements CtkTest
                 passed = response.getResponseBodyAsString().contains("Joe Administrator");
             }
         });
-        results.assertTrue("Should be able to call http://demo.jira.com and log in using seraph authentication", passed);
+        results.assertTrueOrWarn("Should be able to call http://demo.jira.com and log in using seraph authentication", passed);
     }
 }

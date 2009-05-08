@@ -34,6 +34,5 @@ public class LoginUriProviderTest implements CtkTest
         String destUri = "http://server/dest.html?param=value";
         URI loginUri = provider.getLoginUri(new URI(destUri));
         results.assertTrue("Login URI should contain destination: " + loginUri.toString(), loginUri.toString().contains(URLEncoder.encode(destUri, "UTF-8")));
-        System.out.println("encoded:"+URLEncoder.encode(destUri, "UTF-8"));
     }
 }
