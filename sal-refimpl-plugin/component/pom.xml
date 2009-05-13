@@ -19,7 +19,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>com.atlassian.sal.refimpl.component</Bundle-SymbolicName>
-	                    <Import-Package>com.atlassian.sal.api.component</Import-Package>
+	                    <Import-Package>com.atlassian.sal.api.component;version="[2.0.0,3.0.0)",org.springframework.osgi.context,org.osgi.framework</Import-Package>
 	                    <Private-Package>com.atlassian.sal.refimpl.component</Private-Package>
                         <Spring-Context>*;timeout:=60</Spring-Context>
                     </instructions>
@@ -33,6 +33,19 @@
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-api</artifactId>
             <version>${pom.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-refimpl</artifactId>
+            <classifier>classes</classifier>
+            <version>2.2.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.osgi</groupId>
+            <artifactId>spring-osgi-core</artifactId>
+            <version>1.1.3</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
