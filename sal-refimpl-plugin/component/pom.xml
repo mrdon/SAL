@@ -19,7 +19,8 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>com.atlassian.sal.refimpl.component</Bundle-SymbolicName>
-	                    <Import-Package>com.atlassian.sal.api.component;version="[2.0.0,3.0.0)",org.springframework.osgi.context,org.osgi.framework</Import-Package>
+	                    <Import-Package>com.atlassian.sal.api.component;version="[2.0.0,3.0.0)",org.springframework.osgi.context,org.osgi.framework,
+                                        org.apache.commons.logging</Import-Package>
 	                    <Private-Package>com.atlassian.sal.refimpl.component</Private-Package>
                         <Spring-Context>*;timeout:=60</Spring-Context>
                     </instructions>
