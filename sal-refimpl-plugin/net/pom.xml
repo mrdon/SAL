@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.atlassian.sal</groupId>
         <artifactId>sal-refimpl-plugins</artifactId>
-        <version>2.0-beta-2</version>
+        <version>2.0-streams-JAC-NOUI-0.1</version>
     </parent>
 
     <artifactId>sal-refimpl-net-plugin</artifactId>
@@ -20,7 +20,7 @@
                     <instructions>
                         <Import-Package>
                             com.atlassian.security.auth.trustedapps, com.atlassian.sal.api.user,
-                            com.atlassian.sal.api.net, com.atlassian.sal.api.net.auth, 
+                            com.atlassian.sal.api.net, com.atlassian.sal.api.net.auth,
                             javax.crypto, javax.crypto.spec, javax.net, javax.net.ssl, javax.servlet.http,
                             org.apache.commons.codec, org.apache.commons.codec.binary, org.apache.commons.codec.net,
                             org.apache.commons.lang, org.apache.commons.logging, org.apache.log4j

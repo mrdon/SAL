@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.atlassian.sal</groupId>
         <artifactId>sal-refimpl-plugins</artifactId>
-        <version>2.0-beta-2</version>
+        <version>2.0-streams-JAC-NOUI-0.1</version>
     </parent>
 
     <artifactId>sal-refimpl-appproperties-plugin</artifactId>
@@ -23,14 +23,14 @@
 <!--
 	                    <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
 	                    <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
-	                    <Spring-Context>classpath:/META-INF/spring/*.xml;create-asynchronously:=false</Spring-Context> 
+	                    <Spring-Context>classpath:/META-INF/spring/*.xml;create-asynchronously:=false</Spring-Context>
 -->
                     </instructions>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-    
+
     <dependencies>
         <dependency>
             <groupId>com.atlassian.sal</groupId>

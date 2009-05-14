@@ -8,7 +8,7 @@ import java.util.List;
 import org.picocontainer.ComponentAdapter;
 import org.picocontainer.PicoContainer;
 
-import uk.ltd.getahead.dwr.util.Logger;
+import org.apache.log4j.Logger;
 
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.sal.api.component.ComponentLocator;
