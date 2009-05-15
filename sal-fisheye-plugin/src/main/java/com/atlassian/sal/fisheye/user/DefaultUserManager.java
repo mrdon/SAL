@@ -48,6 +48,8 @@ public class DefaultUserManager implements UserManager
 
     public Principal resolve(final String username) throws UserResolutionException
     {
+        if (username == null) return null;
+        
         try
         {
             if (fisheyeUserManagerAccessor.getUser(username) == null)
