@@ -5,6 +5,10 @@
         <vendor name="Atlassian Software Systems Pty Ltd" url="http://www.atlassian.com"/>
     </plugin-info>
 
+    <component-import key="applicationProperties" name="SAL Application Properties Import" system="true">
+        <interface>com.atlassian.sal.api.ApplicationProperties</interface>
+    </component-import>
+
     <component key="pluginSettingsFactory" name="Plugin settings factory"
                class="com.atlassian.sal.refimpl.pluginsettings.RefimplPluginSettingsFactory"
                system="true" public="true">

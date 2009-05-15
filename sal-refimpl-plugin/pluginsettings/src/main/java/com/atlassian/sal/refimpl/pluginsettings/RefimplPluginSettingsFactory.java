@@ -2,6 +2,7 @@ package com.atlassian.sal.refimpl.pluginsettings;
 
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.atlassian.sal.api.ApplicationProperties;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -21,51 +22,62 @@ public class RefimplPluginSettingsFactory implements PluginSettingsFactory
     private final Properties properties;
     private final File file;
 
-    public RefimplPluginSettingsFactory()
+    public RefimplPluginSettingsFactory(ApplicationProperties applicationProperties)
     {
+        // Maintain backwards compatibility, check the old locations
         File file = new File(System.getProperty("sal.pluginsettings.store", "pluginsettings.xml"));
         properties = new Properties();
-        if (file.exists() && file.canRead())
+        if (!file.exists() || !file.canRead())
         {
-            if (file.length() > 0)
+            // Use refapp home directory
+            File dataDir = new File(applicationProperties.getHomeDirectory(), "data");
+            try
             {
-                InputStream is = null;
-                try
+                if (!dataDir.exists())
                 {
-                    is = new FileInputStream(file);
-                    properties.loadFromXML(is);
-                    log.info("Using " + file.getAbsolutePath() + " as plugin settings store");
+                    dataDir.mkdirs();
                 }
-                catch (Exception e)
+                file = new File(dataDir, "pluginsettings.xml");
+                file.createNewFile();
+            }
+            catch (IOException ioe)
+            {
+                log.error("Error creating plugin settings properties, using memory store", ioe);
+                file = null;
+            }
+        }
+        if (file != null && file.length() > 0)
+        {
+            InputStream is = null;
+            try
+            {
+                is = new FileInputStream(file);
+                properties.loadFromXML(is);
+            }
+            catch (Exception e)
+            {
+                log.error("Error loading plugin settings properties, using memory store", e);
+                file = null;
+            }
+            finally
+            {
+                if (is != null)
                 {
-                    log.error("Error loading plugin settings properties", e);
-                    file = null;
-                }
-                finally
-                {
-                    if (is != null)
+                    try
                     {
-                        try
-                        {
-                            is.close();
-                        }
-                        catch (IOException ioe)
-                        {
-                            log.error("Error closing file", ioe);
-                        }
+                        is.close();
+                    }
+                    catch (IOException ioe)
+                    {
+                        log.error("Error closing file", ioe);
                     }
                 }
             }
-            else
-            {
-                // File is a new file
-                log.info("Using " + file.getAbsolutePath() + " as plugin settings store");
-            }
         }
-        else
+        if (file != null)
         {
-            log.info("Cannot find property settings file, using memory store");
-            file = null;
+            // File is a new file
+            log.info("Using " + file.getAbsolutePath() + " as plugin settings store");
         }
         this.file = file;
     }

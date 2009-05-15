@@ -19,7 +19,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>com.atlassian.sal.refimpl.pluginsettings</Bundle-SymbolicName>
-	                    <Import-Package>com.atlassian.sal.api.pluginsettings,org.apache.commons.lang,org.apache.log4j</Import-Package>
+	                    <Import-Package>com.atlassian.sal.api.pluginsettings,org.apache.commons.lang,org.apache.log4j,com.atlassian.sal.api</Import-Package>
 	                    <Private-Package>com.atlassian.sal.refimpl.pluginsettings,com.atlassian.sal.core.pluginsettings</Private-Package>
                         <Spring-Context>*;timeout:=60</Spring-Context>
                     </instructions>
