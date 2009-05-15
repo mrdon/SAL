@@ -23,15 +23,15 @@ public class ComponentLocatorTest implements CtkTest
             results.assertTrue("PluginController accessible in ComponentLocator", mgr != null);
 
             final Collection<PluginController> c = ComponentLocator.getComponents(PluginController.class);
-            results.assertTrue("Should be one PluginController found", c != null && !c.isEmpty());
-            results.assertTrue("There should be only one PluginController", c.size()==1);
+            results.assertTrue("Should be at least one PluginController found", c != null && !c.isEmpty());
+            results.assertTrueOrWarn("There should be only one PluginController", c.size()==1);
 
             final PluginAccessor accessor = ComponentLocator.getComponent(PluginAccessor.class);
             results.assertTrue("PluginAccessor accessible in ComponentLocator", accessor != null);
 
             final Collection<PluginAccessor> ca = ComponentLocator.getComponents(PluginAccessor.class);
-            results.assertTrue("Should be one PluginAccessor found", ca != null && !ca.isEmpty());
-            results.assertTrue("There should be only one PluginAccessor", ca.size()==1);
+            results.assertTrue("Should be at least one PluginAccessor found", ca != null && !ca.isEmpty());
+            results.assertTrueOrWarn("There should be only one PluginAccessor", ca.size()==1);
 
             results.assertTrueOrWarn("PluginAccessor should be accessible in ComponentLocator", ComponentLocator.getComponent(PluginAccessor.class) != null);
         } catch (final UnsupportedOperationException ex)
