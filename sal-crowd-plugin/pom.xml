@@ -80,6 +80,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.config</groupId>
+            <artifactId>atlassian-config</artifactId>
+            <version>0.9</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>servletapi</groupId>
             <artifactId>servletapi</artifactId>
             <version>2.3</version>
