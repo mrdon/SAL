@@ -19,7 +19,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>com.atlassian.sal.bamboo</Bundle-SymbolicName>
-                        <Export-Package />
+                        <Export-Package/>
                         <Private-Package>com.atlassian.sal.core.*,com.atlassian.sal.bamboo.*</Private-Package>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
@@ -33,32 +33,32 @@
     </build>
 
     <dependencyManagement>
-      <dependencies>
-        <dependency>
-          <groupId>commons-httpclient</groupId>
-          <artifactId>commons-httpclient</artifactId>
-          <version>3.1</version>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>commons-lang</groupId>
-          <artifactId>commons-lang</artifactId>
-          <version>2.1</version>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>com.atlassian.seraph</groupId>
-          <artifactId>atlassian-seraph</artifactId>
-          <version>0.38.3</version>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>com.atlassian.sal</groupId>
-          <artifactId>sal-api</artifactId>
-          <version>${pom.version}</version>
-          <scope>provided</scope>
-        </dependency>
-      </dependencies>
+        <dependencies>
+            <dependency>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>3.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.seraph</groupId>
+                <artifactId>atlassian-seraph</artifactId>
+                <version>0.38.3</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.sal</groupId>
+                <artifactId>sal-api</artifactId>
+                <version>${pom.version}</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
     </dependencyManagement>
 
     <dependencies>
@@ -68,7 +68,7 @@
             <version>${pom.version}</version>
         </dependency>
         <dependency>
-              <groupId>log4j</groupId>
+            <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.7</version>
             <scope>provided</scope>
@@ -86,4 +86,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
- </project>
+</project>
