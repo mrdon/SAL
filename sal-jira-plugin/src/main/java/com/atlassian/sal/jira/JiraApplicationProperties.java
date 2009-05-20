@@ -2,6 +2,7 @@ package com.atlassian.sal.jira;
 
 import com.atlassian.jira.util.BuildUtils;
 import com.atlassian.jira.util.velocity.VelocityRequestContextFactory;
+import com.atlassian.jira.config.util.JiraHome;
 import com.atlassian.sal.api.ApplicationProperties;
 
 import java.util.Date;
@@ -13,10 +14,12 @@ import java.io.File;
 public class JiraApplicationProperties implements ApplicationProperties
 {
     private final VelocityRequestContextFactory velocityRequestContextFactory;
+    private final JiraHome jiraHome;
 
-    public JiraApplicationProperties(VelocityRequestContextFactory velocityRequestContextFactory)
+    public JiraApplicationProperties(VelocityRequestContextFactory velocityRequestContextFactory, JiraHome jiraHome)
     {
         this.velocityRequestContextFactory = velocityRequestContextFactory;
+        this.jiraHome = jiraHome;
     }
 
     public String getBaseUrl()
@@ -46,6 +49,6 @@ public class JiraApplicationProperties implements ApplicationProperties
 
     public File getHomeDirectory()
     {
-        throw new UnsupportedOperationException();
+        return jiraHome.getHome();
     }
 }
