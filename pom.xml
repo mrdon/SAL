@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.sal</groupId>
     <artifactId>sal-parent</artifactId>
-    <version>2.0.7-SNAPSHOT</version>
+    <version>2.1.0-net-request-entity-SNAPSHOT</version>
 
     <name>Shared Access Layer POM</name>
     <packaging>pom</packaging>
@@ -100,8 +100,8 @@
     </dependencies>
 
     <scm>
-        <connection>scm:svn:https://studio.atlassian.com/svn/SAL/branches/2.0-stable</connection>
-        <developerConnection>scm:svn:https://studio.atlassian.com/svn/SAL/branches/2.0-stable</developerConnection>
-        <url>https://studio.atlassian.com/svn/SAL/branches/2.0-stable</url>
+        <connection>scm:svn:https://studio.atlassian.com/svn/SAL/branches/2.1-net-request-entity</connection>
+        <developerConnection>scm:svn:https://studio.atlassian.com/svn/SAL/branches/2.1-net-request-entity</developerConnection>
+        <url>https://studio.atlassian.com/svn/SAL/branches/2.1-net-request-entity</url>
     </scm>
 </project>
