@@ -6,10 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.atlassian.sal.api.net.Request;
-import com.atlassian.sal.api.net.Response;
-import com.atlassian.sal.api.net.ResponseException;
-import com.atlassian.sal.api.net.ResponseHandler;
+import com.atlassian.sal.api.net.*;
 import com.atlassian.sal.api.net.auth.Authenticator;
 
 /**
@@ -36,6 +33,7 @@ public class MockRequest implements Request<MockRequest>
     private String seraphPassword;
     private Response response;
     private String responseBody;
+    private RequestEntity requestEntity;
 
     public MockRequest(final MethodType methodType, final String url)
     {
@@ -130,6 +128,12 @@ public class MockRequest implements Request<MockRequest>
         return this;
     }
 
+    public MockRequest setRequestEntity(RequestEntity requestEntity)
+    {
+        this.requestEntity = requestEntity;
+        return this;
+    }
+    
     public void execute(final ResponseHandler responseHandler) throws ResponseException
     {
         if (response == null)
@@ -238,4 +242,10 @@ public class MockRequest implements Request<MockRequest>
     {
         this.responseBody = responseBody;
     }
+
+    public RequestEntity getRequestEntity()
+    {
+        return requestEntity;
+    }
+
 }

@@ -1,9 +1,6 @@
 package com.atlassian.sal.core.net;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,10 +29,7 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.atlassian.sal.api.net.Request;
-import com.atlassian.sal.api.net.Response;
-import com.atlassian.sal.api.net.ResponseException;
-import com.atlassian.sal.api.net.ResponseHandler;
+import com.atlassian.sal.api.net.*;
 import com.atlassian.sal.api.net.auth.Authenticator;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.core.net.auth.BaseAuthenticator;
@@ -65,6 +59,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     private final UserManager userManager;
     private String requestBody;
     private String requestContentType;
+    private RequestEntity requestEntity;
 
     public HttpClientRequest(final HttpClient httpClient, final MethodType methodType, final String url,
         final CertificateFactory certificateFactory, final UserManager userManager)
@@ -151,6 +146,16 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     public HttpClientRequest setRequestContentType(final String requestContentType)
     {
         this.requestContentType = requestContentType;
+        return this;
+    }
+
+    public HttpClientRequest setRequestEntity(RequestEntity requestEntity)
+    {
+        this.requestEntity = requestEntity;
+        if (methodType != MethodType.POST && methodType != MethodType.PUT)
+        {
+            throw new IllegalArgumentException("Only POST and PUT methods can have request entity");
+        }
         return this;
     }
 
@@ -439,6 +444,35 @@ public class HttpClientRequest implements Request<HttpClientRequest>
         {
             return;	// only POST and PUT method can apply
         }
+        final EntityEnclosingMethod entityEnclosingMethod = (EntityEnclosingMethod) method;
+
+        // The existence of a requestEntity overrides everything
+        if (this.requestEntity != null)
+        {
+            entityEnclosingMethod.setRequestEntity(new org.apache.commons.httpclient.methods.RequestEntity()
+            {
+                public boolean isRepeatable()
+                {
+                    return false;
+                }
+
+                public void writeRequest(OutputStream outputStream) throws IOException
+                {
+                    requestEntity.writeRequest(outputStream);
+                }
+
+                public long getContentLength()
+                {
+                    return requestEntity.getContentLength();
+                }
+
+                public String getContentType()
+                {
+                    return requestEntity.getContentType();
+                }
+            });
+        }
+
         // Add post parameters
         if ((method instanceof PostMethod) && !this.parameters.isEmpty())
         {
@@ -457,7 +491,6 @@ public class HttpClientRequest implements Request<HttpClientRequest>
         // Set request body
         if (this.requestBody!=null)
         {
-            final EntityEnclosingMethod entityEnclosingMethod = (EntityEnclosingMethod) method;
             final String contentType = requestContentType + "; charset=UTF-8";
             ByteArrayInputStream inputStream;
             try

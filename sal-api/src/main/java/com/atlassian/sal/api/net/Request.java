@@ -2,6 +2,7 @@ package com.atlassian.sal.api.net;
 
 import com.atlassian.sal.api.net.auth.Authenticator;
 
+import java.io.InputStream;
 
 /**
  * Interface Request represents a request to retrieve data. To execute a request call {@link Request#execute(ResponseHandler)}.
@@ -44,6 +45,8 @@ public interface Request<T extends Request<?>>
     /**
      * Sets the body of the request. In default implementation only requests of type {@link MethodType#POST} and {@link MethodType#POST} can have request body.
      *
+     * This value is ignored if a {@link RequestEntity} is set with {@link setRequestEntity()}.
+     *
      * @param requestBody the body of the request
      * @return a reference to this object.
      */
@@ -52,10 +55,20 @@ public interface Request<T extends Request<?>>
     /**
      * Sets Content-Type of the body of the request. In default implementation only requests of type {@link MethodType#POST} and {@link MethodType#POST} can have request body.
      *
+     * This value is ignored if a {@link RequestEntity} is set with {@link setRequestEntity()}.
+     *
      * @param contentType the contentType of the request
      * @return a reference to this object.
      */
     T setRequestContentType(String contentType);
+
+    /**
+     * Sets the request entity for this request. In default implementation only requests of type {@link MethodType#POST} and {@link MethodType#POST} can have request body.
+     *
+     * @param requestEntity the entity to send in the request
+     * @return a reference to this object.
+     */
+    T setRequestEntity(RequestEntity requestEntity);
 
     /**
      * Sets parameters of the request. In default implementation only requests of type {@link MethodType#POST} and {@link MethodType#POST} can have parameters.
