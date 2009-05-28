@@ -6,10 +6,7 @@ import com.atlassian.sal.api.ApplicationProperties;
 import org.apache.log4j.Logger;
 
 import java.io.*;
-import java.util.Properties;
-import java.util.AbstractMap;
-import java.util.Set;
-import java.util.Collections;
+import java.util.*;
 
 /**
  * This implementation can be backed by a file on the file system.  If a file in the current working directory called
@@ -18,6 +15,8 @@ import java.util.Collections;
  */
 public class RefimplPluginSettingsFactory implements PluginSettingsFactory
 {
+    private static final String CHARLIE_KEYS = "charlie.keys";
+
     private static final Logger log = Logger.getLogger(RefimplPluginSettingsFactory.class);
     private final Properties properties;
     private final File file;
@@ -84,6 +83,11 @@ public class RefimplPluginSettingsFactory implements PluginSettingsFactory
 
     public PluginSettings createSettingsForKey(String key)
     {
+        List<String> charlies = (List<String>) createGlobalSettings().get(CHARLIE_KEYS);
+        if (charlies == null || !charlies.contains(key))
+        {
+            throw new IllegalArgumentException("No Charlie with key " + key + " exists.");
+        }
         return new RefimplPluginSettings(new SettingsMap(key));
     }
 
