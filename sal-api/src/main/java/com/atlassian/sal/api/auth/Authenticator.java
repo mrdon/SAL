@@ -42,16 +42,15 @@ public interface Authenticator
             this(status, message, null);
         }
 
-        Result(final Result.Status status, final Principal principal)
-        {
-            this(status, null, principal);
-        }
-
         Result(final Result.Status status, final Message message, final Principal principal)
         {
             if (status == null)
             {
                 throw new NullPointerException("status");
+            }
+            if (message == null)
+            {
+                throw new NullPointerException("message");
             }
             this.status = status;
             this.message = message;
@@ -120,9 +119,9 @@ public interface Authenticator
 
         public static final class Success extends Result
         {
-            public Success(final Principal principal)
+            public Success(final Message message, final Principal principal)
             {
-                super(Status.SUCCESS, principal);
+                super(Status.SUCCESS, message, principal);
             }
         }
     }
