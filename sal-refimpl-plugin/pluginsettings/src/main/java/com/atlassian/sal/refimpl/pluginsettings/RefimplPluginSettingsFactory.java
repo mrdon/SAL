@@ -83,10 +83,13 @@ public class RefimplPluginSettingsFactory implements PluginSettingsFactory
 
     public PluginSettings createSettingsForKey(String key)
     {
-        List<String> charlies = (List<String>) createGlobalSettings().get(CHARLIE_KEYS);
-        if (charlies == null || !charlies.contains(key))
+        if (key != null)
         {
-            throw new IllegalArgumentException("No Charlie with key " + key + " exists.");
+            List<String> charlies = (List<String>) new RefimplPluginSettings(new SettingsMap(null)).get(CHARLIE_KEYS);
+            if (charlies == null || !charlies.contains(key))
+            {
+                throw new IllegalArgumentException("No Charlie with key " + key + " exists.");
+            }
         }
         return new RefimplPluginSettings(new SettingsMap(key));
     }
