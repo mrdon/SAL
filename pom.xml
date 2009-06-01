@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.sal</groupId>
     <artifactId>sal-parent</artifactId>
-    <version>2.0.7-SNAPSHOT</version>
+    <version>2.0.7</version>
 
     <name>Shared Access Layer POM</name>
     <packaging>pom</packaging>
@@ -19,7 +19,7 @@
         <fisheye-jar.version>1.7-M6-382</fisheye-jar.version>
         <atlassian-fisheye-api.version>1.7-M6-382</atlassian-fisheye-api.version>
         <confluence.version>2.10.2</confluence.version>
-        <bamboo.version>2.3-SNAPSHOT</bamboo.version>
+        <bamboo.version>2.3-m6</bamboo.version>
         <crowd.version>2.0-m1</crowd.version>
         <legacyjira.version>3.13</legacyjira.version>
         <jira.version>4.0-r77016</jira.version>
@@ -100,8 +100,8 @@
     </dependencies>
 
     <scm>
-        <connection>scm:svn:https://studio.atlassian.com/svn/SAL/branches/2.0-stable</connection>
-        <developerConnection>scm:svn:https://studio.atlassian.com/svn/SAL/branches/2.0-stable</developerConnection>
-        <url>https://studio.atlassian.com/svn/SAL/branches/2.0-stable</url>
+        <connection>scm:svn:https://studio.atlassian.com/svn/SAL/tags/sal-parent-2.0.7</connection>
+        <developerConnection>scm:svn:https://studio.atlassian.com/svn/SAL/tags/sal-parent-2.0.7</developerConnection>
+        <url>https://studio.atlassian.com/svn/SAL/tags/sal-parent-2.0.7</url>
     </scm>
 </project>
