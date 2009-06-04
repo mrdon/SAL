@@ -1,5 +1,6 @@
 package com.atlassian.sal.api.auth;
 
+import java.io.Serializable;
 import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,11 +32,6 @@ public interface Authenticator
         private final Result.Status status;
         private final Message message;
         private final Principal principal;
-
-        Result(final Result.Status status)
-        {
-            this(status, null, null);
-        }
 
         Result(final Result.Status status, final Message message)
         {
@@ -93,11 +89,24 @@ public interface Authenticator
             }
         }
 
+        private static final Message NO_ATTEMPT_MESSAGE = new Message()
+        {
+            public Serializable[] getArguments()
+            {
+                return null;
+            }
+
+            public String getKey()
+            {
+                return "no.authentication.attempted";
+            }
+        };
+        
         public static final class NoAttempt extends Result
         {
             public NoAttempt()
             {
-                super(Status.NO_ATTEMPT);
+                super(Status.NO_ATTEMPT, NO_ATTEMPT_MESSAGE);
             }
         }
 
