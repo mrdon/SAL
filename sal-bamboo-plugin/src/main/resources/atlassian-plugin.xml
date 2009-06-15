@@ -72,7 +72,7 @@
     <interface>com.atlassian.sal.api.search.SearchProvider</interface>
   </component>
 
-  <component key="certificateFactory" class="com.atlassian.sal.bamboo.trusted.BambooCertificateFactory" name="Bamboo Certificate Factory" public="true">
+  <component key="certificateFactory" class="com.atlassian.sal.trustedapps.TrustedAppsPluginCertificateFactory" name="Trusted Apps Plugin Certificate Factory" public="true">
     <interface>com.atlassian.sal.core.trusted.CertificateFactory</interface>
   </component>
 

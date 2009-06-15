@@ -20,6 +20,7 @@
                     <instructions>
                         <Bundle-SymbolicName>com.atlassian.sal.bamboo</Bundle-SymbolicName>
                         <Export-Package />
+                        <Import-Package>com.atlassian.security.auth.trustedapps.api;resolution:="optional",*</Import-Package>
                         <Private-Package>com.atlassian.sal.core.*,com.atlassian.sal.bamboo.*</Private-Package>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
@@ -65,6 +66,11 @@
         <dependency>
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-core</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-trusted-apps-plugin-support</artifactId>
             <version>${pom.version}</version>
         </dependency>
         <dependency>
