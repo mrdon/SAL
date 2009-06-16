@@ -2,15 +2,11 @@ package com.atlassian.sal.bamboo.user;
 
 import org.apache.log4j.Logger;
 import org.acegisecurity.Authentication;
-import org.acegisecurity.adapters.PrincipalAcegiUserToken;
 import org.acegisecurity.userdetails.UserDetails;
 import org.acegisecurity.context.SecurityContextHolder;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserResolutionException;
-import com.atlassian.sal.api.transaction.TransactionTemplate;
-import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.bamboo.user.BambooUserManager;
-import com.atlassian.bamboo.user.BambooUser;
 import com.atlassian.bamboo.security.BambooPermissionManager;
 import com.atlassian.bamboo.security.GlobalApplicationSecureObject;
 import com.atlassian.user.User;
@@ -23,6 +19,7 @@ import java.security.Principal;
 public class BambooSalUserManager implements UserManager
 {
     private static final Logger log = Logger.getLogger(BambooSalUserManager.class);
+    private static final String ANONYMOUS_USER = "anonymousUser";
     // ------------------------------------------------------------------------------------------------------- Constants
     // ------------------------------------------------------------------------------------------------- Type Properties
     // ---------------------------------------------------------------------------------------------------- Dependencies
@@ -43,7 +40,17 @@ public class BambooSalUserManager implements UserManager
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null)
         {
-            return authentication.getName();
+            // Bamboo's acegi configuration causes unauthenticated requests to be treated as requests by a user called
+            // "anonymousUser".  The spec for this interface requires that this method should return null for
+            // unauthenticatedRequests.  Lack of this behaviour breaks some plugins (such as AppLinks).
+            if (ANONYMOUS_USER.equals(authentication.getName()))
+            {
+                return null;
+            }
+            else
+            {
+                return authentication.getName();
+            }
         }
         return null;
     }
