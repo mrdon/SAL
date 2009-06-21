@@ -16,6 +16,7 @@ public interface LoginUriProvider
      *
      * @param returnUri {@code URI} of the page the application should redirect the user to after login is complete
      * @return the {@code URI} to redirect users for login
+     * @throws RuntimeException if the returnUri is not a valid URI, or cannot be url encoded properly
      */
     URI getLoginUri(URI returnUri);
 }

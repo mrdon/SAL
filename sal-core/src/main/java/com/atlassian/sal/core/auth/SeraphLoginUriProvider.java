@@ -9,6 +9,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 
+/**
+ * @since 2.0.2
+ */
 public class SeraphLoginUriProvider implements LoginUriProvider
 {
     private final ApplicationProperties applicationProperties;
