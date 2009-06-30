@@ -9,5 +9,14 @@
                system="true" public="true">
         <interface>com.atlassian.sal.api.ApplicationProperties</interface>
     </component>
+
+    <servlet-filter name="Servlet Context Thread Local Filter"
+                    key="servletContextThreadLocalFilter"
+                    class="com.atlassian.core.filters.ServletContextThreadLocalFilter"
+                    location="before-decoration"
+                    weight="1">
+        <description>Makes the servlet context, request, and response available through static methods.</description>
+        <url-pattern>/</url-pattern>
+    </servlet-filter>
 </atlassian-plugin>
 

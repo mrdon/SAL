@@ -1,12 +1,15 @@
 package com.atlassian.sal.refimpl;
 
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.core.filters.ServletContextThreadLocal;
 
 import java.util.Date;
 import java.io.File;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
- * Implementation of ApplicationProperties for http://localhost
+ * Implementation of ApplicationProperties
  */
 public class RefimplApplicationProperties implements ApplicationProperties
 {
@@ -14,6 +17,11 @@ public class RefimplApplicationProperties implements ApplicationProperties
 
     public String getBaseUrl()
     {
+        HttpServletRequest request = ServletContextThreadLocal.getRequest();
+        if (request != null)
+        {
+            return HttpServletRequestBaseUrlExtractor.extractBaseUrl(request);
+        }
         return System.getProperty("baseurl", "http://localhost:8080/atlassian-plugins-refimpl");
     }
 
