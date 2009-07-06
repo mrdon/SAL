@@ -32,9 +32,11 @@
         <module>sal-confluence-plugin</module>
         <module>sal-jira-plugin</module>
         <module>sal-fisheye-plugin</module>
+        <!--
         <module>sal-crowd-plugin</module>
         <module>sal-ctk-plugin</module>
         <module>sal-refimpl-plugin</module>
+        -->
         <module>sal-rest</module>
     </modules>
 
