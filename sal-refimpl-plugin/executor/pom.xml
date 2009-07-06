@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.atlassian.sal</groupId>
         <artifactId>sal-refimpl-plugins</artifactId>
-        <version>fe2-streams-1.0</version>
+        <version>fe2-streams-1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>sal-refimpl-executor-plugin</artifactId>
