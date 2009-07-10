@@ -3,13 +3,12 @@ package com.atlassian.sal.core.pluginsettings;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+import java.util.Map.Entry;
 
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import org.apache.commons.lang.Validate;
+import org.apache.log4j.Logger;
 
 /**
  * PluginSettings implementation for datastores that only support Strings.  Handles converting Strings into Lists and
@@ -17,9 +16,13 @@ import org.apache.commons.lang.Validate;
  */
 public abstract class AbstractStringPluginSettings implements PluginSettings
 {
+    private static final Logger log = Logger.getLogger(AbstractStringPluginSettings.class);
+    
     private static final String PROPERTIES_ENCODING = "ISO8859_1";
     private static final String PROPERTIES_IDENTIFIER = "java.util.Properties";
-    private static final String LIST_IDENTIFIER = "java.util.List";
+    private static final String LIST_IDENTIFIER = "#java.util.List";
+    private static final String MAP_IDENTIFIER = "#java.util.Map";
+    private static final String VERTICAL_TAB = "\f";
 
     @SuppressWarnings("unchecked")
 	public Object put(String key, Object val)
@@ -47,10 +50,25 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
         else if (val instanceof List)
         {
             final StringBuilder sb = new StringBuilder();
-            sb.append("#java.util.List\n");
+            sb.append(LIST_IDENTIFIER).append("\n");
             for (final Iterator i = ((List)val).iterator(); i.hasNext(); )
             {
                 sb.append(i.next().toString());
+                if (i.hasNext())
+                    sb.append('\n');
+            }
+            putActual(key, sb.toString());
+        }
+        else if (val instanceof Map)
+        {
+            final StringBuilder sb = new StringBuilder();
+            sb.append(MAP_IDENTIFIER).append("\n");
+            for (final Iterator<Entry> i = ((Map)val).entrySet().iterator(); i.hasNext(); )
+            {
+                final Entry entry = i.next();
+                sb.append(entry.getKey().toString());
+                sb.append(VERTICAL_TAB);
+                sb.append(entry.getValue().toString());
                 if (i.hasNext())
                     sb.append('\n');
             }
@@ -77,14 +95,30 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
                 throw new IllegalArgumentException("Unable to deserialize properties", e);
             }
             return p;
-        } else if (val != null && val.startsWith("#"+LIST_IDENTIFIER))
+        } else if (val != null && val.startsWith(LIST_IDENTIFIER))
         {
             final ArrayList<String> list = new ArrayList<String>();
             final String[] items = val.split("\n");
-            for (int x=1; x<items.length; x++)
-                list.add(items[x]);
+            list.addAll(Arrays.asList(items).subList(1, items.length));
 
             return list;
+        } else if (val != null && val.startsWith(MAP_IDENTIFIER))
+        {
+            String nval = val.substring(MAP_IDENTIFIER.length()+1);
+            final HashMap<String, String> map = new HashMap<String, String>();
+            final String[] items = nval.split("\n");
+            for (String item : items) {
+                String[] pair = item.split(VERTICAL_TAB);
+                if(pair.length != 2)
+                {
+                    log.error("Could not parse map element: << " + item + " >> \n" +
+                            "Full list: \n" + nval);
+                }
+                
+                map.put(pair[0], pair[1]);
+            }
+
+            return map;
         } else
         {
             return val;

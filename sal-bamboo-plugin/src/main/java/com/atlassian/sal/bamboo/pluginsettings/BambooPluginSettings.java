@@ -1,16 +1,15 @@
 package com.atlassian.sal.bamboo.pluginsettings;
 
-import org.apache.log4j.Logger;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.bandana.BandanaManager;
 import com.atlassian.bamboo.bandana.BambooBandanaContext;
 
 import java.util.Properties;
 import java.util.List;
+import java.util.Map;
 
 public class BambooPluginSettings implements PluginSettings
 {
-    private static final Logger log = Logger.getLogger(BambooPluginSettings.class);
     // ------------------------------------------------------------------------------------------------------- Constants
     // ------------------------------------------------------------------------------------------------- Type Properties
     private final BambooBandanaContext ctx;
@@ -27,7 +26,7 @@ public class BambooPluginSettings implements PluginSettings
 
     public Object put(final String key, final Object val)
     {
-        if ((val instanceof Properties) || (val instanceof List) || (val instanceof String) || (val == null))
+        if ((val instanceof Properties) || (val instanceof List) || (val instanceof String) || (val instanceof Map) || (val == null))
         {
             final Object removed = bandanaManager.getValue(ctx, key, false);
             bandanaManager.setValue(ctx, key, val);

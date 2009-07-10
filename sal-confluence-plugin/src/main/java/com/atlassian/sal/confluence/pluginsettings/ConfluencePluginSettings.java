@@ -2,6 +2,7 @@ package com.atlassian.sal.confluence.pluginsettings;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.Map;
 
 import com.atlassian.bandana.BandanaManager;
 import com.atlassian.confluence.setup.bandana.ConfluenceBandanaContext;
@@ -27,7 +28,7 @@ public class ConfluencePluginSettings implements PluginSettings
     {
 
         Validate.notNull(key, "The plugin settings key cannot be null");
-    	if ((val instanceof Properties) || (val instanceof List)  || (val instanceof String) || (val == null))
+    	if ((val instanceof Properties) || (val instanceof List)  || (val instanceof String) || (val instanceof Map) || (val == null))
 		{
             return txTemplate.execute(new TransactionCallback()
             {
