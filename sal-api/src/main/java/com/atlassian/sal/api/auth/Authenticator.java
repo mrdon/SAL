@@ -101,7 +101,20 @@ public interface Authenticator
                 return "no.authentication.attempted";
             }
         };
-        
+
+        private static final Message SUCCESS_MESSAGE = new Message()
+        {
+            public Serializable[] getArguments()
+            {
+                return null;
+            }
+
+            public String getKey()
+            {
+                return "success";
+            }
+        };
+
         public static final class NoAttempt extends Result
         {
             public NoAttempt()
@@ -128,6 +141,25 @@ public interface Authenticator
 
         public static final class Success extends Result
         {
+            /**
+             * Construct a success result for a particular principal.
+             *
+             * @param principal the successfully-authenticated principal
+             * @deprecated since 2.0.10, use {@link Success#Success(Message, Principal)}
+             */
+            @Deprecated
+            public Success(final Principal principal)
+            {
+                this(SUCCESS_MESSAGE, principal);
+            }
+
+            /**
+             * Construct a success result for a particular principal with a result message.
+             *
+             * @param message a message indicating the success of this result
+             * @param principal the successfully-authenticated principal
+             * @since 2.0.7
+             */
             public Success(final Message message, final Principal principal)
             {
                 super(Status.SUCCESS, message, principal);
