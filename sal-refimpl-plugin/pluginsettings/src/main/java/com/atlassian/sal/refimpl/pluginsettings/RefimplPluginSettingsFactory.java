@@ -34,7 +34,7 @@ public class RefimplPluginSettingsFactory implements PluginSettingsFactory
     {
         // Maintain backwards compatibility, check the old locations
         File file = new File(System.getProperty("sal.pluginsettings.store", "pluginsettings.xml"));
-        boolean useMemoryStore = Boolean.valueOf(System.getProperty("sal.pluginsettings.memorystore", "false"));
+        boolean useMemoryStore = Boolean.valueOf(System.getProperty("sal.pluginsettings.usememorystore", "false"));
         properties = new Properties();
         if (useMemoryStore)
         {
