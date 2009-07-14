@@ -5,8 +5,17 @@ import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.ApplicationProperties;
 import org.apache.log4j.Logger;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.AbstractMap;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * This implementation can be backed by a file on the file system.  If a file in the current working directory called
@@ -25,8 +34,14 @@ public class RefimplPluginSettingsFactory implements PluginSettingsFactory
     {
         // Maintain backwards compatibility, check the old locations
         File file = new File(System.getProperty("sal.pluginsettings.store", "pluginsettings.xml"));
+        boolean useMemoryStore = Boolean.valueOf(System.getProperty("sal.pluginsettings.memorystore", "false"));
         properties = new Properties();
-        if (!file.exists() || !file.canRead())
+        if (useMemoryStore)
+        {
+            log.info("Using memory store for plugin settings");
+            file = null;
+        }
+        else if (!file.exists() || !file.canRead())
         {
             // Use refapp home directory
             File dataDir = new File(applicationProperties.getHomeDirectory(), "data");
