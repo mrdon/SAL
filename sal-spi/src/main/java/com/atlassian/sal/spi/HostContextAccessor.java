@@ -20,18 +20,20 @@ public interface HostContextAccessor
      * @return Optional result of the operation. May be null
      * @throws RuntimeException if anything went wrong.  The caller will be responsible for rolling back.
      */
-    Object doInTransaction(HostTransactionCallback callback);
+    <T> T doInTransaction(HostTransactionCallback<T> callback);
 
     /**
      * The interface to implement for code that needs to be ran inside a host transaction
+     * <p>
+     * Use {@link java.lang.Void} for <code>void</code> returns.
      */
-    public static interface HostTransactionCallback
+    public static interface HostTransactionCallback<T>
     {
         /**
          * Runs an action in a transaction and returns a optional value.
          * @return Optional result of the operation. May be null
          * @throws RuntimeException if anything went wrong.  The caller will be responsible for rolling back.
          */
-        Object doInTransaction();
+        T doInTransaction();
     }
 }
