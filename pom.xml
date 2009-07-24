@@ -149,8 +149,8 @@
     </dependencies>
 
     <scm>
-        <connection>scm:svn:https://studio.atlassian.com/svn/SAL/branches/2.0-stable</connection>
-        <developerConnection>scm:svn:https://studio.atlassian.com/svn/SAL/branches/2.0-stable</developerConnection>
-        <url>https://studio.atlassian.com/svn/SAL/branches/2.0-stable</url>
+        <connection>scm:svn:https://studio.atlassian.com/svn/SAL/branches/trunk</connection>
+        <developerConnection>scm:svn:https://studio.atlassian.com/svn/SAL/branches/trunk</developerConnection>
+        <url>https://studio.atlassian.com/svn/SAL/branches/trunk</url>
     </scm>
 </project>
