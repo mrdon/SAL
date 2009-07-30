@@ -8,16 +8,20 @@ package com.atlassian.sal.api.pluginsettings;
 public interface PluginSettingsFactory
 {
     /**
-     * Gets all settings for a key, usually a space, project, or repository key
+     * Gets all settings for a key, for which valid values are application-specific (Confluence maps this to space keys,
+     * JIRA to project keys, and FishEye to repository keys, for example). To store settings for other keys, 
+     * createGlobalSettings should be used, and the keys should be sensibly namespaced by the plugin.
      *
-     * @param key The key, can be null to retrieve global settings
+     * @param key the key, can be null to retrieve global settings
      * @throws IllegalArgumentException if no "concept" for the key can be found
      * @return The settings
      */
     PluginSettings createSettingsForKey(String key);
 
     /**
-     * Gets all global settings
+     * Gets all global settings. This is useful to store settings against arbitrary keys. When storing settings against
+     * arbitrary keys, plugins are advised to namespace the key with something unique to the plugin (for example
+     * "com.example.plugin:key-I-would-like-to-use" ) to avoid clashes with other keys.
      *
      * @return Global settings
      */
