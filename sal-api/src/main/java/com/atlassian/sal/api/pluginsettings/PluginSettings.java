@@ -11,7 +11,9 @@ import java.util.Properties;
  * <li>java.lang.String</li>
  * <li>java.util.List</li>
  * <li>java.util.Properties</li>
+ * <li>java.util.Map</li>
  * </ul>
+ * {@link List} and {@link Map} types must contain only {@link Strings}.
  * <p/>
  * Instances are assumed to be not threadsafe and mutable.
  *
@@ -32,8 +34,8 @@ public interface PluginSettings
      * Puts a setting value.
      *
      * @param key   Setting key.  Cannot be null
-     * @param value Setting value.  Must be one of {@link String}, {@link List}, {@link Properties} or null. null will remove.
-     * @throws IllegalArgumentException if value is not {@link String}, {@link List}, {@link Properties} or null.
+     * @param value Setting value.  Must be one of {@link String}, {@link List}, {@link Properties}, {@link Map}, or null. null will remove the item from the settings.
+     * @throws IllegalArgumentException if value is not {@link String}, {@link List}, {@link Properties}, {@link Map}, or null.
      * @return The setting value that was over ridden. Null if none existed.
      */
     Object put(String key, Object value);
