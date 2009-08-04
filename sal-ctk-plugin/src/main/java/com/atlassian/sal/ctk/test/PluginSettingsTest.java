@@ -57,13 +57,10 @@ public class PluginSettingsTest implements CtkTest
         map = (Properties) settings.get("map");
         results.assertTrue("Should be able to store and retrieve a map", map != null && "value".equals(map.get("key")));
 
-        try
-        {
-            settings.put("map", new HashMap());
-            results.fail("Should not allow Map");
-        } catch (final IllegalArgumentException ex)
-        {
-            results.pass("Should not allow Map");
-        }
+        Map<String, String> hashMap = new HashMap<String, String>();
+        hashMap.put("key", "value");
+        settings.put("hashMap", hashMap);
+        hashMap = (Map) settings.get("hashMap");
+        results.assertTrue("Should be able to store and retrieve a real map", hashMap != null && "value".equals(hashMap.get("key")));
     }
 }

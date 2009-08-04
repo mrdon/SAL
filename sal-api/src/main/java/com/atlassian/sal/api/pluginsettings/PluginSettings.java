@@ -2,6 +2,7 @@ package com.atlassian.sal.api.pluginsettings;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.Map;
 
 /**
  * Provides access to settings globally or per project/space/repository/build-plan
@@ -13,7 +14,7 @@ import java.util.Properties;
  * <li>java.util.Properties</li>
  * <li>java.util.Map</li>
  * </ul>
- * {@link List} and {@link Map} types must contain only {@link Strings}.
+ * {@link List} and {@link Map} types must contain only {@link String}.
  * <p/>
  * Instances are assumed to be not threadsafe and mutable.
  *
