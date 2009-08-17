@@ -3,6 +3,7 @@ package com.atlassian.sal.bamboo.pluginsettings;
 import com.atlassian.bandana.BandanaManager;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.atlassian.sal.core.pluginsettings.PrefixedPluginSettingsDelegate;
 import com.atlassian.bamboo.bandana.BambooBandanaContext;
 import com.atlassian.bamboo.bandana.PlanAwareBandanaContext;
 import com.atlassian.bamboo.build.BuildManager;
@@ -39,7 +40,17 @@ public class BambooPluginSettingsFactory implements PluginSettingsFactory
             }
             else
             {
-                throw new IllegalArgumentException("Could no create Plugin Settings no build with key \"" + key + "\" exists.");
+                // See if a project with that key exists
+                if (buildManager.getProjectByKey(key) != null)
+                {
+                    return new PrefixedPluginSettingsDelegate(new StringBuilder("__").append(key).append(
+                        ".").toString(), createGlobalSettings());
+                }
+                else
+                {
+                    throw new IllegalArgumentException(
+                        "Could no create Plugin Settings no build with key \"" + key + "\" exists.");
+                }
             }
         }
         else
