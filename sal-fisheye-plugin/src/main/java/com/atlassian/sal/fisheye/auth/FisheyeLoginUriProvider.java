@@ -20,7 +20,12 @@ public class FisheyeLoginUriProvider implements LoginUriProvider
     {
         try
         {
-            return URI.create(applicationProperties.getBaseUrl() + "/login?origUrl=" + URLEncoder.encode(returnUri.toString(), "UTF-8"));
+            return URI.create(
+                    applicationProperties.getBaseUrl() +
+                    "/login?origUrl=" +
+                    (!returnUri.isAbsolute() ? applicationProperties.getBaseUrl() : "") +
+                    URLEncoder.encode(returnUri.toString(),
+                    "UTF-8"));
         }
         catch (UnsupportedEncodingException e)
         {
