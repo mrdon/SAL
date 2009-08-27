@@ -57,8 +57,9 @@ public class JiraPluginScheduler implements PluginScheduler
                     serviceManager.removeService(service.getId());
                 }
             }
+            // SAL-81 Use the Class version of addService() to avoid possible ClassNotFoundException. 
             serviceManager.addService(name,
-                    "com.atlassian.sal.jira.scheduling.JiraPluginSchedulerService",
+                    JiraPluginSchedulerService.class,
                     repeatInterval,
                     serviceDataMap);
         }
