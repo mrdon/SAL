@@ -36,6 +36,7 @@ import com.atlassian.sal.api.search.query.SearchQueryParser;
 import com.atlassian.sal.core.message.DefaultMessage;
 import com.atlassian.sal.core.search.BasicResourceType;
 import com.atlassian.sal.core.search.BasicSearchMatch;
+import com.atlassian.query.Query;
 import com.opensymphony.user.User;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -112,7 +113,7 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
         		return new SearchResults(errorMessages);
         	}
 
-        	return performSearch(maxHits, searchRequest, issues, remoteUser);
+        	return performSearch(maxHits, searchRequest.getQuery(), issues, remoteUser);
         } finally
         {
         	// restore original user (who is hopefully null)
@@ -120,7 +121,7 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
         }
     }
 
-    private SearchResults performSearch(int maxHits, SearchRequest searchRequest, Collection<Issue> issues,
+    private SearchResults performSearch(int maxHits, Query query, Collection<Issue> issues,
        User remoteUser)
     {
         try
@@ -130,7 +131,7 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
 
             pagerFilter.setMax(maxHits);
             final com.atlassian.jira.issue.search.SearchResults searchResults =
-                searchProvider.search(searchRequest, remoteUser, pagerFilter);
+                searchProvider.search(query, remoteUser, pagerFilter);
             issues.addAll(searchResults.getIssues());
             final int numResults = searchResults.getTotal() - searchResults.getIssues().size()+issues.size();
 
@@ -184,7 +185,7 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
             return null;
         }
 
-        return searchRequestFactory.create(null, remoteUser, holder, null, getSearchContext());
+        return searchRequestFactory.createFromParameters(null, remoteUser, issueNavigatorActionParams);
     }
 
     private Collection<Issue> getIssuesFromQuery(String query)
@@ -239,11 +240,12 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
     {
         final Collection searchers = issueSearcherManager.getAllSearchers();
         final SearchContext searchContext = getSearchContext();
+        final I18nBean bean = new I18nBean(remoteUser);
         for (final Iterator iterator = searchers.iterator(); iterator.hasNext();)
         {
             final IssueSearcher searcher = (IssueSearcher) iterator.next();
-            searcher.getSearchInputTransformer().populateFromParams(fieldValuesHolder, actionParams);
-            searcher.getSearchInputTransformer().validateParams(searchContext, fieldValuesHolder, new I18nBean(remoteUser), errors);
+            searcher.getSearchInputTransformer().populateFromParams(remoteUser, fieldValuesHolder, actionParams);
+            searcher.getSearchInputTransformer().validateParams(remoteUser, searchContext, fieldValuesHolder, bean, errors);
         }
     }
 

@@ -16,13 +16,16 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.web.bean.PagerFilter;
+import com.atlassian.jira.jql.builder.JqlQueryBuilder;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.search.SearchMatch;
 import com.atlassian.sal.core.search.query.DefaultSearchQueryParser;
+import com.atlassian.query.Query;
 import com.opensymphony.user.User;
 import junit.framework.TestCase;
 import org.easymock.EasyMock;
 import org.easymock.MockControl;
+import org.easymock.internal.AlwaysMatcher;
 import org.easymock.classextension.MockClassControl;
 
 import java.util.ArrayList;
@@ -42,8 +45,12 @@ public class TestJiraSearchProvider extends TestCase
 
     public void testNoResults() throws SearchException
     {
+        Query query = JqlQueryBuilder.newBuilder().where().project().isEmpty().buildQuery();
+
         final MockControl mockSearchRequestControl = MockClassControl.createControl(SearchRequest.class);
         final SearchRequest mockSearchRequest = (SearchRequest) mockSearchRequestControl.getMock();
+        mockSearchRequest.getQuery();
+        mockSearchRequestControl.setReturnValue(query);
         mockSearchRequestControl.replay();
 
         final FieldValuesHolder fieldValuesHolder = new FieldValuesHolderImpl();
@@ -57,7 +64,7 @@ public class TestJiraSearchProvider extends TestCase
 
         final MockControl mockSearchProviderControl = MockControl.createControl(com.atlassian.jira.issue.search.SearchProvider.class);
         final com.atlassian.jira.issue.search.SearchProvider mockSearchProvider = (com.atlassian.jira.issue.search.SearchProvider) mockSearchProviderControl.getMock();
-        mockSearchProvider.search(mockSearchRequest, null, PagerFilter.getUnlimitedFilter());
+        mockSearchProvider.search(query, null, PagerFilter.getUnlimitedFilter());
         mockSearchProviderControl.setDefaultReturnValue(new SearchResults(Collections.EMPTY_LIST, 0, PagerFilter.getUnlimitedFilter()));
         mockSearchProviderControl.replay();
 
@@ -69,7 +76,8 @@ public class TestJiraSearchProvider extends TestCase
 
         final MockControl mockSearchRequestFactoryControl = MockControl.createControl(SearchRequestFactory.class);
         final SearchRequestFactory mockSearchRequestFactory = (SearchRequestFactory) mockSearchRequestFactoryControl.getMock();
-        mockSearchRequestFactory.create(null, null, fieldValuesHolder, null, null);
+        mockSearchRequestFactory.createFromParameters(null, null, null);
+        mockSearchRequestFactoryControl.setMatcher(new AlwaysMatcher());
         mockSearchRequestFactoryControl.setDefaultReturnValue(mockSearchRequest);
         mockSearchRequestFactoryControl.replay();
 
@@ -204,8 +212,12 @@ public class TestJiraSearchProvider extends TestCase
 
     public void testResults() throws SearchException
     {
+        Query query = JqlQueryBuilder.newBuilder().where().project().isEmpty().buildQuery();
+
         final MockControl mockSearchRequestControl = MockClassControl.createControl(SearchRequest.class);
         final SearchRequest mockSearchRequest = (SearchRequest) mockSearchRequestControl.getMock();
+        mockSearchRequest.getQuery();
+        mockSearchRequestControl.setReturnValue(query);
         mockSearchRequestControl.replay();
 
         final FieldValuesHolder fieldValuesHolder = new FieldValuesHolderImpl();
@@ -240,7 +252,7 @@ public class TestJiraSearchProvider extends TestCase
 
         final MockControl mockSearchProviderControl = MockControl.createControl(com.atlassian.jira.issue.search.SearchProvider.class);
         final com.atlassian.jira.issue.search.SearchProvider mockSearchProvider = (com.atlassian.jira.issue.search.SearchProvider) mockSearchProviderControl.getMock();
-        mockSearchProvider.search(mockSearchRequest, null, PagerFilter.getUnlimitedFilter());
+        mockSearchProvider.search(query, null, PagerFilter.getUnlimitedFilter());
         mockSearchProviderControl.setDefaultReturnValue(new SearchResults(issues, 1, PagerFilter.getUnlimitedFilter()));
         mockSearchProviderControl.replay();
 
@@ -252,7 +264,8 @@ public class TestJiraSearchProvider extends TestCase
 
         final MockControl mockSearchRequestFactoryControl = MockControl.createControl(SearchRequestFactory.class);
         final SearchRequestFactory mockSearchRequestFactory = (SearchRequestFactory) mockSearchRequestFactoryControl.getMock();
-        mockSearchRequestFactory.create(null, null, fieldValuesHolder, null, null);
+        mockSearchRequestFactory.createFromParameters(null, null, null);
+        mockSearchRequestFactoryControl.setMatcher(new AlwaysMatcher());
         mockSearchRequestFactoryControl.setDefaultReturnValue(mockSearchRequest);
         mockSearchRequestFactoryControl.replay();
 
