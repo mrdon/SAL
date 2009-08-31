@@ -1,7 +1,7 @@
 package com.atlassian.sal.jira.license;
 
 import com.atlassian.jira.bc.license.JiraLicenseService;
-import com.atlassian.jira.bc.license.JiraLicenseUpdaterService;
+import com.atlassian.jira.license.JiraLicenseManager;
 import com.atlassian.jira.util.I18nHelper;
 import com.atlassian.sal.api.license.LicenseHandler;
 
@@ -12,12 +12,14 @@ import java.util.Locale;
  */
 public class JiraLicenseHandler implements LicenseHandler
 {
-    private JiraLicenseUpdaterService jiraLicenseUpdaterService;
+    private JiraLicenseService jiraLicenseService;
+    private JiraLicenseManager jiraLicenseManager = null;
     private I18nHelper.BeanFactory i18nBeanFactory;
 
-    public JiraLicenseHandler(JiraLicenseUpdaterService jiraLicenseUpdaterService, I18nHelper.BeanFactory i18nBeanFactory)
+    public JiraLicenseHandler(JiraLicenseService jiraLicenseService, JiraLicenseManager jiraLicenseManager, I18nHelper.BeanFactory i18nBeanFactory)
     {
-        this.jiraLicenseUpdaterService = jiraLicenseUpdaterService;
+        this.jiraLicenseService = jiraLicenseService;
+        this.jiraLicenseManager = jiraLicenseManager;
         this.i18nBeanFactory = i18nBeanFactory;
     }
     /**
@@ -27,11 +29,11 @@ public class JiraLicenseHandler implements LicenseHandler
      */
     public void setLicense(String license)
     {
-        JiraLicenseService.ValidationResult validationResult = jiraLicenseUpdaterService.validate(i18nBeanFactory.getInstance(Locale.getDefault()), license);
+        JiraLicenseService.ValidationResult validationResult = jiraLicenseService.validate(i18nBeanFactory.getInstance(Locale.getDefault()), license);
         if (validationResult.getErrorCollection().hasAnyErrors())
         {
             throw new IllegalArgumentException("Specified license was invalid.");
         }
-        jiraLicenseUpdaterService.setLicense(validationResult);
+        jiraLicenseManager.setLicense(license);
     }
 }
