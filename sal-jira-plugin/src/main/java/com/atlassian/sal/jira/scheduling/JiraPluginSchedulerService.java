@@ -66,7 +66,7 @@ public class JiraPluginSchedulerService extends AbstractService
         {
             log.error("Cannot access job class", iae);
             return;
-        }d
+        }
         job.execute(jobMap);
     }
 
