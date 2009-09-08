@@ -1,20 +1,20 @@
 package com.atlassian.sal.jira.scheduling;
 
-import com.atlassian.jira.service.AbstractService;
-import com.atlassian.configurable.ObjectConfigurationException;
 import com.atlassian.configurable.ObjectConfiguration;
+import com.atlassian.configurable.ObjectConfigurationException;
 import com.atlassian.configurable.ObjectConfigurationImpl;
-import com.atlassian.configurable.StringObjectDescription;
 import com.atlassian.configurable.ObjectConfigurationProperty;
 import com.atlassian.configurable.ObjectConfigurationTypes;
-import com.atlassian.sal.api.component.ComponentLocator;
-import com.atlassian.sal.api.scheduling.PluginScheduler;
+import com.atlassian.configurable.StringObjectDescription;
+import com.atlassian.jira.ComponentManager;
+import com.atlassian.jira.service.AbstractService;
 import com.atlassian.sal.api.scheduling.PluginJob;
+import com.atlassian.sal.api.scheduling.PluginScheduler;
 import com.opensymphony.module.propertyset.PropertySet;
 import org.apache.log4j.Logger;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
      * JIRA service that executes a PluginJob
@@ -47,7 +47,7 @@ public class JiraPluginSchedulerService extends AbstractService
         final String jobName = props.getString(JiraPluginScheduler.PLUGIN_JOB_NAME);
 
         // Find the descriptor
-        final JiraPluginScheduler scheduler = (JiraPluginScheduler) ComponentLocator.getComponent(PluginScheduler.class);
+        final JiraPluginScheduler scheduler = (JiraPluginScheduler) ComponentManager.getOSGiComponentInstanceOfType(PluginScheduler.class);
         final JiraPluginSchedulerServiceDescriptor sd = scheduler.getServiceDescriptor(jobName);
 
         final Class<? extends PluginJob> jobClass = sd.getJob();
