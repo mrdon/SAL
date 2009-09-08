@@ -28,6 +28,7 @@
 
     <bean name="salLifecycleManager" class="com.atlassian.sal.jira.lifecycle.JiraLifecycleManager" destroy-method="destroy">
         <constructor-arg ref="pluginEventManager"/>
+        <constructor-arg ref="beanFactories"/>
         <property name="lifecycleAwareListeners" ref="lifecycleAwareImpls"/>
     </bean>
 
@@ -39,6 +40,9 @@
 
     <osgi:list id="lifecycleAwareImpls" interface="com.atlassian.sal.api.lifecycle.LifecycleAware" cardinality="0..N">
         <osgi:listener bind-method="onBind" ref="salLifecycleManager" />
+    </osgi:list>
+
+    <osgi:list id="beanFactories" interface="org.springframework.beans.factory.ListableBeanFactory" cardinality="0..N">
     </osgi:list>
 
 </beans>
