@@ -72,9 +72,7 @@ public class JiraPluginSchedulerService extends AbstractService
 
     public ObjectConfiguration getObjectConfiguration() throws ObjectConfigurationException
     {
-        final ObjectConfiguration oc = new ObjectConfigurationImpl(params, new StringObjectDescription(
-            "Plugin Scheduler Service"));
-        return oc;
+        return new ObjectConfigurationImpl(params, new StringObjectDescription("Plugin Scheduler Service"));
     }
 
      /**
