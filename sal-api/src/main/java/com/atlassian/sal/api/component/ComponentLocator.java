@@ -32,7 +32,7 @@ public abstract class ComponentLocator
 
     /**
      * Gets a component by its interface.  Applications that don't support interface-based components will need to
-     * covert the interface name into a String
+     * convert the interface name into a String
      *
      * @param iface The interface to find an implementation for
      * @return The implementation
