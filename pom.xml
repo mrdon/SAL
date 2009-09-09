@@ -19,7 +19,7 @@
         <fisheye-jar.version>1.7-M6-382</fisheye-jar.version>
         <atlassian-fisheye-api.version>1.7-M6-382</atlassian-fisheye-api.version>
         <confluence.version>2.10.2</confluence.version>
-        <bamboo.version>2.3-m6</bamboo.version>
+        <bamboo.version>2.4-SNAPSHOT</bamboo.version>
         <crowd.version>2.0-m1</crowd.version>
         <legacyjira.version>3.13</legacyjira.version>
         <jira.version>4.0-r97925</jira.version>
