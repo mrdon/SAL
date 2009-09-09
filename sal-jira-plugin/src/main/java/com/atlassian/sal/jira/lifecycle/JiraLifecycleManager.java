@@ -25,7 +25,6 @@ public class JiraLifecycleManager extends DefaultLifecycleManager
     {
         super(pluginEventManager);
         this.beanFactories = beanFactories;
-        System.out.println("JiraLifecycleManager construct");
     }
 
     public boolean isApplicationSetUp()
