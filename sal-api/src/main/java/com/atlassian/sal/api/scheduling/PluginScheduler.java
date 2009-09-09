@@ -11,7 +11,11 @@ import java.util.Map;
 public interface PluginScheduler
 {
     /**
-     * Schedule the given job
+     * Schedule the given job.
+     *
+     * <p> <strong>WARNING</strong>: it is very important not to try to call this method until the underlying application
+     * is fully started. You should implement {@link com.atlassian.sal.api.lifecycle.LifecycleAware} and call scheduleJob()
+     * only on {@link com.atlassian.sal.api.lifecycle.LifecycleAware#onStart()}
      *
      * @param name           A unique name of the job
      * @param job            The class for the job
