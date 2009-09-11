@@ -49,6 +49,11 @@ public class JiraPluginSchedulerService extends AbstractService
         // Find the descriptor
         final JiraPluginScheduler scheduler = (JiraPluginScheduler) ComponentManager.getOSGiComponentInstanceOfType(PluginScheduler.class);
         final JiraPluginSchedulerServiceDescriptor sd = scheduler.getServiceDescriptor(jobName);
+        if (sd == null)
+        {
+            log.error(String.format("Unable to load a service descriptor for the job '%s'. This is usually the result of an obsolete service that can removed in the Administration section.", jobName));
+            return;
+        }
 
         final Class<? extends PluginJob> jobClass = sd.getJob();
         final Map jobMap = sd.getJobDataMap();
