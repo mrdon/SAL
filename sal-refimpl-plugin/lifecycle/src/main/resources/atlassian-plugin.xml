@@ -5,5 +5,7 @@
         <vendor name="Atlassian Software Systems Pty Ltd" url="http://www.atlassian.com"/>
     </plugin-info>
 
+    <component-import key="pluginEventManager" interface="com.atlassian.plugin.event.PluginEventManager" />
+
 </atlassian-plugin>
 

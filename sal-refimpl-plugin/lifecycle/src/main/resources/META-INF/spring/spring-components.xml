@@ -8,7 +8,7 @@
            http://www.springframework.org/schema/osgi/spring-osgi.xsd"
         default-autowire="autodetect">
 
-    <bean name="lifecycleManager" class="com.atlassian.sal.refimpl.lifecycle.RefimplLifecycleManager" destroy-method="destroy">
+    <bean name="salLifecycleManager" class="com.atlassian.sal.refimpl.lifecycle.RefimplLifecycleManager" destroy-method="destroy">
         <constructor-arg ref="pluginEventManager"/>
         <property name="lifecycleAwareListeners" ref="lifecycleAwareImpls"/>
     </bean>
