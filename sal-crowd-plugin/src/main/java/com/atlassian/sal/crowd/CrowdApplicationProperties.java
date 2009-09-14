@@ -1,13 +1,13 @@
 package com.atlassian.sal.crowd;
 
-import com.atlassian.crowd.integration.service.soap.client.ClientProperties;
+import com.atlassian.config.HomeLocator;
 import com.atlassian.crowd.model.application.ApplicationType;
+import com.atlassian.crowd.service.soap.client.ClientProperties;
 import com.atlassian.crowd.util.build.BuildUtils;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.config.HomeLocator;
 
-import java.util.Date;
 import java.io.File;
+import java.util.Date;
 
 public class CrowdApplicationProperties implements ApplicationProperties
 {

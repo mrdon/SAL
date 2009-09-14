@@ -1,5 +1,6 @@
 package com.atlassian.sal.crowd.pluginsettings;
 
+import com.atlassian.crowd.exception.ObjectNotFoundException;
 import com.atlassian.crowd.manager.property.PluginPropertyManager;
 import com.atlassian.sal.core.pluginsettings.AbstractStringPluginSettings;
 import org.apache.log4j.Logger;
@@ -36,7 +37,7 @@ public class CrowdPluginSettings extends AbstractStringPluginSettings
         {
             log.warn(e, e);
         }
-        catch (final com.atlassian.crowd.integration.exception.ObjectNotFoundException e)
+        catch (final ObjectNotFoundException e)
         {
             // return null
         }

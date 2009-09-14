@@ -80,6 +80,18 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-integration-client-api</artifactId>
+            <version>${crowd.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-server</artifactId>
+            <version>${crowd.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.config</groupId>
             <artifactId>atlassian-config</artifactId>
             <version>0.9</version>

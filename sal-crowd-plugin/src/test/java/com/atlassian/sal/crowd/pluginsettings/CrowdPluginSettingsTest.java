@@ -1,6 +1,6 @@
 package com.atlassian.sal.crowd.pluginsettings;
 
-import com.atlassian.crowd.integration.exception.ObjectNotFoundException;
+import com.atlassian.crowd.exception.ObjectNotFoundException;
 import com.atlassian.crowd.manager.property.PluginPropertyManager;
 import junit.framework.TestCase;
 import static org.mockito.Mockito.*;
