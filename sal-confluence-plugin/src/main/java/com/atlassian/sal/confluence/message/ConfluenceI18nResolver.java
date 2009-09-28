@@ -7,8 +7,11 @@ import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.sal.core.message.AbstractI18nResolver;
 
 import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  */
@@ -44,6 +47,33 @@ public class ConfluenceI18nResolver extends AbstractI18nResolver
 
     public Map<String, String> getAllTranslationsForPrefix(final String prefix, final Locale locale)
     {
-        throw new UnsupportedOperationException("This application does not support this method call yet!");
+        if (prefix == null)
+        {
+            throw new NullStateException("prefix");
+        }
+
+        final Map<String, String> ret = new HashMap<String, String>();
+        final I18NBean i18NBean = (locale == null) ? getI18nBean() : i18NBeanFactory.getI18NBean(locale);
+        final ResourceBundle bundle = i18NBean.getResourceBundle();
+
+        final Enumeration<String> keys = bundle.getKeys();
+        while (keys.hasMoreElements())
+        {
+            final String key = keys.nextElement();
+            if (key.startsWith(prefix))
+            {
+                ret.put(key, bundle.getString(key));
+            }
+        }
+
+        return ret;
+    }
+
+    static class NullStateException extends java.lang.IllegalStateException
+    {
+        NullStateException(final String name)
+        {
+            super(name + " should not be null!");
+        }
     }
 }
