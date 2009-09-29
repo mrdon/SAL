@@ -13,8 +13,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-/**
- */
 public class ConfluenceI18nResolver extends AbstractI18nResolver
 {
     private I18NBeanFactory i18NBeanFactory;
@@ -49,11 +47,15 @@ public class ConfluenceI18nResolver extends AbstractI18nResolver
     {
         if (prefix == null)
         {
-            throw new NullStateException("prefix");
+            throw new NullPointerException("prefix must not be null");
+        }
+        if (locale == null)
+        {
+            throw new NullPointerException("locale must not be null");
         }
 
         final Map<String, String> ret = new HashMap<String, String>();
-        final I18NBean i18NBean = (locale == null) ? getI18nBean() : i18NBeanFactory.getI18NBean(locale);
+        final I18NBean i18NBean = i18NBeanFactory.getI18NBean(locale);
         final ResourceBundle bundle = i18NBean.getResourceBundle();
 
         final Enumeration<String> keys = bundle.getKeys();
@@ -69,11 +71,4 @@ public class ConfluenceI18nResolver extends AbstractI18nResolver
         return ret;
     }
 
-    static class NullStateException extends java.lang.IllegalStateException
-    {
-        NullStateException(final String name)
-        {
-            super(name + " should not be null!");
-        }
-    }
 }
