@@ -5,6 +5,8 @@ import com.atlassian.sal.core.pluginsettings.AbstractStringPluginSettings;
 
 public class JiraPluginSettings extends AbstractStringPluginSettings
 {
+    private static final int MAX_LENGTH = 255;
+
     private PropertySet propertySet;
 
     public JiraPluginSettings(PropertySet set)
@@ -12,27 +14,42 @@ public class JiraPluginSettings extends AbstractStringPluginSettings
         this.propertySet = set;
     }
 
-    protected Object removeActual(String key)
+    protected void removeActual(String key)
     {
-        if (propertySet.exists(key))
-            propertySet.remove(key);
-        return key;
+        propertySet.remove(key);
     }
 
     protected void putActual(String key, String val)
     {
-        // remove value first - is this necessary ?
+        // remove value first - is this necessary?
         if (key != null && propertySet.exists(key))
             propertySet.remove(key);
 
-        propertySet.setString(key, val);
+        if (val.length() > MAX_LENGTH)
+        {
+            propertySet.setText(key, val);
+        }
+        else
+        {
+            propertySet.setString(key, val);
+        }
     }
 
     protected String getActual(String key)
     {
-        if (!propertySet.exists(key) || propertySet.getType(key) != PropertySet.STRING)
+        if (!propertySet.exists(key))
+        {
             return null;
-        return propertySet.getString(key);
+        }
+        switch (propertySet.getType(key))
+        {
+            case PropertySet.STRING:
+                return propertySet.getString(key);
+            case PropertySet.TEXT:
+                return propertySet.getText(key);
+            default:
+                return null;
+        }
     }
 
 }

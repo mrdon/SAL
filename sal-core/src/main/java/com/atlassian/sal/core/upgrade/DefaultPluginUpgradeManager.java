@@ -40,6 +40,7 @@ public class DefaultPluginUpgradeManager implements PluginUpgradeManager, Lifecy
 
     public void onBind(final PluginUpgradeTask task, final Map props)
     {
+        // Doing lots here....
         log.debug("onbind task = [" + task.getPluginKey() + ", " + task.getBuildNumber() + "] ");
     }
 
@@ -62,7 +63,7 @@ public class DefaultPluginUpgradeManager implements PluginUpgradeManager, Lifecy
     /**
 	 * @return map of all upgrade tasks (stored by pluginKey)
 	 */
-	private Map<String, List<PluginUpgradeTask>> getUpgradeTasks()
+	protected Map<String, List<PluginUpgradeTask>> getUpgradeTasks()
 	{
 		final Map<String, List<PluginUpgradeTask>> pluginUpgrades = new HashMap<String, List<PluginUpgradeTask>>();
 

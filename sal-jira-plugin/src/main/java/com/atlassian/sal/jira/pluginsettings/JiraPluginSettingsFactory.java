@@ -2,6 +2,7 @@ package com.atlassian.sal.jira.pluginsettings;
 
 import com.atlassian.jira.config.properties.PropertiesManager;
 import com.atlassian.jira.propertyset.JiraPropertySetFactory;
+import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.opensymphony.module.propertyset.PropertySet;
@@ -11,14 +12,16 @@ public class JiraPluginSettingsFactory implements PluginSettingsFactory
 {
 
     private final JiraPropertySetFactory jiraPropertySetFactory;
+    private final ProjectManager projectManager;
 
     PropertiesManager pm;
     private boolean propsManagerInitialized = false;
     static Logger log = Logger.getLogger(JiraPluginSettingsFactory.class);
 
-    public JiraPluginSettingsFactory(JiraPropertySetFactory jiraPropertySetFactory)
+    public JiraPluginSettingsFactory(JiraPropertySetFactory jiraPropertySetFactory, ProjectManager projectManager)
     {
         this.jiraPropertySetFactory = jiraPropertySetFactory;
+        this.projectManager = projectManager;
         pm = getPropertiesManager();
     }
 
@@ -44,19 +47,19 @@ public class JiraPluginSettingsFactory implements PluginSettingsFactory
         return pm;
     }
 
-
     public PluginSettings createSettingsForKey(String key)
     {
         PropertySet propertySet;
         if (key != null)
         {
-            propertySet = jiraPropertySetFactory.buildCachingDefaultPropertySet(key, true);
+            propertySet = LazyProjectMigratingPropertySet.create(projectManager, jiraPropertySetFactory,
+                jiraPropertySetFactory.buildCachingDefaultPropertySet(key, true), key);
         }
         else
         {
             propertySet = getPropertiesManager().getPropertySet();
         }
-        return new JiraPluginSettings(UnlimitedStringsPropertySet.create(propertySet));
+        return new JiraPluginSettings(propertySet);
     }
 
     public PluginSettings createGlobalSettings()

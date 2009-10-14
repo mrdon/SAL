@@ -59,4 +59,7 @@
     <component key="authenticationController" class="com.atlassian.sal.core.auth.SeraphAuthenticationController" public="true">
         <interface>com.atlassian.sal.api.auth.AuthenticationController</interface>
     </component>
+    <component key="upgradeTask1" class="com.atlassian.sal.jira.upgrade.UpgradeTo_v1" public="true">
+        <interface>com.atlassian.sal.api.upgrade.PluginUpgradeTask</interface>
+    </component>
 </atlassian-plugin>

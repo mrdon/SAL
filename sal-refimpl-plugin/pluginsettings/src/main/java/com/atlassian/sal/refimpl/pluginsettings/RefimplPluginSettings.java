@@ -22,8 +22,8 @@ public class RefimplPluginSettings extends AbstractStringPluginSettings
         return map.get(key);
     }
 
-    protected Object removeActual(String key)
+    protected void removeActual(String key)
     {
-        return map.remove(key);
+        map.remove(key);
     }
 }

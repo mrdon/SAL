@@ -1,20 +1,23 @@
 package com.atlassian.sal.core.pluginsettings;
 
-import junit.framework.TestCase;
-
 import java.util.*;
 
-public class TestAbstractStringPluginSettings extends TestCase
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class TestAbstractStringPluginSettings
 {
     private PluginSettingsAcceptor acceptor;
     private static final String KEY = "some key";
 
-    @Override
+    @Before
     public void setUp()
     {
         acceptor = new PluginSettingsAcceptor();
     }
-    
+
+    @Test
     public void testString()
     {
         String value = "this is the value";
@@ -22,7 +25,8 @@ public class TestAbstractStringPluginSettings extends TestCase
         acceptor.put(KEY, value);
         assertEquals("Values should be equal.", value, acceptor.get(KEY));
     }
-    
+
+    @Test
     public void testList()
     {
         final List<String> value = new ArrayList<String>();
@@ -44,7 +48,8 @@ public class TestAbstractStringPluginSettings extends TestCase
         assertEquals("List should still be in order", first, real.get(0));
         assertEquals("List should still be in order", second, real.get(1));
     }
-    
+
+    @Test
     public void testMap()
     {
         final Map<String, String> value = new HashMap<String, String>();
@@ -69,7 +74,8 @@ public class TestAbstractStringPluginSettings extends TestCase
         assertMapEntryEquals("Map should retrieve the correct value for each key", real, second);
         assertMapEntryEquals("Map should retrieve the correct value for each key", real, third);
     }
-    
+
+    @Test
     public void testProperties()
     {
         final Properties value = new Properties();
@@ -92,6 +98,36 @@ public class TestAbstractStringPluginSettings extends TestCase
         assertPropertiesEntryEquals("Propertis should contain the same value for each key", real, first);
         assertPropertiesEntryEquals("Propertis should contain the same value for each key", real, second);
         assertPropertiesEntryEquals("Propertis should contain the same value for each key", real, third);
+    }
+
+    @Test
+    public void testPutReturnValueNull()
+    {
+        List<String> value = Arrays.asList("one", "two", "three");
+        assertNull(acceptor.put(KEY, value));
+    }
+
+    @Test
+    public void testPutReturnValueOldValue()
+    {
+        List<String> oldValue = Arrays.asList("two", "three", "four");
+        acceptor.put(KEY, oldValue);
+        List<String> value = Arrays.asList("one", "two", "three");
+        assertEquals(oldValue, acceptor.put(KEY, value));
+    }
+
+    @Test
+    public void testRemoveReturnValueNull()
+    {
+        assertNull(acceptor.remove(KEY));
+    }
+
+    @Test
+    public void testRemoveReturnValueOldValue()
+    {
+        List<String> oldValue = Arrays.asList("two", "three", "four");
+        acceptor.put(KEY, oldValue);
+        assertEquals(oldValue, acceptor.remove(KEY));
     }
 
     private void assertPropertiesEntryEquals(String errMsg, Properties real, String[] kvPair)
@@ -129,9 +165,9 @@ public class TestAbstractStringPluginSettings extends TestCase
             return backingStore.get(key);                        
         }
 
-        protected String removeActual(String key)
+        protected void removeActual(String key)
         {
-            return backingStore.remove(key);
+            backingStore.remove(key);
         }
     }
 }

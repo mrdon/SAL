@@ -4,14 +4,11 @@ import org.apache.log4j.Logger;
 import org.ofbiz.core.entity.GenericValue;
 
 import com.atlassian.core.ofbiz.util.OFBizPropertyUtils;
-import com.atlassian.core.user.UserUtils;
 import com.atlassian.jira.config.properties.PropertiesManager;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.opensymphony.module.propertyset.PropertySet;
-import com.opensymphony.user.EntityNotFoundException;
-import com.opensymphony.user.User;
 
 public class JiraPluginSettingsFactory implements PluginSettingsFactory
 {

@@ -8,7 +8,7 @@
            http://www.springframework.org/schema/osgi/spring-osgi.xsd"
         default-autowire="autodetect">
 
-    <bean name="pluginUpgradeManager" class="com.atlassian.sal.core.upgrade.DefaultPluginUpgradeManager">
+    <bean name="pluginUpgradeManager" class="com.atlassian.sal.jira.upgrade.JiraPluginUpgradeManager">
         <constructor-arg ref="upgradeTasks" />
         <constructor-arg ref="transactionTemplate" />
         <constructor-arg ref="pluginAccessor" />

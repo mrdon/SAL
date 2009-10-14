@@ -53,11 +53,9 @@ public class CrowdPluginSettings extends AbstractStringPluginSettings
     }
 
     @Override
-    protected Object removeActual(String propertyName)
+    protected void removeActual(String propertyName)
     {
         final String notNullPropertyName = propertyName == null ? NULL_STRING : propertyName;
-        Object val = getActual(notNullPropertyName);
         pluginPropertyManager.removeProperty(key, notNullPropertyName);
-        return val;
     }
 }

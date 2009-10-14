@@ -17,41 +17,55 @@ import org.apache.log4j.Logger;
 public abstract class AbstractStringPluginSettings implements PluginSettings
 {
     private static final Logger log = Logger.getLogger(AbstractStringPluginSettings.class);
-    
+
     private static final String PROPERTIES_ENCODING = "ISO8859_1";
     private static final String PROPERTIES_IDENTIFIER = "java.util.Properties";
     private static final String LIST_IDENTIFIER = "#java.util.List";
     private static final String MAP_IDENTIFIER = "#java.util.Map";
     private static final String VERTICAL_TAB = "\f";
 
+    /**
+     * Puts a setting value.
+     *
+     * @param key   Setting key.  Cannot be null
+     * @param value Setting value.  Must be one of {@link String}, {@link List}, {@link Properties}, {@link Map}, or null. null will remove the item from the settings.
+     * @throws IllegalArgumentException if value is not {@link String}, {@link List}, {@link Properties}, {@link Map}, or null.
+     * @return The setting value that was over ridden. Null if none existed.
+     */
     @SuppressWarnings("unchecked")
-	public Object put(String key, Object val)
+    public Object put(String key, Object value)
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
-        if (val == null)
-            return removeActual(key);
+        if (value == null)
+        {
+            return remove(key);
+        }
 
-        if (val instanceof Properties)
+        Object oldValue = get(key);
+        if (value instanceof Properties)
         {
             final ByteArrayOutputStream bout = new ByteArrayOutputStream();
             try
             {
 
-                final Properties properties = (Properties) val;
+                final Properties properties = (Properties) value;
                 properties.store(bout, PROPERTIES_IDENTIFIER);
                 putActual(key, new String(bout.toByteArray(), PROPERTIES_ENCODING));
-            } catch (final IOException e)
+            }
+            catch (final IOException e)
             {
                 throw new IllegalArgumentException("Unable to serialize properties", e);
             }
         }
-        else if (val instanceof String)
-            putActual(key, (String)val);
-        else if (val instanceof List)
+        else if (value instanceof String)
+        {
+            putActual(key, (String) value);
+        }
+        else if (value instanceof List)
         {
             final StringBuilder sb = new StringBuilder();
             sb.append(LIST_IDENTIFIER).append("\n");
-            for (final Iterator i = ((List)val).iterator(); i.hasNext(); )
+            for (final Iterator i = ((List) value).iterator(); i.hasNext();)
             {
                 sb.append(i.next().toString());
                 if (i.hasNext())
@@ -59,11 +73,11 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
             }
             putActual(key, sb.toString());
         }
-        else if (val instanceof Map)
+        else if (value instanceof Map)
         {
             final StringBuilder sb = new StringBuilder();
             sb.append(MAP_IDENTIFIER).append("\n");
-            for (final Iterator<Entry> i = ((Map)val).entrySet().iterator(); i.hasNext(); )
+            for (final Iterator<Entry> i = ((Map) value).entrySet().iterator(); i.hasNext();)
             {
                 final Entry entry = i.next();
                 sb.append(entry.getKey().toString());
@@ -75,70 +89,106 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
             putActual(key, sb.toString());
         }
         else
-            throw new IllegalArgumentException("Property type: "+val.getClass()+" not supported");
-        return val;
+        {
+            throw new IllegalArgumentException("Property type: " + value.getClass() + " not supported");
+        }
+        return oldValue;
     }
 
-
+    /**
+     * Gets a setting value. The setting returned should be specific to this context settings object and not cascade
+     * the value to a global context.
+     *
+     * @param key The setting key.  Cannot be null
+     * @return The setting value. May be null
+     */
     public Object get(String key)
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
         final String val = getActual(key);
-        if (val != null && val.startsWith("#"+PROPERTIES_IDENTIFIER))
+        if (val != null && val.startsWith("#" + PROPERTIES_IDENTIFIER))
         {
             final Properties p = new Properties();
             try
             {
                 p.load(new ByteArrayInputStream(val.getBytes(PROPERTIES_ENCODING)));
-            } catch (final IOException e)
+            }
+            catch (final IOException e)
             {
                 throw new IllegalArgumentException("Unable to deserialize properties", e);
             }
             return p;
-        } else if (val != null && val.startsWith(LIST_IDENTIFIER))
+        }
+        else if (val != null && val.startsWith(LIST_IDENTIFIER))
         {
             final ArrayList<String> list = new ArrayList<String>();
             final String[] items = val.split("\n");
             list.addAll(Arrays.asList(items).subList(1, items.length));
 
             return list;
-        } else if (val != null && val.startsWith(MAP_IDENTIFIER))
+        }
+        else if (val != null && val.startsWith(MAP_IDENTIFIER))
         {
-            String nval = val.substring(MAP_IDENTIFIER.length()+1);
+            String nval = val.substring(MAP_IDENTIFIER.length() + 1);
             final HashMap<String, String> map = new HashMap<String, String>();
             final String[] items = nval.split("\n");
-            for (String item : items) {
+            for (String item : items)
+            {
                 String[] pair = item.split(VERTICAL_TAB);
-                if(pair.length != 2)
+                if (pair.length != 2)
                 {
                     log.error("Could not parse map element: << " + item + " >> \n" +
-                            "Full list: \n" + nval);
+                        "Full list: \n" + nval);
                 }
-                
+
                 map.put(pair[0], pair[1]);
             }
 
             return map;
-        } else
+        }
+        else
         {
             return val;
         }
     }
 
-    protected abstract void putActual(String key, String val);
-    protected abstract String getActual(String key);
-
     /**
-     * Do the removal
-     * @param key The key to remove
-     * @return The value that was removed
+     * Removes a setting value
+     *
+     * @param key The setting key
+     * @return The setting value that was removed. Null if nothing was removed.
      */
-    protected abstract Object removeActual(String key);
-
-
     public Object remove(String key)
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
-        return put(key, null);
+        Object oldValue = get(key);
+        if (oldValue != null)
+        {
+            removeActual(key);
+        }
+        return oldValue;
     }
+
+    /**
+     * Put the actual value.
+     *
+     * @param key The key to put it at.
+     * @param val The value
+     */
+    protected abstract void putActual(String key, String val);
+
+    /**
+     * Get the actual value
+     *
+     * @param key The key to get
+     * @return The value
+     */
+    protected abstract String getActual(String key);
+
+    /**
+     * Do the actual remove.  This will only be called if the value already exists.
+     *
+     * @param key The key to remove
+     */
+    protected abstract void removeActual(String key);
 }

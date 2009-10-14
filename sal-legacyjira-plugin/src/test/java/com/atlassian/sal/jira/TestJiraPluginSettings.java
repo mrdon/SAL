@@ -27,6 +27,7 @@ public class TestJiraPluginSettings extends TestCase
     public void testPropertySetString()
     {
         mockPropertySet.expectAndReturn("exists", C.args(C.eq("foo")), false);
+        mockPropertySet.expectAndReturn("exists", C.args(C.eq("foo")), false);
         mockPropertySet.expect("setString", C.args(C.eq("foo"), C.eq("bar")));
         map.put("foo", "bar");
         mockPropertySet.verify();
@@ -44,6 +45,7 @@ public class TestJiraPluginSettings extends TestCase
 
     public void testPropertySetList()
     {
+        mockPropertySet.expectAndReturn("exists", C.args(C.eq("foo")), false);
         mockPropertySet.expectAndReturn("exists", C.args(C.eq("foo")), false);
         mockPropertySet.expect("setString", C.args(C.eq("foo"), C.eq("#java.util.List\nbar\njim")));
         map.put("foo", Arrays.asList(new String[]{"bar", "jim"}));
@@ -65,6 +67,7 @@ public class TestJiraPluginSettings extends TestCase
 
     public void testPropertySetProperties()
     {
+        mockPropertySet.expectAndReturn("exists", C.args(C.eq("foo")), false);
         mockPropertySet.expectAndReturn("exists", C.args(C.eq("foo")), false);
         mockPropertySet.expect("setString", C.args(C.eq("foo"), new Constraint() {
             public boolean eval(Object object)
