@@ -39,7 +39,7 @@ public class FisheyePluginSettings extends AbstractStringPluginSettings
 
     protected void removeActual(String key)
     {
-        int index = findPropertyType(key.toString());
+        int index = findPropertyType(key);
         if (index > -1)
         {
             propertiesType.removeProperty(index);

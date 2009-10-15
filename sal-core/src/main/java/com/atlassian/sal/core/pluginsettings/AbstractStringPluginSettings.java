@@ -27,12 +27,13 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     /**
      * Puts a setting value.
      *
-     * @param key   Setting key.  Cannot be null
-     * @param value Setting value.  Must be one of {@link String}, {@link List}, {@link Properties}, {@link Map}, or null. null will remove the item from the settings.
-     * @throws IllegalArgumentException if value is not {@link String}, {@link List}, {@link Properties}, {@link Map}, or null.
+     * @param key Setting key.  Cannot be null
+     * @param value Setting value.  Must be one of {@link String}, {@link List<String>}, {@link Properties}, {@link
+     * Map<String, String>}, or null. null will remove the item from the settings.
      * @return The setting value that was over ridden. Null if none existed.
+     * @throws IllegalArgumentException if value is not {@link String}, {@link List<String>}, {@link Properties}, {@link
+     * Map<String, String>}, or null.
      */
-    @SuppressWarnings("unchecked")
     public Object put(String key, Object value)
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
@@ -41,7 +42,7 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
             return remove(key);
         }
 
-        Object oldValue = get(key);
+        final Object oldValue = get(key);
         if (value instanceof Properties)
         {
             final ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -96,8 +97,8 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     }
 
     /**
-     * Gets a setting value. The setting returned should be specific to this context settings object and not cascade
-     * the value to a global context.
+     * Gets a setting value. The setting returned should be specific to this context settings object and not cascade the
+     * value to a global context.
      *
      * @param key The setting key.  Cannot be null
      * @return The setting value. May be null
@@ -121,8 +122,8 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
         }
         else if (val != null && val.startsWith(LIST_IDENTIFIER))
         {
-            final ArrayList<String> list = new ArrayList<String>();
             final String[] items = val.split("\n");
+            final ArrayList<String> list = new ArrayList<String>(items.length - 1);
             list.addAll(Arrays.asList(items).subList(1, items.length));
 
             return list;

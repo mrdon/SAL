@@ -5,7 +5,7 @@ import com.atlassian.sal.core.pluginsettings.AbstractStringPluginSettings;
 
 public class JiraPluginSettings extends AbstractStringPluginSettings
 {
-    private static final int MAX_LENGTH = 255;
+    private static final int STRING_PROPERTY_MAX_LENGTH = 255;
 
     private PropertySet propertySet;
 
@@ -21,11 +21,11 @@ public class JiraPluginSettings extends AbstractStringPluginSettings
 
     protected void putActual(String key, String val)
     {
-        // remove value first - is this necessary?
+        // remove value first
         if (key != null && propertySet.exists(key))
             propertySet.remove(key);
 
-        if (val.length() > MAX_LENGTH)
+        if (val.length() > STRING_PROPERTY_MAX_LENGTH)
         {
             propertySet.setText(key, val);
         }

@@ -10,7 +10,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
- * Lazily migrates the old SAL settings by keys from project into normal property sets
+ * Lazily migrates the old SAL settings by keys from project into normal property sets.  May be decommissioned at some
+ * point in future, no sooner than SAL 3.
  */
 public class LazyProjectMigratingPropertySet
 {

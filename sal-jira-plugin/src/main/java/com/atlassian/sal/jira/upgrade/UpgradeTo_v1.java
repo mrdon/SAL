@@ -2,22 +2,23 @@ package com.atlassian.sal.jira.upgrade;
 
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
 import com.atlassian.sal.api.message.Message;
-import com.atlassian.core.ofbiz.CoreFactory;
 import com.atlassian.core.util.map.EasyMap;
 import com.atlassian.jira.propertyset.JiraPropertySetFactory;
+import com.atlassian.jira.ofbiz.OfBizDelegator;
 import com.opensymphony.module.propertyset.PropertySet;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Collections;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 import org.ofbiz.core.entity.GenericValue;
-import org.ofbiz.core.entity.GenericEntityException;
 import org.apache.log4j.Logger;
 
 /**
- * Convert Strings that were stored larger than 255 characters
+ * Convert Strings that were split across multiple string entries because string entries only supported 255 characters
+ * to single entries stored as text
  */
 public class UpgradeTo_v1 implements PluginUpgradeTask
 {
@@ -26,10 +27,12 @@ public class UpgradeTo_v1 implements PluginUpgradeTask
     private static final Pattern MARKER_PATTERN = Pattern.compile(MARKER + "([\\d]+)");
 
     private final JiraPropertySetFactory jiraPropertySetFactory;
+    private final OfBizDelegator ofBizDelegator;
 
-    public UpgradeTo_v1(JiraPropertySetFactory jiraPropertySetFactory)
+    public UpgradeTo_v1(JiraPropertySetFactory jiraPropertySetFactory, OfBizDelegator ofBizDelegator)
     {
         this.jiraPropertySetFactory = jiraPropertySetFactory;
+        this.ofBizDelegator = ofBizDelegator;
     }
 
     public int getBuildNumber()
@@ -42,12 +45,12 @@ public class UpgradeTo_v1 implements PluginUpgradeTask
         return "Convert Strings that were split because they were larger than 255 characters to one row.";
     }
 
-    @SuppressWarnings({"unchecked"})
     public Collection<Message> doUpgrade() throws Exception
     {
         log.info("Loading all string properties with values like #-#-#%, this may take some time...");
         // Find all the properties with a value like #-#-#%
-        List<GenericValue> properties = getSplitProperties();
+        List<GenericValue> properties = ofBizDelegator.findByLike("OSPropertyString", EasyMap.build("value", "#-#-#%"),
+            Collections.EMPTY_LIST);
         log.info("Done. Converting " + properties.size() + " properties...");
         for (GenericValue gv : properties)
         {
@@ -59,7 +62,8 @@ public class UpgradeTo_v1 implements PluginUpgradeTask
                 int parts = Integer.parseInt(matcher.group(1));
                 long id = gv.getLong("id");
                 // Get the entry
-                GenericValue entry = getPropertyEntry(id);
+                GenericValue entry = ofBizDelegator.findByPrimaryKey("OSPropertyEntry", id);
+
                 if (entry != null)
                 {
                     String entityName = entry.getString("entityName");
@@ -89,19 +93,6 @@ public class UpgradeTo_v1 implements PluginUpgradeTask
         }
         log.info("Conversion complete.");
         return null;
-    }
-
-    protected GenericValue getPropertyEntry(long id)
-        throws GenericEntityException
-    {
-        return CoreFactory.getGenericDelegator().findByPrimaryKey("OSPropertyEntry", EasyMap.build("id", id));
-    }
-
-    @SuppressWarnings({"unchecked"})
-    protected List<GenericValue> getSplitProperties()
-        throws GenericEntityException
-    {
-        return CoreFactory.getGenericDelegator().findByLike("OSPropertyString", EasyMap.build("value", "#-#-#%"));
     }
 
     public String getPluginKey()

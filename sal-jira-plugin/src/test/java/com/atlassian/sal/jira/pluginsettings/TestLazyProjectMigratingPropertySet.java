@@ -1,16 +1,18 @@
 package com.atlassian.sal.jira.pluginsettings;
 
 import org.mockito.Mock;
-import static org.mockito.MockitoAnnotations.initMocks;
+import org.mockito.runners.MockitoJUnitRunner;
 import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 import com.atlassian.jira.propertyset.JiraPropertySetFactory;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.project.Project;
 import com.opensymphony.module.propertyset.PropertySet;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TestLazyProjectMigratingPropertySet
 {
 
@@ -27,7 +29,6 @@ public class TestLazyProjectMigratingPropertySet
     @Before
     public void setUp()
     {
-        initMocks(this);
         lazyProjectMigratingPropertySet = LazyProjectMigratingPropertySet.create(projectManager, jiraPropertySetFactory,
             targetPropertySet, KEY);
     }
