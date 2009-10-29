@@ -62,4 +62,7 @@
     <component key="upgradeTask1" class="com.atlassian.sal.jira.upgrade.UpgradeTo_v1" public="true">
         <interface>com.atlassian.sal.api.upgrade.PluginUpgradeTask</interface>
     </component>
+    <component key="upgradeTask2" class="com.atlassian.sal.jira.upgrade.UpgradeTo_v2" public="true">
+        <interface>com.atlassian.sal.api.upgrade.PluginUpgradeTask</interface>
+    </component>
 </atlassian-plugin>
