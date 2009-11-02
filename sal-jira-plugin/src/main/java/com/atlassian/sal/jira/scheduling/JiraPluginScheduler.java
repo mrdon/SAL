@@ -1,17 +1,18 @@
 package com.atlassian.sal.jira.scheduling;
 
-import com.atlassian.jira.service.JiraServiceContainer;
-import com.atlassian.jira.service.ServiceManager;
-import com.atlassian.sal.api.scheduling.PluginJob;
-import com.atlassian.sal.api.scheduling.PluginScheduler;
-import org.apache.log4j.Logger;
-
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.atlassian.jira.service.JiraServiceContainer;
+import com.atlassian.jira.service.ServiceManager;
+import com.atlassian.sal.api.scheduling.PluginJob;
+import com.atlassian.sal.api.scheduling.PluginScheduler;
 
 public class JiraPluginScheduler implements PluginScheduler
 {
@@ -42,26 +43,9 @@ public class JiraPluginScheduler implements PluginScheduler
 
         try
         {
-            // Remove the service if it exists.  We use getServices() rather than getServiceWithName() because there was
-            // a bug where multiple services with the same name were being created.  getServiceWithName() will throw an
-            // exception in that circumstance, so we'll just iterate through them all and delete all the ones that have
-            // a matching name.
-            Collection<JiraServiceContainer> services = serviceManager.getServices();
-            // We have to copy the services into a second map, otherwise after deleting one, we get a
-            // ConcurrentModificationException
-            services = new HashSet<JiraServiceContainer>(services);
-            for (final JiraServiceContainer service : services)
-            {
-                if (name.equals(service.getName()))
-                {
-                    serviceManager.removeService(service.getId());
-                }
-            }
-            // SAL-81 Use the Class version of addService() to avoid possible ClassNotFoundException.
-            serviceManager.addService(name,
-                    JiraPluginSchedulerService.class,
-                    repeatInterval,
-                    serviceDataMap);
+            // Remove the service if it exists.
+            removeServicesByName(name);
+            serviceManager.addService(name, JiraPluginSchedulerService.class, repeatInterval, serviceDataMap);
         }
         catch (final Exception e)
         {
@@ -74,35 +58,38 @@ public class JiraPluginScheduler implements PluginScheduler
         return serviceMap.get(name);
     }
 
-
     public void unscheduleJob(final String name)
     {
-        // Remove the service if it exists. We use getServices() rather than
-        // getServiceWithName() because there was
-        // a bug where multiple services with the same name were being
-        // created. getServiceWithName() will throw an
-        // exception in that circumstance, so we'll just iterate through
-        // them all and delete all the ones that have
+        removeServicesByName(name);
+    }
+
+    public void removeServicesByName(final String name)
+    {
+        // We use getServices() rather than getServiceWithName() because there was
+        // a bug where multiple services with the same name were being created.  getServiceWithName() will throw an
+        // exception in that circumstance, so we'll just iterate through them all and delete all the ones that have
         // a matching name.
-        Collection<JiraServiceContainer> services = serviceManager.getServices();
-        // We have to copy the services into a second map, otherwise after
-        // deleting one, we get a
-        // ConcurrentModificationException
-        services = new HashSet<JiraServiceContainer>(services);
+        final Collection<JiraServiceContainer> servicesToRemove = new ArrayList<JiraServiceContainer>();
+        final Collection<JiraServiceContainer> services = serviceManager.getServices();
         for (final JiraServiceContainer service : services)
         {
             if (name.equals(service.getName()))
             {
-                try
-                {
-                    serviceManager.removeService(service.getId());
-                }
-                catch (final Exception e)
-                {
-                    log.error("Error removing service to jira", e);
-                }
+                servicesToRemove.add(service);
+            }
+        }
+
+        // remove services
+        for (final JiraServiceContainer service : servicesToRemove)
+        {
+            try
+            {
+                serviceManager.removeService(service.getId());
+            }
+            catch (final Exception e)
+            {
+                log.error("Error removing service "+service.getName()+" ("+service.getId()+") from jira", e);
             }
         }
     }
-
 }

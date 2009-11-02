@@ -1,5 +1,10 @@
 package com.atlassian.sal.jira.scheduling;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import com.atlassian.configurable.ObjectConfiguration;
 import com.atlassian.configurable.ObjectConfigurationException;
 import com.atlassian.configurable.ObjectConfigurationImpl;
@@ -11,18 +16,14 @@ import com.atlassian.jira.service.AbstractService;
 import com.atlassian.sal.api.scheduling.PluginJob;
 import com.atlassian.sal.api.scheduling.PluginScheduler;
 import com.opensymphony.module.propertyset.PropertySet;
-import org.apache.log4j.Logger;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
-     * JIRA service that executes a PluginJob
+ * JIRA service that executes a PluginJob
  */
 public class JiraPluginSchedulerService extends AbstractService
 {
     private static final Logger log = Logger.getLogger(JiraPluginSchedulerService.class);
-    
+
     private static final Map<String, Object> params = new HashMap<String, Object>();
 
     static
@@ -44,7 +45,11 @@ public class JiraPluginSchedulerService extends AbstractService
             return;
         }
 
-        final String jobName = props.getString(JiraPluginScheduler.PLUGIN_JOB_NAME);
+        String jobName = props.getString(JiraPluginScheduler.PLUGIN_JOB_NAME);
+        if (jobName==null)
+        {
+            jobName = getName();
+        }
 
         // Find the descriptor
         final JiraPluginScheduler scheduler = (JiraPluginScheduler) ComponentManager.getOSGiComponentInstanceOfType(PluginScheduler.class);
@@ -80,7 +85,7 @@ public class JiraPluginSchedulerService extends AbstractService
         return new ObjectConfigurationImpl(params, new StringObjectDescription("Plugin Scheduler Service"));
     }
 
-     /**
+    /**
      * A hidden type, needed because you can't extend an ObjectConfigurationPropertyImpl
      */
     private static class JiraPluginSchedulerServiceProperty extends HashMap implements ObjectConfigurationProperty
