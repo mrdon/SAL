@@ -1,5 +1,16 @@
 package com.atlassian.sal.jira.search;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import junit.framework.TestCase;
+
+import org.easymock.EasyMock;
+import org.easymock.MockControl;
+import org.easymock.classextension.MockClassControl;
+import org.easymock.internal.AlwaysMatcher;
+
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.issue.search.SearchContext;
@@ -12,25 +23,16 @@ import com.atlassian.jira.issue.search.util.QueryCreator;
 import com.atlassian.jira.issue.transport.FieldValuesHolder;
 import com.atlassian.jira.issue.transport.impl.FieldValuesHolderImpl;
 import com.atlassian.jira.issue.transport.impl.IssueNavigatorActionParams;
+import com.atlassian.jira.jql.builder.JqlQueryBuilder;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.web.bean.PagerFilter;
-import com.atlassian.jira.jql.builder.JqlQueryBuilder;
+import com.atlassian.query.Query;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.search.SearchMatch;
 import com.atlassian.sal.core.search.query.DefaultSearchQueryParser;
-import com.atlassian.query.Query;
 import com.opensymphony.user.User;
-import junit.framework.TestCase;
-import org.easymock.EasyMock;
-import org.easymock.MockControl;
-import org.easymock.internal.AlwaysMatcher;
-import org.easymock.classextension.MockClassControl;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  *
@@ -45,7 +47,7 @@ public class TestJiraSearchProvider extends TestCase
 
     public void testNoResults() throws SearchException
     {
-        Query query = JqlQueryBuilder.newBuilder().where().project().isEmpty().buildQuery();
+        final Query query = JqlQueryBuilder.newBuilder().where().project().isEmpty().buildQuery();
 
         final MockControl mockSearchRequestControl = MockClassControl.createControl(SearchRequest.class);
         final SearchRequest mockSearchRequest = (SearchRequest) mockSearchRequestControl.getMock();
@@ -87,10 +89,10 @@ public class TestJiraSearchProvider extends TestCase
         mockSearchRequestManagerControl.setDefaultReturnValue(mockSearchRequest);
         mockSearchRequestManagerControl.replay();
 
-        final JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchProvider, null, null, mockSearchRequestFactory, null, EasyMock.createNiceMock(UserUtil.class), new DefaultSearchQueryParser())
+        final JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchProvider, null, null, mockSearchRequestFactory, null, EasyMock.createNiceMock(UserUtil.class), new DefaultSearchQueryParser(), null)
         {
             @Override
-            void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors, User remoteUser)
+            void populateAndValidate(final IssueNavigatorActionParams actionParams, final FieldValuesHolder fieldValuesHolder, final ErrorCollection errors, final User remoteUser)
             {
                 fieldValuesHolder.put("query", "query");
             }
@@ -102,19 +104,13 @@ public class TestJiraSearchProvider extends TestCase
             }
 
             @Override
-            ApplicationProperties getWebProperties()
+            User getUser(final String username)
             {
                 return null;
             }
 
             @Override
-            User getUser(String username)
-            {
-                return null;
-            }
-
-            @Override
-            void setAuthenticationContextUser(User user)
+            void setAuthenticationContextUser(final User user)
             {}
 
             @Override
@@ -156,10 +152,10 @@ public class TestJiraSearchProvider extends TestCase
         mockQueryCreatorControl.setDefaultReturnValue("?query=query&summary=true");
         mockQueryCreatorControl.replay();
 
-        final JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, null, null, null, null, null, EasyMock.createNiceMock(UserUtil.class), new DefaultSearchQueryParser())
+        final JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, null, null, null, null, null, EasyMock.createNiceMock(UserUtil.class), new DefaultSearchQueryParser(), null)
         {
             @Override
-            void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors, User user)
+            void populateAndValidate(final IssueNavigatorActionParams actionParams, final FieldValuesHolder fieldValuesHolder, final ErrorCollection errors, final User user)
             {
                 errors.addError("query", "invalid query string provided");
             }
@@ -171,20 +167,13 @@ public class TestJiraSearchProvider extends TestCase
             }
 
             @Override
-            ApplicationProperties getWebProperties()
-            {
-                return null;
-            }
-
-
-            @Override
-            User getUser(String username)
+            User getUser(final String username)
             {
                 return null;
             }
 
             @Override
-            void setAuthenticationContextUser(User user)
+            void setAuthenticationContextUser(final User user)
             {}
 
             @Override
@@ -212,7 +201,7 @@ public class TestJiraSearchProvider extends TestCase
 
     public void testResults() throws SearchException
     {
-        Query query = JqlQueryBuilder.newBuilder().where().project().isEmpty().buildQuery();
+        final Query query = JqlQueryBuilder.newBuilder().where().project().isEmpty().buildQuery();
 
         final MockControl mockSearchRequestControl = MockClassControl.createControl(SearchRequest.class);
         final SearchRequest mockSearchRequest = (SearchRequest) mockSearchRequestControl.getMock();
@@ -275,10 +264,18 @@ public class TestJiraSearchProvider extends TestCase
         mockSearchRequestManagerControl.setDefaultReturnValue(mockSearchRequest);
         mockSearchRequestManagerControl.replay();
 
-        final JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchProvider, null, null, mockSearchRequestFactory, null, EasyMock.createNiceMock(UserUtil.class), new DefaultSearchQueryParser())
+        final MockControl mockWebPropertiesControl = MockControl.createControl(ApplicationProperties.class);
+        final ApplicationProperties mockApplicationProperties = (ApplicationProperties) mockWebPropertiesControl.getMock();
+        mockApplicationProperties.getBaseUrl();
+        mockWebPropertiesControl.setDefaultReturnValue("http://jira.atlassian.com");
+        mockApplicationProperties.getDisplayName();
+        mockWebPropertiesControl.setDefaultReturnValue("JIRA");
+        mockWebPropertiesControl.replay();
+
+        final JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchProvider, null, null, mockSearchRequestFactory, null, EasyMock.createNiceMock(UserUtil.class), new DefaultSearchQueryParser(), mockApplicationProperties)
         {
             @Override
-            void populateAndValidate(IssueNavigatorActionParams actionParams, FieldValuesHolder fieldValuesHolder, ErrorCollection errors, User user)
+            void populateAndValidate(final IssueNavigatorActionParams actionParams, final FieldValuesHolder fieldValuesHolder, final ErrorCollection errors, final User user)
             {
                 fieldValuesHolder.put("query", "query");
             }
@@ -290,27 +287,13 @@ public class TestJiraSearchProvider extends TestCase
             }
 
             @Override
-            ApplicationProperties getWebProperties()
-            {
-                MockControl mockWebPropertiesControl = MockControl.createControl(ApplicationProperties.class);
-                ApplicationProperties mockApplicationProperties = (ApplicationProperties) mockWebPropertiesControl.getMock();
-                mockApplicationProperties.getBaseUrl();
-                mockWebPropertiesControl.setDefaultReturnValue("http://jira.atlassian.com");
-                mockApplicationProperties.getDisplayName();
-                mockWebPropertiesControl.setDefaultReturnValue("JIRA");
-                mockWebPropertiesControl.replay();
-
-                return mockApplicationProperties;
-            }
-
-            @Override
-            User getUser(String username)
+            User getUser(final String username)
             {
                 return null;
             }
 
             @Override
-            void setAuthenticationContextUser(User user)
+            void setAuthenticationContextUser(final User user)
             {}
 
             @Override
