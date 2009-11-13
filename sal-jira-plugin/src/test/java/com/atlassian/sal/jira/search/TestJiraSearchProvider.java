@@ -3,98 +3,74 @@ package com.atlassian.sal.jira.search;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Collection;
 
-import junit.framework.TestCase;
-
-import org.easymock.EasyMock;
-import org.easymock.MockControl;
-import org.easymock.classextension.MockClassControl;
-import org.easymock.internal.AlwaysMatcher;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import static org.mockito.Matchers.isNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.IssueManager;
+import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.issuetype.IssueType;
-import com.atlassian.jira.issue.search.SearchContext;
-import com.atlassian.jira.issue.search.SearchException;
-import com.atlassian.jira.issue.search.SearchRequest;
-import com.atlassian.jira.issue.search.SearchRequestFactory;
-import com.atlassian.jira.issue.search.SearchRequestManager;
-import com.atlassian.jira.issue.search.SearchResults;
-import com.atlassian.jira.issue.search.util.QueryCreator;
+import com.atlassian.jira.issue.search.*;
 import com.atlassian.jira.issue.transport.FieldValuesHolder;
 import com.atlassian.jira.issue.transport.impl.FieldValuesHolderImpl;
-import com.atlassian.jira.issue.transport.impl.IssueNavigatorActionParams;
-import com.atlassian.jira.jql.builder.JqlQueryBuilder;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.util.UserUtil;
-import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.web.bean.PagerFilter;
-import com.atlassian.query.Query;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.search.SearchMatch;
 import com.atlassian.sal.core.search.query.DefaultSearchQueryParser;
+import com.atlassian.query.Query;
 import com.opensymphony.user.User;
 
 /**
  *
  */
-public class TestJiraSearchProvider extends TestCase
+@SuppressWarnings({"UnusedDeclaration", "JUnitTestMethodWithNoAssertions"})
+@RunWith(MockitoJUnitRunner.class)
+public class TestJiraSearchProvider
 {
-    @Override
-    protected void setUp() throws Exception
+    private JiraSearchProvider searchProvider;
+    @Mock
+    private SearchProvider mockSearchProvider;
+    @Mock
+    private UserUtil mockUserUtil;
+    @Mock
+    private IssueManager mockIssueManager;
+    @Mock
+    private JiraAuthenticationContext mockAuthenticationContext;
+    @Mock
+    private ApplicationProperties mockApplicationProperties;
+
+    private Collection<String> keys;
+
+    @Before
+    public void setUp() throws Exception
     {
-        super.setUp();
-    }
+        when(mockApplicationProperties.getBaseUrl()).thenReturn("http://jira.atlassian.com");
+        when(mockApplicationProperties.getDisplayName()).thenReturn("JIRA");
 
-    public void testNoResults() throws SearchException
-    {
-        final Query query = JqlQueryBuilder.newBuilder().where().project().isEmpty().buildQuery();
+        keys = new ArrayList<String>();
 
-        final MockControl mockSearchRequestControl = MockClassControl.createControl(SearchRequest.class);
-        final SearchRequest mockSearchRequest = (SearchRequest) mockSearchRequestControl.getMock();
-        mockSearchRequest.getQuery();
-        mockSearchRequestControl.setReturnValue(query);
-        mockSearchRequestControl.replay();
-
-        final FieldValuesHolder fieldValuesHolder = new FieldValuesHolderImpl();
-        fieldValuesHolder.put("query", "query");
-
-        final MockControl mockJiraAuthenticationContextControl = MockControl.createControl(JiraAuthenticationContext.class);
-        final JiraAuthenticationContext mockJiraAuthenticationContext = (JiraAuthenticationContext) mockJiraAuthenticationContextControl.getMock();
-        mockJiraAuthenticationContext.getUser();
-        mockJiraAuthenticationContextControl.setDefaultReturnValue(null);
-        mockJiraAuthenticationContextControl.replay();
-
-        final MockControl mockSearchProviderControl = MockControl.createControl(com.atlassian.jira.issue.search.SearchProvider.class);
-        final com.atlassian.jira.issue.search.SearchProvider mockSearchProvider = (com.atlassian.jira.issue.search.SearchProvider) mockSearchProviderControl.getMock();
-        mockSearchProvider.search(query, null, PagerFilter.getUnlimitedFilter());
-        mockSearchProviderControl.setDefaultReturnValue(new SearchResults(Collections.EMPTY_LIST, 0, PagerFilter.getUnlimitedFilter()));
-        mockSearchProviderControl.replay();
-
-        final MockControl mockQueryCreatorControl = MockClassControl.createControl(QueryCreator.class);
-        final QueryCreator mockQueryCreator = (QueryCreator) mockQueryCreatorControl.getMock();
-        mockQueryCreator.createQuery("query");
-        mockQueryCreatorControl.setDefaultReturnValue("?query=query&summary=true");
-        mockQueryCreatorControl.replay();
-
-        final MockControl mockSearchRequestFactoryControl = MockControl.createControl(SearchRequestFactory.class);
-        final SearchRequestFactory mockSearchRequestFactory = (SearchRequestFactory) mockSearchRequestFactoryControl.getMock();
-        mockSearchRequestFactory.createFromParameters(null, null, null);
-        mockSearchRequestFactoryControl.setMatcher(new AlwaysMatcher());
-        mockSearchRequestFactoryControl.setDefaultReturnValue(mockSearchRequest);
-        mockSearchRequestFactoryControl.replay();
-
-        final MockControl mockSearchRequestManagerControl = MockControl.createControl(SearchRequestManager.class);
-        final SearchRequestManager mockSearchRequestManager = (SearchRequestManager) mockSearchRequestManagerControl.getMock();
-        mockSearchRequestManager.create(mockSearchRequest);
-        mockSearchRequestManagerControl.setDefaultReturnValue(mockSearchRequest);
-        mockSearchRequestManagerControl.replay();
-
-        final JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchProvider, null, null, mockSearchRequestFactory, null, EasyMock.createNiceMock(UserUtil.class), new DefaultSearchQueryParser(), null)
+        searchProvider = new JiraSearchProvider(mockSearchProvider, mockUserUtil, mockIssueManager,
+            mockAuthenticationContext, new DefaultSearchQueryParser(), mockApplicationProperties)
         {
             @Override
-            void populateAndValidate(final IssueNavigatorActionParams actionParams, final FieldValuesHolder fieldValuesHolder, final ErrorCollection errors, final User remoteUser)
+            Collection<String> getIssueKeysFromQuery(String query)
             {
-                fieldValuesHolder.put("query", "query");
+                return keys;
             }
 
             @Override
@@ -102,212 +78,84 @@ public class TestJiraSearchProvider extends TestCase
             {
                 return null;
             }
-
-            @Override
-            User getUser(final String username)
-            {
-                return null;
-            }
-
-            @Override
-            void setAuthenticationContextUser(final User user)
-            {}
-
-            @Override
-            User getAuthenticationContextUser()
-            {
-                return null;
-            }
-
-            @Override
-            List<String> getIssueKeysFromString(final String query)
-            {
-                return Collections.emptyList();
-            }
         };
+
+    }
+
+    @Test
+    public void searchWithNoResults() throws SearchException
+    {
+        when(mockSearchProvider.search(any(Query.class), (User) isNull(), any(PagerFilter.class))).thenAnswer(
+            new Answer()
+            {
+                public Object answer(InvocationOnMock invocationOnMock) throws Throwable
+                {
+                    Query query = (Query) invocationOnMock.getArguments()[0];
+                    assertEquals("{summary ~ \"query\"} OR {description ~ \"query\"}", query.toString());
+                    return new SearchResults(Collections.<Issue>emptyList(), 0, PagerFilter.getUnlimitedFilter());
+                }
+            });
 
         final com.atlassian.sal.api.search.SearchResults results = searchProvider.search(null, "query");
         assertNotNull(results);
         assertEquals(0, results.getErrors().size());
         assertEquals(0, results.getMatches().size());
-
-        mockJiraAuthenticationContextControl.verify();
-        mockQueryCreatorControl.verify();
-        mockSearchProviderControl.verify();
-        mockSearchRequestControl.verify();
-        mockSearchRequestManagerControl.verify();
     }
 
-    public void testErrors() throws SearchException
+    @Test
+    public void allWordsInSearch() throws SearchException
     {
-        final MockControl mockJiraAuthenticationContextControl = MockControl.createControl(JiraAuthenticationContext.class);
-        final JiraAuthenticationContext mockJiraAuthenticationContext = (JiraAuthenticationContext) mockJiraAuthenticationContextControl.getMock();
-        mockJiraAuthenticationContext.getUser();
-        mockJiraAuthenticationContextControl.setDefaultReturnValue(null);
-        mockJiraAuthenticationContextControl.replay();
-
-        final MockControl mockQueryCreatorControl = MockClassControl.createControl(QueryCreator.class);
-        final QueryCreator mockQueryCreator = (QueryCreator) mockQueryCreatorControl.getMock();
-        mockQueryCreator.createQuery("query");
-        mockQueryCreatorControl.setDefaultReturnValue("?query=query&summary=true");
-        mockQueryCreatorControl.replay();
-
-        final JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, null, null, null, null, null, EasyMock.createNiceMock(UserUtil.class), new DefaultSearchQueryParser(), null)
-        {
-            @Override
-            void populateAndValidate(final IssueNavigatorActionParams actionParams, final FieldValuesHolder fieldValuesHolder, final ErrorCollection errors, final User user)
+        when(mockSearchProvider.search(any(Query.class), (User) isNull(), any(PagerFilter.class))).thenAnswer(
+            new Answer()
             {
-                errors.addError("query", "invalid query string provided");
-            }
+                public Object answer(InvocationOnMock invocationOnMock) throws Throwable
+                {
+                    Query query = (Query) invocationOnMock.getArguments()[0];
+                    assertEquals(
+                        "( {summary ~ \"search\"} OR {description ~ \"search\"} ) AND ( {summary ~ \"terms\"} OR {description ~ \"terms\"} )",
+                        query.toString());
+                    return new SearchResults(Collections.<Issue>emptyList(), 0, PagerFilter.getUnlimitedFilter());
+                }
+            });
 
-            @Override
-            SearchContext getSearchContext()
-            {
-                return null;
-            }
-
-            @Override
-            User getUser(final String username)
-            {
-                return null;
-            }
-
-            @Override
-            void setAuthenticationContextUser(final User user)
-            {}
-
-            @Override
-            User getAuthenticationContextUser()
-            {
-                return null;
-            }
-
-            @Override
-            List<String> getIssueKeysFromString(final String query)
-            {
-                return Collections.emptyList();
-            }
-        };
-
-        final com.atlassian.sal.api.search.SearchResults results = searchProvider.search(null, "badquery");
-        assertNotNull(results);
-        assertEquals(1, results.getErrors().size());
-        assertEquals("invalid query string provided", results.getErrors().get(0).getKey());
-        assertEquals(0, results.getMatches().size());
-
-        mockJiraAuthenticationContextControl.verify();
-        mockQueryCreatorControl.verify();
+        searchProvider.search(null, "search terms");
     }
 
-    public void testResults() throws SearchException
+    @Test
+    public void searchWithProject() throws SearchException
     {
-        final Query query = JqlQueryBuilder.newBuilder().where().project().isEmpty().buildQuery();
+        when(mockSearchProvider.search(any(Query.class), (User) isNull(), any(PagerFilter.class))).thenAnswer(
+            new Answer()
+            {
+                public Object answer(InvocationOnMock invocationOnMock) throws Throwable
+                {
+                    Query query = (Query) invocationOnMock.getArguments()[0];
+                    assertEquals("{project = \"KEY\"} AND ( {summary ~ \"query\"} OR {description ~ \"query\"} )",
+                        query.toString());
+                    return new SearchResults(Collections.<Issue>emptyList(), 0, PagerFilter.getUnlimitedFilter());
+                }
+            });
 
-        final MockControl mockSearchRequestControl = MockClassControl.createControl(SearchRequest.class);
-        final SearchRequest mockSearchRequest = (SearchRequest) mockSearchRequestControl.getMock();
-        mockSearchRequest.getQuery();
-        mockSearchRequestControl.setReturnValue(query);
-        mockSearchRequestControl.replay();
+        searchProvider.search(null, "query&project=KEY");
+    }
 
-        final FieldValuesHolder fieldValuesHolder = new FieldValuesHolderImpl();
-        fieldValuesHolder.put("query", "query");
+    @Test
+    public void searchWithResults() throws SearchException
+    {
+        IssueType mockIssueType = mock(IssueType.class);
+        when(mockIssueType.getId()).thenReturn("1");
 
-        final MockControl mockJiraAuthenticationContextControl = MockControl.createControl(JiraAuthenticationContext.class);
-        final JiraAuthenticationContext mockJiraAuthenticationContext = (JiraAuthenticationContext) mockJiraAuthenticationContextControl.getMock();
-        mockJiraAuthenticationContext.getUser();
-        mockJiraAuthenticationContextControl.setDefaultReturnValue(null);
-        mockJiraAuthenticationContextControl.replay();
+        Issue mockIssue = mock(Issue.class);
+        when(mockIssue.getKey()).thenReturn("JST-234");
+        when(mockIssue.getSummary()).thenReturn("Sample Summary");
+        when(mockIssue.getDescription()).thenReturn("Sample description for the query issue.");
+        when(mockIssue.getIssueTypeObject()).thenReturn(mockIssueType);
 
-        final MockControl mockIssueTypeControl = MockControl.createControl(IssueType.class);
-        final IssueType mockIssueType = (IssueType) mockIssueTypeControl.getMock();
-        mockIssueType.getId();
-        mockIssueTypeControl.setReturnValue("1");
-        mockIssueTypeControl.replay();
-
-        final MockControl mockIssueControl = MockControl.createControl(Issue.class);
-        final Issue mockIssue = (Issue) mockIssueControl.getMock();
-        mockIssue.getKey();
-        mockIssueControl.setDefaultReturnValue("JST-234");
-        mockIssue.getSummary();
-        mockIssueControl.setReturnValue("Sample Summary");
-        mockIssue.getDescription();
-        mockIssueControl.setReturnValue("Sample description for the query issue.");
-        mockIssue.getIssueTypeObject();
-        mockIssueControl.setReturnValue(mockIssueType);
-        mockIssueControl.replay();
-
-        final List issues = new ArrayList();
+        List<Issue> issues = new ArrayList<Issue>();
         issues.add(mockIssue);
 
-        final MockControl mockSearchProviderControl = MockControl.createControl(com.atlassian.jira.issue.search.SearchProvider.class);
-        final com.atlassian.jira.issue.search.SearchProvider mockSearchProvider = (com.atlassian.jira.issue.search.SearchProvider) mockSearchProviderControl.getMock();
-        mockSearchProvider.search(query, null, PagerFilter.getUnlimitedFilter());
-        mockSearchProviderControl.setDefaultReturnValue(new SearchResults(issues, 1, PagerFilter.getUnlimitedFilter()));
-        mockSearchProviderControl.replay();
-
-        final MockControl mockQueryCreatorControl = MockClassControl.createControl(QueryCreator.class);
-        final QueryCreator mockQueryCreator = (QueryCreator) mockQueryCreatorControl.getMock();
-        mockQueryCreator.createQuery("query");
-        mockQueryCreatorControl.setDefaultReturnValue("?query=query&summary=true");
-        mockQueryCreatorControl.replay();
-
-        final MockControl mockSearchRequestFactoryControl = MockControl.createControl(SearchRequestFactory.class);
-        final SearchRequestFactory mockSearchRequestFactory = (SearchRequestFactory) mockSearchRequestFactoryControl.getMock();
-        mockSearchRequestFactory.createFromParameters(null, null, null);
-        mockSearchRequestFactoryControl.setMatcher(new AlwaysMatcher());
-        mockSearchRequestFactoryControl.setDefaultReturnValue(mockSearchRequest);
-        mockSearchRequestFactoryControl.replay();
-
-        final MockControl mockSearchRequestManagerControl = MockControl.createControl(SearchRequestManager.class);
-        final SearchRequestManager mockSearchRequestManager = (SearchRequestManager) mockSearchRequestManagerControl.getMock();
-        mockSearchRequestManager.create(mockSearchRequest);
-        mockSearchRequestManagerControl.setDefaultReturnValue(mockSearchRequest);
-        mockSearchRequestManagerControl.replay();
-
-        final MockControl mockWebPropertiesControl = MockControl.createControl(ApplicationProperties.class);
-        final ApplicationProperties mockApplicationProperties = (ApplicationProperties) mockWebPropertiesControl.getMock();
-        mockApplicationProperties.getBaseUrl();
-        mockWebPropertiesControl.setDefaultReturnValue("http://jira.atlassian.com");
-        mockApplicationProperties.getDisplayName();
-        mockWebPropertiesControl.setDefaultReturnValue("JIRA");
-        mockWebPropertiesControl.replay();
-
-        final JiraSearchProvider searchProvider = new JiraSearchProvider(null, mockQueryCreator, mockSearchProvider, null, null, mockSearchRequestFactory, null, EasyMock.createNiceMock(UserUtil.class), new DefaultSearchQueryParser(), mockApplicationProperties)
-        {
-            @Override
-            void populateAndValidate(final IssueNavigatorActionParams actionParams, final FieldValuesHolder fieldValuesHolder, final ErrorCollection errors, final User user)
-            {
-                fieldValuesHolder.put("query", "query");
-            }
-
-            @Override
-            SearchContext getSearchContext()
-            {
-                return null;
-            }
-
-            @Override
-            User getUser(final String username)
-            {
-                return null;
-            }
-
-            @Override
-            void setAuthenticationContextUser(final User user)
-            {}
-
-            @Override
-            User getAuthenticationContextUser()
-            {
-                return null;
-            }
-
-            @Override
-            List<String> getIssueKeysFromString(final String query)
-            {
-                return Collections.emptyList();
-            }
-        };
+        when(mockSearchProvider.search(any(Query.class), (User) isNull(), any(PagerFilter.class))).thenReturn(
+            new SearchResults(issues, 1, PagerFilter.getUnlimitedFilter()));
 
         final com.atlassian.sal.api.search.SearchResults results = searchProvider.search(null, "query");
         assertNotNull(results);
@@ -321,11 +169,46 @@ public class TestJiraSearchProvider extends TestCase
         assertEquals("1", searchMatch.getResourceType().getType());
         assertEquals("JIRA", searchMatch.getResourceType().getName());
         assertEquals("http://jira.atlassian.com", searchMatch.getResourceType().getUrl());
+    }
 
-        mockJiraAuthenticationContextControl.verify();
-        mockQueryCreatorControl.verify();
-        mockSearchProviderControl.verify();
-        mockSearchRequestControl.verify();
-        mockSearchRequestManagerControl.verify();
+    @Test
+    public void issueKeyInSearch() throws SearchException
+    {
+        when(mockSearchProvider.search(any(Query.class), (User) isNull(), any(PagerFilter.class))).thenReturn(
+            new SearchResults(Collections.<Issue>emptyList(), 0, PagerFilter.getUnlimitedFilter()));
+
+        keys.add("JST-234");
+
+        IssueType mockIssueType = mock(IssueType.class);
+        when(mockIssueType.getId()).thenReturn("1");
+
+        MutableIssue mockIssue = mock(MutableIssue.class);
+        when(mockIssue.getKey()).thenReturn("JST-234");
+        when(mockIssue.getSummary()).thenReturn("Sample Summary");
+        when(mockIssue.getDescription()).thenReturn("Sample description for the query issue.");
+        when(mockIssue.getIssueTypeObject()).thenReturn(mockIssueType);
+
+        when(mockIssueManager.getIssueObject("JST-234")).thenReturn(mockIssue);
+
+        com.atlassian.sal.api.search.SearchResults results = searchProvider.search(null, "JST-234");
+
+        assertNotNull(results);
+        assertEquals(0, results.getErrors().size());
+        assertEquals(1, results.getMatches().size());
+        //assert stuff abou the one match
+        final SearchMatch searchMatch = results.getMatches().get(0);
+        assertEquals("http://jira.atlassian.com/browse/JST-234", searchMatch.getUrl());
+    }
+
+    @SuppressWarnings("unchecked")
+    private FieldValuesHolder createFieldValuesHolder(String query)
+    {
+        FieldValuesHolder holder = new FieldValuesHolderImpl();
+        holder.put("query", query);
+        holder.put("summary", "true");
+        holder.put("body", "true");
+        holder.put("description", "true");
+        holder.put("environment", "true");
+        return holder;
     }
 }
