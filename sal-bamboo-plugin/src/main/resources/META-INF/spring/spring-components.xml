@@ -23,7 +23,6 @@
   </osgi:service>
 
   <osgi:list id="upgradeTasks" interface="com.atlassian.sal.api.upgrade.PluginUpgradeTask" cardinality="0..N">
-    <osgi:listener bind-method="onBind" ref="pluginUpgradeManager"/>
   </osgi:list>
 
   <bean id="salLifecycleManager" class="com.atlassian.sal.bamboo.lifecycle.BambooLifecycleManager" destroy-method="destroy">

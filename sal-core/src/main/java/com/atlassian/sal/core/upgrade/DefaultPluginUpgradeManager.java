@@ -38,6 +38,18 @@ public class DefaultPluginUpgradeManager implements PluginUpgradeManager, Lifecy
         this.pluginSettingsFactory = pluginSettingsFactory;
     }
 
+    /**
+     * Notifies the plugin upgrade manager that a plugin update tasks has been registered.
+     * 
+     * This method does nothing but logging at the moment. Is is now deprecated since it could result in circular
+     * dependency when trying to bind already exposed update tasks to plugin manager that is being created.
+     * 
+     * @deprecated
+     * @param task the upgrade task that is being bound
+     * @param props the set of properties that the upgrade task was registered with
+     */
+    @SuppressWarnings("unchecked")
+    @Deprecated
     public void onBind(final PluginUpgradeTask task, final Map props)
     {
         // Doing lots here....
@@ -127,6 +139,5 @@ public class DefaultPluginUpgradeManager implements PluginUpgradeManager, Lifecy
 
 		return messages;
 	}
-
 
 }
