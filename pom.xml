@@ -22,7 +22,7 @@
         <bamboo.version>2.5-studio-m1</bamboo.version>
         <crowd.version>2.1.0-m1</crowd.version>
         <legacyjira.version>3.13</legacyjira.version>
-        <jira.version>4.0-r97925</jira.version>
+        <jira.version>4.1-SNAPSHOT</jira.version>
     </properties>
 
     <modules>
