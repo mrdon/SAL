@@ -28,6 +28,7 @@ public class BambooI18nResolver extends AbstractI18nResolver
     // ----------------------------------------------------------------------------------------------- Interface Methods
     // -------------------------------------------------------------------------------------------------- Action Methods
     // -------------------------------------------------------------------------------------------------- Public Methods
+    
     public String resolveText(String key, Serializable[] arguments)
     {
         return getI18nBean().getText(key, arguments);
