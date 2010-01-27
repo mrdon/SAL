@@ -95,13 +95,13 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
             issues.addAll(searchResults.getIssues());
             final int numResults = searchResults.getTotal() - searchResults.getIssues().size() + issues.size();
 
-            List<Issue> trimedResults = new ArrayList<Issue>(issues);
-            if (trimedResults.size() > maxHits)
+            List<Issue> trimmedResults = new ArrayList<Issue>(issues);
+            if (trimmedResults.size() > maxHits)
             {
-                trimedResults = trimedResults.subList(0, maxHits);
+                trimmedResults = trimmedResults.subList(0, maxHits);
             }
 
-            return new SearchResults(transformResults(trimedResults), numResults,
+            return new SearchResults(transformResults(trimmedResults), numResults,
                 System.currentTimeMillis() - startTime);
         }
         catch (final SearchException e)
