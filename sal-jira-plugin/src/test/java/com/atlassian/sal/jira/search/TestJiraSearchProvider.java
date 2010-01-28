@@ -91,7 +91,7 @@ public class TestJiraSearchProvider
                 public Object answer(InvocationOnMock invocationOnMock) throws Throwable
                 {
                     Query query = (Query) invocationOnMock.getArguments()[0];
-                    assertEquals("{summary ~ \"query\"} OR {description ~ \"query\"}", query.toString());
+                    assertEquals("{summary ~ \"query\"} OR {description ~ \"query\"} OR {comment ~ \"query\"}", query.toString());
                     return new SearchResults(Collections.<Issue>emptyList(), 0, PagerFilter.getUnlimitedFilter());
                 }
             });
@@ -112,7 +112,7 @@ public class TestJiraSearchProvider
                 {
                     Query query = (Query) invocationOnMock.getArguments()[0];
                     assertEquals(
-                        "( {summary ~ \"search\"} OR {description ~ \"search\"} ) AND ( {summary ~ \"terms\"} OR {description ~ \"terms\"} )",
+                        "( {summary ~ \"search\"} OR {description ~ \"search\"} OR {comment ~ \"search\"} ) AND ( {summary ~ \"terms\"} OR {description ~ \"terms\"} OR {comment ~ \"terms\"} )",
                         query.toString());
                     return new SearchResults(Collections.<Issue>emptyList(), 0, PagerFilter.getUnlimitedFilter());
                 }
@@ -130,7 +130,7 @@ public class TestJiraSearchProvider
                 public Object answer(InvocationOnMock invocationOnMock) throws Throwable
                 {
                     Query query = (Query) invocationOnMock.getArguments()[0];
-                    assertEquals("{project = \"KEY\"} AND ( {summary ~ \"query\"} OR {description ~ \"query\"} )",
+                    assertEquals("{project = \"KEY\"} AND ( {summary ~ \"query\"} OR {description ~ \"query\"} OR {comment ~ \"query\"} )",
                         query.toString());
                     return new SearchResults(Collections.<Issue>emptyList(), 0, PagerFilter.getUnlimitedFilter());
                 }

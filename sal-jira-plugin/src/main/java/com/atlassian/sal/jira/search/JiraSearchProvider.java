@@ -161,7 +161,8 @@ public class JiraSearchProvider implements com.atlassian.sal.api.search.SearchPr
                 clause.and();
             }
             // Search if the summary or the description contains the word
-            clause.sub().summary(terms.get(i)).or().description(terms.get(i)).endsub();
+            final String term = terms.get(i);
+            clause.sub().summary(term).or().description(term).or().comment(term).endsub();
         }
 
         return builder.buildQuery();
