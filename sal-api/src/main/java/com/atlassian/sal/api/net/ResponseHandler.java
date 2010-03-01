@@ -7,7 +7,7 @@ package com.atlassian.sal.api.net;
  *
  * @since 2.0
  */
-public interface ResponseHandler
+public interface ResponseHandler<T extends Response>
 {
     /**
      * Triggered when response from {@link Request#execute(ResponseHandler)} method becomes available. Implementations
@@ -16,5 +16,5 @@ public interface ResponseHandler
      * @param response a response object. Never null.
      * @throws ResponseException If the response cannot be retrieved
      */
-    void handle(Response response) throws ResponseException;
+    void handle(T response) throws ResponseException;
 }

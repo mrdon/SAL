@@ -13,19 +13,19 @@ import com.atlassian.sal.ctk.CtkTestResults;
 @Component
 public class RequestFactoryTest implements CtkTest
 {
-    private final RequestFactory<Request<?>> requestFactory;
+    private final RequestFactory<Request<?, ?>> requestFactory;
     private boolean passed = false;
 
-    public RequestFactoryTest(final RequestFactory<Request<?>> requestFactory)
-	{
-		this.requestFactory = requestFactory;
-	}
+    public RequestFactoryTest(final RequestFactory<Request<?, ?>> requestFactory)
+    {
+        this.requestFactory = requestFactory;
+    }
 
     public void execute(final CtkTestResults results) throws ResponseException
     {
         results.assertTrue("RequestFactory must be injectable", requestFactory != null);
 
-        Request<?> request = requestFactory.createRequest(Request.MethodType.GET, "http://google.com");
+        Request<?, ?> request = requestFactory.createRequest(Request.MethodType.GET, "http://google.com");
 
         request.execute(new ResponseHandler()
         {

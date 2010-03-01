@@ -1,23 +1,23 @@
 package com.atlassian.sal.testresources.net;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.sal.api.net.Request;
 import com.atlassian.sal.api.net.Response;
 import com.atlassian.sal.api.net.ResponseException;
 import com.atlassian.sal.api.net.ResponseHandler;
 import com.atlassian.sal.api.net.auth.Authenticator;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Mock request that provides getters to all the information that is passed in, and also setters for the
  * response body that should be returned for execute(), or the response that should be passed to the
  * response handler.
  */
-public class MockRequest implements Request<MockRequest>
+public class MockRequest implements Request<MockRequest, MockResponse>
 {
     private final Request.MethodType methodType;
     private String url;
@@ -84,8 +84,8 @@ public class MockRequest implements Request<MockRequest>
         List<String> list = headers.get(headerName);
         if (list == null)
         {
-        	list = new ArrayList<String>();
-        	headers.put(headerName, list);
+            list = new ArrayList<String>();
+            headers.put(headerName, list);
         }
         list.add(headerValue);
         return this;
@@ -93,7 +93,7 @@ public class MockRequest implements Request<MockRequest>
 
     public MockRequest setHeader(final String headerName, final String headerValue)
     {
-    	headers.put(headerName, new ArrayList<String>(Arrays.asList(headerValue)));
+        headers.put(headerName, new ArrayList<String>(Arrays.asList(headerValue)));
         return this;
     }
 
@@ -178,15 +178,15 @@ public class MockRequest implements Request<MockRequest>
     {
         return requestParameters;
     }
-    
+
     public Map<String, List<String>> getHeaders()
     {
-    	return headers;
+        return headers;
     }
-    
+
     public List<String> getHeader(final String headerName)
     {
-    	return headers.get(headerName);
+        return headers.get(headerName);
     }
 
     public List<Authenticator> getAuthenticators()

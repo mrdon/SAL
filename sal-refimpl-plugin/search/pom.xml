@@ -1,9 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.atlassian.sal</groupId>
         <artifactId>sal-refimpl-plugins</artifactId>
-        <version>2.0.18-SNAPSHOT</version>
+        <version>2.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>sal-refimpl-search-plugin</artifactId>
@@ -19,14 +20,15 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>com.atlassian.sal.refimpl.search</Bundle-SymbolicName>
-	                    <Import-Package>
-	                       com.atlassian.sal.api.search,com.atlassian.sal.api.search.query,
-	                       com.atlassian.sal.api.search.parameter,
-	                       com.atlassian.sal.api,
-	                       org.apache.log4j, org.apache.commons.lang</Import-Package>
-	                    <Private-Package>
-	                       com.atlassian.sal.refimpl.search,com.atlassian.sal.refimpl.search.query,
-	                       com.atlassian.sal.refimpl.search.parameter,com.atlassian.sal.core.search
+                        <Import-Package>
+                            com.atlassian.sal.api.search,com.atlassian.sal.api.search.query,
+                            com.atlassian.sal.api.search.parameter,
+                            com.atlassian.sal.api,
+                            org.apache.log4j, org.apache.commons.lang
+                        </Import-Package>
+                        <Private-Package>
+                            com.atlassian.sal.refimpl.search,com.atlassian.sal.refimpl.search.query,
+                            com.atlassian.sal.refimpl.search.parameter,com.atlassian.sal.core.search
                         </Private-Package>
                         <Spring-Context>*;timeout:=60</Spring-Context>
                     </instructions>

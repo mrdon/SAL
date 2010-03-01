@@ -8,7 +8,7 @@ import com.atlassian.sal.api.net.Request.MethodType;
  * @param <T> The type of request to create
  * @since 2.0
  */
-public interface RequestFactory<T extends Request<?>>
+public interface RequestFactory<T extends Request<?, ?>>
 {
     /**
      * Creates a request of given {@link MethodType} to given url
@@ -26,5 +26,5 @@ public interface RequestFactory<T extends Request<?>>
      * @see Request#setHeader(String, String)
      * @see Request#addHeader(String, String)
      */
-	boolean supportsHeader();
+    boolean supportsHeader();
 }

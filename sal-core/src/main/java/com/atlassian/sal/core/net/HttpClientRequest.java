@@ -1,17 +1,15 @@
 package com.atlassian.sal.core.net;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.atlassian.sal.api.net.Request;
+import com.atlassian.sal.api.net.ResponseException;
+import com.atlassian.sal.api.net.ResponseHandler;
+import com.atlassian.sal.api.net.auth.Authenticator;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.core.net.auth.BaseAuthenticator;
+import com.atlassian.sal.core.net.auth.HttpClientAuthenticator;
+import com.atlassian.sal.core.net.auth.SeraphAuthenticator;
+import com.atlassian.sal.core.net.auth.TrustedTokenAuthenticator;
+import com.atlassian.sal.core.trusted.CertificateFactory;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
@@ -32,22 +30,23 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.atlassian.sal.api.net.Request;
-import com.atlassian.sal.api.net.Response;
-import com.atlassian.sal.api.net.ResponseException;
-import com.atlassian.sal.api.net.ResponseHandler;
-import com.atlassian.sal.api.net.auth.Authenticator;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.core.net.auth.BaseAuthenticator;
-import com.atlassian.sal.core.net.auth.HttpClientAuthenticator;
-import com.atlassian.sal.core.net.auth.SeraphAuthenticator;
-import com.atlassian.sal.core.net.auth.TrustedTokenAuthenticator;
-import com.atlassian.sal.core.trusted.CertificateFactory;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
- *	HttpClient implementation of Request interface
+ * HttpClient implementation of Request interface
  */
-public class HttpClientRequest implements Request<HttpClientRequest>
+public class HttpClientRequest implements Request<HttpClientRequest, HttpClientResponse>
 {
     private static final Logger log = Logger.getLogger(HttpClientRequest.class);
 
@@ -67,7 +66,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     private String requestContentType;
 
     public HttpClientRequest(final HttpClient httpClient, final MethodType methodType, final String url,
-        final CertificateFactory certificateFactory, final UserManager userManager)
+                             final CertificateFactory certificateFactory, final UserManager userManager)
     {
         this.httpClient = httpClient;
         this.methodType = methodType;
@@ -83,19 +82,24 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     }
 
     // ------------------------ authenticators -------------------------------------------
+
     public HttpClientRequest addAuthentication(final Authenticator authenticator)
     {
         if (authenticator instanceof HttpClientAuthenticator)
+        {
             this.authenticators.add((HttpClientAuthenticator) authenticator);
+        }
         else
-            log.warn("Authenticator '"+authenticator+"'is not instance of " + HttpClientAuthenticator.class.getName());
+        {
+            log.warn("Authenticator '" + authenticator + "'is not instance of " + HttpClientAuthenticator.class.getName());
+        }
         return this;
     }
 
     public HttpClientRequest addTrustedTokenAuthentication()
     {
         final TrustedTokenAuthenticator trustedTokenAuthenticator = new TrustedTokenAuthenticator(
-            userManager.getRemoteUsername(), certificateFactory);
+                userManager.getRemoteUsername(), certificateFactory);
 
         this.authenticators.add(trustedTokenAuthenticator);
         return this;
@@ -104,7 +108,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     public HttpClientRequest addTrustedTokenAuthentication(final String username)
     {
         final TrustedTokenAuthenticator trustedTokenAuthenticator = new TrustedTokenAuthenticator(username,
-            certificateFactory);
+                certificateFactory);
 
         this.authenticators.add(trustedTokenAuthenticator);
         return this;
@@ -156,7 +160,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 
     public HttpClientRequest addRequestParameters(final String... params)
     {
-        if (params.length%2!=0)
+        if (params.length % 2 != 0)
         {
             throw new IllegalArgumentException("You must enter even number of arguments");
         }
@@ -166,12 +170,12 @@ public class HttpClientRequest implements Request<HttpClientRequest>
             throw new IllegalArgumentException("Only POST and PUT methods accept req");
         }
 
-        for (int i = 0; i < params.length; i+=2)
+        for (int i = 0; i < params.length; i += 2)
         {
             final String name = params[i];
-            final String value = params[i+1];
+            final String value = params[i + 1];
             List<String> list = parameters.get(name);
-            if (list==null)
+            if (list == null)
             {
                 list = new ArrayList<String>();
                 parameters.put(name, list);
@@ -184,7 +188,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     public HttpClientRequest addHeader(final String headerName, final String headerValue)
     {
         List<String> list = headers.get(headerName);
-        if (list==null)
+        if (list == null)
         {
             list = new ArrayList<String>();
             headers.put(headerName, list);
@@ -201,17 +205,17 @@ public class HttpClientRequest implements Request<HttpClientRequest>
 
     public HttpClientRequest addHeaders(final String... params)
     {
-        if (params.length%2!=0)
+        if (params.length % 2 != 0)
         {
             throw new IllegalArgumentException("You must enter even number of arguments");
         }
 
-        for (int i = 0; i < params.length; i+=2)
+        for (int i = 0; i < params.length; i += 2)
         {
             final String name = params[i];
-            final String value = params[i+1];
+            final String value = params[i + 1];
             List<String> list = headers.get(name);
-            if (list==null)
+            if (list == null)
             {
                 list = new ArrayList<String>();
                 headers.put(name, list);
@@ -224,7 +228,8 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     /* (non-Javadoc)
      * @see com.atlassian.sal.api.net.Request#execute()
      */
-    public void execute(final ResponseHandler responseHandler) throws ResponseException
+
+    public void execute(final ResponseHandler<HttpClientResponse> responseHandler) throws ResponseException
     {
         Throwable lastException = null;
         for (int attempts = 0; attempts < MAX_ATTEMPTS; attempts++)
@@ -237,20 +242,22 @@ public class HttpClientRequest implements Request<HttpClientRequest>
             {
 
                 final Header[] requestHeaders = method.getRequestHeaders();
-                log.debug("Calling " + method.getName() + " " +  this.url + " with headers " + (requestHeaders==null?"none":Arrays.asList(requestHeaders).toString()));
+                log.debug("Calling " + method.getName() + " " + this.url + " with headers " + (requestHeaders == null ? "none" : Arrays.asList(requestHeaders).toString()));
             }
             method.setRequestHeader("Connection", "close");
             try
             {
                 executeMethod(method, 0);
                 responseHandler.handle(new HttpClientResponse(method));
-                return;	// success lets get out of here
-            } catch (final RetryAgainException e)
+                return;    // success lets get out of here
+            }
+            catch (final RetryAgainException e)
             {
                 // this exception occurs during executeMethod(). keep retrying.
                 lastException = e.getCause();
-                log.debug(e,e);
-            } catch (final ResponseException e)
+                log.debug(e, e);
+            }
+            catch (final ResponseException e)
             {
                 // this exception occurs during responseHandler.handle(). throw it all the way out.
                 // this catch block is here only to improve readability of the code
@@ -262,11 +269,13 @@ public class HttpClientRequest implements Request<HttpClientRequest>
                 method.releaseConnection();
                 // see https://extranet.atlassian.com/display/~doflynn/2008/05/19/HttpClient+leaks+sockets+into+CLOSE_WAIT
                 final HttpConnectionManager httpConnectionManager = httpClient.getHttpConnectionManager();
-                if (httpConnectionManager!=null)
+                if (httpConnectionManager != null)
+                {
                     httpConnectionManager.closeIdleConnections(0);
+                }
             }
         }
-        throw new ResponseException("Maximum number of retries ("+MAX_ATTEMPTS+") reached.", lastException);
+        throw new ResponseException("Maximum number of retries (" + MAX_ATTEMPTS + ") reached.", lastException);
     }
 
     private static void exhaustResponseContents(final HttpMethod response)
@@ -275,7 +284,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
         try
         {
             body = response.getResponseBodyAsStream();
-            if (body==null)
+            if (body == null)
             {
                 return;
             }
@@ -300,11 +309,12 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     /**
      * Unconditionally close an <code>InputStream</code>.
      * Equivalent to {@link InputStream#close()}, except any exceptions will be ignored.
+     *
      * @param input A (possibly null) InputStream
      */
-    public static void shutdownStream( final InputStream input )
+    public static void shutdownStream(final InputStream input)
     {
-        if( null == input )
+        if (null == input)
         {
             return;
         }
@@ -313,7 +323,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
         {
             input.close();
         }
-        catch( final IOException ioe )
+        catch (final IOException ioe)
         {
             // Do nothing
         }
@@ -323,9 +333,9 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     public String execute() throws ResponseException
     {
         final Set<String> stringHolder = new HashSet<String>();
-        execute(new ResponseHandler()
+        execute(new ResponseHandler<HttpClientResponse>()
         {
-            public void handle(final Response response) throws ResponseException
+            public void handle(final HttpClientResponse response) throws ResponseException
             {
                 if (!response.isSuccessful())
                 {
@@ -335,7 +345,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
             }
         });
 
-        return stringHolder.isEmpty()?"":stringHolder.iterator().next();
+        return stringHolder.isEmpty() ? "" : stringHolder.iterator().next();
     }
     // ------------------------------------------------------------------------------------------------------------------------------------
     // -------------------------------------------------- private methods ------------------------------------------------------------------
@@ -374,7 +384,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
                 break;
             default:
                 method = new GetMethod(url);
-            break;
+                break;
         }
         return method;
     }
@@ -383,8 +393,10 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     {
         try
         {
-            if (++redirectCounter>MAX_REDIRECTS)
-                throw new IOException("Maximum number of redirects ("+MAX_REDIRECTS+") reached.");
+            if (++redirectCounter > MAX_REDIRECTS)
+            {
+                throw new IOException("Maximum number of redirects (" + MAX_REDIRECTS + ") reached.");
+            }
 
             // execute the method.
             final int statusCode = httpClient.executeMethod(method);
@@ -407,16 +419,20 @@ public class HttpClientRequest implements Request<HttpClientRequest>
                     throw new IOException("HTTP response returned redirect code " + statusCode + " but did not provide a location header");
                 }
             }
-        } catch (final URIException e)
+        }
+        catch (final URIException e)
         {
             throw new RetryAgainException(e);
-        } catch (final HttpException e)
+        }
+        catch (final HttpException e)
         {
             throw new RetryAgainException(e);
-        } catch (final NullPointerException e)
+        }
+        catch (final NullPointerException e)
         {
             throw new RetryAgainException(e);
-        } catch (final IOException e)
+        }
+        catch (final IOException e)
         {
             throw new RetryAgainException(e);
         }
@@ -437,7 +453,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
     {
         if (!(method instanceof EntityEnclosingMethod))
         {
-            return;	// only POST and PUT method can apply
+            return;    // only POST and PUT method can apply
         }
         // Add post parameters
         if ((method instanceof PostMethod) && !this.parameters.isEmpty())
@@ -455,7 +471,7 @@ public class HttpClientRequest implements Request<HttpClientRequest>
         }
 
         // Set request body
-        if (this.requestBody!=null)
+        if (this.requestBody != null)
         {
             final EntityEnclosingMethod entityEnclosingMethod = (EntityEnclosingMethod) method;
             final String contentType = requestContentType + "; charset=UTF-8";
@@ -463,7 +479,8 @@ public class HttpClientRequest implements Request<HttpClientRequest>
             try
             {
                 inputStream = new ByteArrayInputStream(requestBody.getBytes("UTF-8"));
-            } catch (final UnsupportedEncodingException e)
+            }
+            catch (final UnsupportedEncodingException e)
             {
                 throw new RuntimeException(e);
             }
@@ -480,10 +497,14 @@ public class HttpClientRequest implements Request<HttpClientRequest>
         }
     }
 
+    public Map<String, List<String>> getHeaders()
+    {
+        return Collections.unmodifiableMap(headers);
+    }
 
     @Override
     public String toString()
     {
-        return methodType + " " + url+", Parameters: " + parameters + (StringUtils.isBlank(requestBody)?"":"\nRequest body:\n" + requestBody);
+        return methodType + " " + url + ", Parameters: " + parameters + (StringUtils.isBlank(requestBody) ? "" : "\nRequest body:\n" + requestBody);
     }
 }

@@ -1,8 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.sal</groupId>
     <artifactId>sal-parent</artifactId>
-    <version>2.0.18-SNAPSHOT</version>
+    <version>2.1-SNAPSHOT</version>
 
     <name>Shared Access Layer POM</name>
     <packaging>pom</packaging>
@@ -65,29 +66,29 @@
                     <artifactId>maven-bundle-plugin</artifactId>
                     <version>1.4.1</version>
                 </plugin>
-            <plugin>
-            <!-- Deploy to the maven1 repo, necessary as maven1 can't resolve snapshots -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-one-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>m1-deploy</id>
-                        <configuration>
-                            <remoteRepositoryId>atlassian-m1-repository</remoteRepositoryId>
-                            <remoteRepositoryUrl>dav:https://maven.atlassian.com/maven1</remoteRepositoryUrl>
-                        </configuration>
-                        <goals>
-                            <goal>deploy-maven-one-repository</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>m1-install</id>
-                        <goals>
-                            <goal>install-maven-one-repository</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+                <plugin>
+                    <!-- Deploy to the maven1 repo, necessary as maven1 can't resolve snapshots -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-one-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>m1-deploy</id>
+                            <configuration>
+                                <remoteRepositoryId>atlassian-m1-repository</remoteRepositoryId>
+                                <remoteRepositoryUrl>dav:https://maven.atlassian.com/maven1</remoteRepositoryUrl>
+                            </configuration>
+                            <goals>
+                                <goal>deploy-maven-one-repository</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>m1-install</id>
+                            <goals>
+                                <goal>install-maven-one-repository</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -105,13 +106,13 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-one-plugin</artifactId>
                         <executions>
-                          <execution>
-                            <goals>
-                              <goal>install-maven-one-repository</goal>
-                            </goals>
-                          </execution>
+                            <execution>
+                                <goals>
+                                    <goal>install-maven-one-repository</goal>
+                                </goals>
+                            </execution>
                         </executions>
-                      </plugin>
+                    </plugin>
                 </plugins>
             </build>
         </profile>

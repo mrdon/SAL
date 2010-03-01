@@ -2,6 +2,9 @@ package com.atlassian.sal.api.net;
 
 import com.atlassian.sal.api.net.auth.Authenticator;
 
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * Interface Request represents a request to retrieve data. To execute a request call {@link Request#execute(ResponseHandler)}.
@@ -9,7 +12,7 @@ import com.atlassian.sal.api.net.auth.Authenticator;
  * @param <T> the type of request used for method chaing
  * @since 2.0
  */
-public interface Request<T extends Request<?>>
+public interface Request<T extends Request<?, ?>, R extends Response>
 {
     /**
      * Represents type of network request
@@ -130,13 +133,18 @@ public interface Request<T extends Request<?>>
     T setHeader(String headerName, String headerValue);
 
     /**
+     * @return an immutable Map of headers added to the request so far
+     * @since 2.1
+     */
+    Map<String, List<String>> getHeaders();
+
+    /**
      * Executes the request.
      *
      * @param responseHandler Callback handler of the response.
      * @throws ResponseException If the response cannot be retrieved
      */
-    void execute(ResponseHandler responseHandler) throws ResponseException;
-
+    void execute(ResponseHandler<R> responseHandler) throws ResponseException;
 
     /**
      * Executes a request and if response is successful, returns response as a string. @see {@link Response#getResponseBodyAsString()}
@@ -145,7 +153,6 @@ public interface Request<T extends Request<?>>
      * @throws ResponseException If the response cannot be retrieved
      */
     String execute() throws ResponseException;
-
 
 
 }
