@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Interface Request represents a request to retrieve data. To execute a request call {@link Request#execute(ResponseHandler)}.
  *
- * @param <T> the type of request used for method chaing
+ * @param <T> the type of request used for method chaining
  * @since 2.0
  */
 public interface Request<T extends Request<?, ?>, R extends Response>
@@ -62,7 +62,7 @@ public interface Request<T extends Request<?, ?>, R extends Response>
 
     /**
      * Sets parameters of the request. In default implementation only requests of type {@link MethodType#POST} and {@link MethodType#POST} can have parameters.
-     * For other requests include parameters in url. This method accepts odd number of arguments, in form of name, value, name, value, name, value, etc
+     * For other requests include parameters in url. This method accepts an even number of arguments, in form of name, value, name, value, name, value, etc
      *
      * @param params parameters of the request in as name, value pairs
      * @return a reference to this object.
