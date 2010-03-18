@@ -253,6 +253,11 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
             }
             catch (final RetryAgainException e)
             {
+                if (method instanceof PostMethod)
+                {
+                    //don't retry POSTs - can't rely on target web resource being idempotent
+                    throw new ResponseException("Request failed to complete normally", e.getCause());
+                }
                 // this exception occurs during executeMethod(). keep retrying.
                 lastException = e.getCause();
                 log.debug(e, e);
