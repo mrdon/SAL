@@ -10,7 +10,6 @@ import com.atlassian.sal.core.trusted.CertificateFactory;
 import junit.framework.TestCase;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -61,75 +60,14 @@ public class TestHttpClientRequest extends TestCase
         assertEquals("Two authenticator should be called.", 2, authenticatorCounter.intValue());
     }
 
-    public void testMaxAttemptsReached()
-    {
-        // counter how many time we tried to execute method
-        final AtomicInteger executeCounter = new AtomicInteger(0);
-
-        // lets have some mock client
-        HttpClient mockHttpClient = new HttpClient()
-        {
-            @Override
-            public int executeMethod(HttpMethod method) throws IOException, HttpException
-            {
-                executeCounter.addAndGet(1);
-                throw new IOException("I am sick today, no connections please");
-            }
-        };
-
-        // lets create new GET request to http://url
-        HttpClientRequest request = new HttpClientRequest(mockHttpClient, MethodType.GET, "http://url",
-                mock(CertificateFactory.class), mock(UserManager.class));
-        try
-        {
-            request.execute(EasyMock.createMock(ResponseHandler.class));
-            fail("Should throw ResponseException - maximum retries reached.");
-        }
-        catch (ResponseException e)
-        {
-            assertEquals("It should try " + HttpClientRequest.MAX_ATTEMPTS + " times", HttpClientRequest.MAX_ATTEMPTS, executeCounter.get());
-        }
-    }
-
-    public void testDoNotReattemptPostMethods()
-    {
-        // counter how many time we tried to execute method
-        final AtomicInteger executeCounter = new AtomicInteger(0);
-
-        // lets have some mock client
-        HttpClient mockHttpClient = new HttpClient()
-        {
-            @Override
-            public int executeMethod(HttpMethod method) throws IOException, HttpException
-            {
-                executeCounter.addAndGet(1);
-                throw new IOException("I am sick today, no connections please");
-            }
-        };
-
-        // lets create new POST request to http://url
-        HttpClientRequest request = new HttpClientRequest(mockHttpClient, MethodType.POST, "http://url",
-                mock(CertificateFactory.class), mock(UserManager.class));
-        try
-        {
-            request.execute(EasyMock.createMock(ResponseHandler.class));
-            fail("Should throw ResponseException.");
-        }
-        catch (ResponseException e)
-        {
-            assertTrue("ResponseException should be wrapping our explicitly thrown IOException", e.getCause() instanceof IOException);
-            assertEquals("POSTs should only execute once", 1, executeCounter.get());
-        }
-    }
-
-    public void testMaxNumberOfRedirectionReached() throws HttpException, IOException
+    public void testMaxNumberOfRedirectionReached() throws IOException
     {
         // create mock GetMethod - it should redirect few times
         final IMocksControl mockControl = EasyMock.createNiceControl();
         final GetMethod mockGetMethod = mockControl.createMock(GetMethod.class);
         mockGetMethod.getResponseHeader("location");
         mockControl.andReturn(new Header("location", "http://someRedirectionUrl"));
-        mockControl.times(HttpClientRequest.MAX_ATTEMPTS * HttpClientRequest.MAX_REDIRECTS);        // it should try to follow redirection MAX_REDIRECTS times and then retry MAX_ATTEMPTS times
+        mockControl.times(HttpClientRequest.MAX_REDIRECTS);
         mockControl.replay();
 
         // create HttpClient that will return 301 Moved Permanently
@@ -137,7 +75,7 @@ public class TestHttpClientRequest extends TestCase
         final HttpClient httpClientMock = httpClientMockControl.createMock(HttpClient.class);
         httpClientMock.executeMethod(mockGetMethod);
         httpClientMockControl.andReturn(302);
-        httpClientMockControl.times(HttpClientRequest.MAX_ATTEMPTS * HttpClientRequest.MAX_REDIRECTS);   // it should try to follow redirection MAX_REDIRECTS times and then retry MAX_ATTEMPTS times
+        httpClientMockControl.times(HttpClientRequest.MAX_REDIRECTS);
         httpClientMockControl.replay();
 
         // create a request that will return mockGetMethod
@@ -231,6 +169,4 @@ public class TestHttpClientRequest extends TestCase
         // and assert results
         mockControl.verify();
     }
-
-
 }

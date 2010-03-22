@@ -13,10 +13,8 @@ import com.atlassian.sal.core.trusted.CertificateFactory;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -50,7 +48,6 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
 {
     private static final Logger log = Logger.getLogger(HttpClientRequest.class);
 
-    public static final int MAX_ATTEMPTS = 2;
     public static final int MAX_REDIRECTS = 3;
 
     private final Request.MethodType methodType;
@@ -231,56 +228,36 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
 
     public void execute(final ResponseHandler<HttpClientResponse> responseHandler) throws ResponseException
     {
-        Throwable lastException = null;
-        for (int attempts = 0; attempts < MAX_ATTEMPTS; attempts++)
+        final HttpMethod method = makeMethod();
+        processHeaders(method);
+        processAuthenticator(method);
+        processParameters(method);
+        if (log.isDebugEnabled())
         {
-            final HttpMethod method = makeMethod();
-            processHeaders(method);
-            processAuthenticator(method);
-            processParameters(method);
-            if (log.isDebugEnabled())
+            final Header[] requestHeaders = method.getRequestHeaders();
+            log.debug("Calling " + method.getName() + " " + this.url + " with headers " + (requestHeaders == null ? "none" : Arrays.asList(requestHeaders).toString()));
+        }
+        method.setRequestHeader("Connection", "close");
+        try
+        {
+            executeMethod(method, 0);
+            responseHandler.handle(new HttpClientResponse(method));
+        }
+        catch (IOException ioe)
+        {
+            throw new ResponseException(ioe);
+        }
+        finally
+        {
+            exhaustResponseContents(method);
+            method.releaseConnection();
+            // see https://extranet.atlassian.com/display/~doflynn/2008/05/19/HttpClient+leaks+sockets+into+CLOSE_WAIT
+            final HttpConnectionManager httpConnectionManager = httpClient.getHttpConnectionManager();
+            if (httpConnectionManager != null)
             {
-
-                final Header[] requestHeaders = method.getRequestHeaders();
-                log.debug("Calling " + method.getName() + " " + this.url + " with headers " + (requestHeaders == null ? "none" : Arrays.asList(requestHeaders).toString()));
-            }
-            method.setRequestHeader("Connection", "close");
-            try
-            {
-                executeMethod(method, 0);
-                responseHandler.handle(new HttpClientResponse(method));
-                return;    // success lets get out of here
-            }
-            catch (final RetryAgainException e)
-            {
-                if (method instanceof PostMethod)
-                {
-                    //don't retry POSTs - can't rely on target web resource being idempotent
-                    throw new ResponseException("Request failed to complete normally", e.getCause());
-                }
-                // this exception occurs during executeMethod(). keep retrying.
-                lastException = e.getCause();
-                log.debug(e, e);
-            }
-            catch (final ResponseException e)
-            {
-                // this exception occurs during responseHandler.handle(). throw it all the way out.
-                // this catch block is here only to improve readability of the code
-                throw e;
-            }
-            finally
-            {
-                exhaustResponseContents(method);
-                method.releaseConnection();
-                // see https://extranet.atlassian.com/display/~doflynn/2008/05/19/HttpClient+leaks+sockets+into+CLOSE_WAIT
-                final HttpConnectionManager httpConnectionManager = httpClient.getHttpConnectionManager();
-                if (httpConnectionManager != null)
-                {
-                    httpConnectionManager.closeIdleConnections(0);
-                }
+                httpConnectionManager.closeIdleConnections(0);
             }
         }
-        throw new ResponseException("Maximum number of retries (" + MAX_ATTEMPTS + ") reached.", lastException);
     }
 
     private static void exhaustResponseContents(final HttpMethod response)
@@ -298,7 +275,9 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
             int bytesRead = 0;
             while ((bytesRead = body.read(buf)) != -1)
             {
-                // throw the bytes away! :)
+                // Read everything the server has to say before closing
+                // the stream, or the server would get a unexpected
+                // "connection closed" error.
             }
         }
         catch (final IOException e)
@@ -356,14 +335,6 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
     // -------------------------------------------------- private methods ------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------------------------------
 
-    private class RetryAgainException extends Exception
-    {
-        public RetryAgainException(final Exception e)
-        {
-            super(e);
-        }
-    }
-
     protected HttpMethod makeMethod()
     {
         final HttpMethod method;
@@ -394,15 +365,14 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
         return method;
     }
 
-    private void executeMethod(final HttpMethod method, int redirectCounter) throws RetryAgainException
+    private void executeMethod(final HttpMethod method, int redirectCounter) throws IOException
     {
-        try
+        if (++redirectCounter > MAX_REDIRECTS)
         {
-            if (++redirectCounter > MAX_REDIRECTS)
-            {
-                throw new IOException("Maximum number of redirects (" + MAX_REDIRECTS + ") reached.");
-            }
-
+            throw new IOException("Maximum number of redirects (" + MAX_REDIRECTS + ") reached.");
+        }
+        else
+        {
             // execute the method.
             final int statusCode = httpClient.executeMethod(method);
 
@@ -424,22 +394,6 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
                     throw new IOException("HTTP response returned redirect code " + statusCode + " but did not provide a location header");
                 }
             }
-        }
-        catch (final URIException e)
-        {
-            throw new RetryAgainException(e);
-        }
-        catch (final HttpException e)
-        {
-            throw new RetryAgainException(e);
-        }
-        catch (final NullPointerException e)
-        {
-            throw new RetryAgainException(e);
-        }
-        catch (final IOException e)
-        {
-            throw new RetryAgainException(e);
         }
     }
 
