@@ -42,6 +42,12 @@ public class DefaultUserManager implements UserManager
               || userAccessor.isSuperUser(user));
     }
 
+    public boolean isAdmin(final String username)
+    {
+        final User user = userAccessor.getUser(username);
+        return user != null && permissionManager.isConfluenceAdministrator(user);
+    }
+
     public boolean authenticate(final String username, final String password)
     {
         final User user = userAccessor.getUser(username);

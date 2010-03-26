@@ -31,6 +31,12 @@ public class DefaultUserManager implements UserManager
         return fisheyeUserManagerAccessor.isSystemAdmin(username);
     }
 
+    public boolean isAdmin(final String username)
+    {
+        // There's no separate notion of admin vs. sys admin in fisheye, so treat them as aliases
+        return isSystemAdmin(username);
+    }
+
     public boolean isUserInGroup(final String username, final String group)
     {
         return fisheyeUserManagerAccessor.isUserInGroup(username, group);

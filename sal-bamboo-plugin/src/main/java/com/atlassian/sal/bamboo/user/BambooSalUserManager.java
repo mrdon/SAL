@@ -85,6 +85,12 @@ public class BambooSalUserManager implements UserManager
         }
     }
 
+    public boolean isAdmin(String username)
+    {
+        // There's no separate notion of admin in bamboo, so we'll just return true if the user is a system admin
+        return isSystemAdmin(username);
+    }
+
     public Principal resolve(String username) throws UserResolutionException
     {
         return bambooUserManager.getBambooUser(username);

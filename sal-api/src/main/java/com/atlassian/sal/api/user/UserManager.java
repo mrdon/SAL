@@ -37,15 +37,23 @@ public interface UserManager
     boolean isUserInGroup(String username, String group);
 
     /**
-     * Returns true or false depending on if a user has been granted the system admin permission.
+     * Returns true or false depending on whether a user has been granted the system admin permission.
      *
      * @param username The username of the user to check
-     * @return true or false depending on if a user has been granted the system admin permission.
+     * @return true or false depending on whether a user has been granted the system admin permission.
      */
     boolean isSystemAdmin(String username);
 
     /**
-     * Given a usernamen & password, this method checks, whether or not the provided user can
+     * Returns true or false depending on whether a user has been granted the admin permission
+     * 
+     * @param username The username of the user to check
+     * @return true or false depending on whether the user has been granted the admin permission
+     */
+    boolean isAdmin(String username);
+
+    /**
+     * Given a usernamen & password, this method checks whether or not the provided user can
      * be authenticated
      *
      * @param username Username of the user

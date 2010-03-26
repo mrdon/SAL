@@ -106,5 +106,32 @@ public class TestDefaultUserManager extends TestCase
         assertTrue(systemAdmin);
         mockGlobalPermissionManagerControl.verify();
     }
+
+    public void testIsAdmin()
+    {
+        MockProviderAccessor mpa = new MockProviderAccessor();
+        final User mockUser = new User("tommy", mpa);
+
+        final MockControl mockGlobalPermissionManagerControl = MockControl.createControl(GlobalPermissionManager.class);
+        final GlobalPermissionManager mockGlobalPermissionManager = (GlobalPermissionManager) mockGlobalPermissionManagerControl.getMock();
+
+        mockGlobalPermissionManager.hasPermission(0, mockUser);
+        mockGlobalPermissionManagerControl.setReturnValue(true);
+        mockGlobalPermissionManagerControl.replay();
+
+        DefaultUserManager defaultUserManager = new DefaultUserManager(mockGlobalPermissionManager, null)
+        {
+            //package level protected for testing
+            User getUser(String username) throws EntityNotFoundException
+            {
+                Assert.assertEquals("tommy", username);
+                return mockUser;
+            }
+        };
+
+        boolean admin = defaultUserManager.isAdmin("tommy");
+        assertTrue(admin);
+        mockGlobalPermissionManagerControl.verify();
+    }
 }
 

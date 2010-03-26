@@ -54,6 +54,19 @@ public class DefaultUserManager implements UserManager
         }
     }
 
+    public boolean isAdmin(final String username)
+    {
+        try
+        {
+            final User user = getUser(username);
+            return globalPermissionManager.hasPermission(Permissions.ADMINISTER, user);
+        }
+        catch (EntityNotFoundException e)
+        {
+            return false;
+        }
+    }
+
     public boolean authenticate(final String username, final String password)
     {
         try

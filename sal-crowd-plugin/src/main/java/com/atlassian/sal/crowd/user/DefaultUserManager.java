@@ -29,6 +29,12 @@ public class DefaultUserManager implements UserManager
         return userService.isSystemAdmin(username);
     }
 
+    public boolean isAdmin(final String username)
+    {
+        // There's no separate notion of admin vs. sys admin, so treat them as aliases
+        return isSystemAdmin(username);
+    }
+
     public boolean isUserInGroup(final String username, final String group)
     {
         return userService.isUserInGroup(username, group);

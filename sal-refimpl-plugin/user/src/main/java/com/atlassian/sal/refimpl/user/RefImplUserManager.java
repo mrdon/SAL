@@ -54,6 +54,12 @@ public class RefImplUserManager implements com.atlassian.sal.api.user.UserManage
         return isUserInGroup(username, "administrators");
     }
 
+    public boolean isAdmin(final String username)
+    {
+        // There's no separate notion of admin vs. sysadmin in the refapp, so treat them as aliases
+        return isSystemAdmin(username);
+    }
+
     public boolean authenticate(final String username, final String password)
     {
         try

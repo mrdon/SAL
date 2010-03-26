@@ -88,6 +88,54 @@ public class TestDefaultUserManager extends TestCase
         mockUser2Control.verify();
     }
 
+    public void testIsAdminNoUser()
+    {
+        final MockControl mockUserControl = MockControl.createControl(User.class);
+        final User mockAdminUser = (User) mockUserControl.getMock();
+        mockUserControl.replay();
+
+        final MockControl mockUser2Control = MockControl.createControl(User.class);
+        final User mockNoAccessUser = (User) mockUser2Control.getMock();
+        mockUser2Control.replay();
+
+        final MockControl mockUserAccessorControl = MockControl.createControl(UserAccessor.class);
+        final UserAccessor mockUserAccessor = (UserAccessor) mockUserAccessorControl.getMock();
+
+
+        mockUserAccessor.getUser("tommy");
+        mockUserAccessorControl.setReturnValue(mockAdminUser);
+        mockUserAccessor.isSuperUser(mockAdminUser);
+        mockUserAccessorControl.setReturnValue(false);
+
+        mockUserAccessor.getUser("noaccess");
+        mockUserAccessorControl.setReturnValue(mockNoAccessUser);
+        mockUserAccessor.isSuperUser(mockNoAccessUser);
+        mockUserAccessorControl.setReturnValue(false);
+
+        mockUserAccessorControl.replay();
+
+        final MockControl mockPermissionManagerControl = MockControl.createControl(PermissionManager.class);
+        final PermissionManager permissionManager = (PermissionManager) mockPermissionManagerControl.getMock();
+
+
+        permissionManager.isConfluenceAdministrator(mockAdminUser);
+        mockPermissionManagerControl.setReturnValue(true);
+        permissionManager.isConfluenceAdministrator(mockNoAccessUser);
+        mockPermissionManagerControl.setReturnValue(false);
+        mockPermissionManagerControl.replay();
+
+        final DefaultUserManager defaultUserManager = new DefaultUserManager(mockUserAccessor, permissionManager);
+
+        boolean isAdmin = defaultUserManager.isAdmin("tommy");
+        assertTrue(isAdmin);
+
+        isAdmin = defaultUserManager.isAdmin("noaccess");
+        assertFalse(isAdmin);
+
+        mockUserControl.verify();
+        mockUser2Control.verify();
+    }
+
     public void testAuthenticate()
     {
 
