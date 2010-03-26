@@ -32,23 +32,23 @@ public interface UserManager
      *
      * @param username The username to check
      * @param group    The group to check
-     * @return True if the user is in the specified group
+     * @return {@code true} if the user is in the specified group
      */
     boolean isUserInGroup(String username, String group);
 
     /**
-     * Returns true or false depending on whether a user has been granted the system admin permission.
+     * Returns {@code true} or {@code false} depending on whether a user has been granted the system admin permission.
      *
      * @param username The username of the user to check
-     * @return true or false depending on whether a user has been granted the system admin permission.
+     * @return {@code true} or {@code false} depending on whether a user has been granted the system admin permission.
      */
     boolean isSystemAdmin(String username);
 
     /**
-     * Returns true or false depending on whether a user has been granted the admin permission
+     * Returns {@code true} or {@code false} depending on whether a user has been granted the admin permission
      * 
      * @param username The username of the user to check
-     * @return true or false depending on whether the user has been granted the admin permission
+     * @return {@code true} or {@code false} depending on whether the user has been granted the admin permission
      */
     boolean isAdmin(String username);
 
@@ -58,7 +58,7 @@ public interface UserManager
      *
      * @param username Username of the user
      * @param password Password of the user
-     * @return True if the user can be authenticated, false otherwise
+     * @return {@code true} if the user can be authenticated, {@code false} otherwise
      */
     boolean authenticate(String username, String password);
 
