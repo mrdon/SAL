@@ -2,13 +2,14 @@ package com.atlassian.sal.confluence.user;
 
 import junit.framework.TestCase;
 
-import org.easymock.MockControl;
+import static org.easymock.EasyMock.*;
 
 import com.atlassian.confluence.security.Permission;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.user.User;
+import org.easymock.MockControl;
 
 /**
  */
@@ -34,58 +35,28 @@ public class TestDefaultUserManager extends TestCase
 
     public void testIsSystemAdminNoUser()
     {
+        final User mockUser = createMock(User.class);
+        final User mockUser2 = createMock(User.class);
+        final UserAccessor mockUserAccessor = createMock(UserAccessor.class);
+        final PermissionManager permissionManager = createMock(PermissionManager.class);
 
-        final MockControl mockUserControl = MockControl.createControl(User.class);
-        final User mockUser = (User) mockUserControl.getMock();
-        mockUserControl.replay();
+        expect(mockUserAccessor.getUser("tommy")).andReturn(null);
+        expect(mockUserAccessor.isSuperUser(mockUser)).andReturn(false);
+        expect(mockUserAccessor.getUser("noaccess")).andReturn(mockUser);
+        expect(mockUserAccessor.isSuperUser(mockUser)).andReturn(false);
+        expect(mockUserAccessor.getUser("sysadmin")).andReturn(mockUser2);
+        expect(mockUserAccessor.isSuperUser(mockUser2)).andReturn(true);
+        expect(permissionManager.hasPermission(mockUser, Permission.ADMINISTER, PermissionManager.TARGET_SYSTEM)).andReturn(false);
+        expect(permissionManager.hasPermission(mockUser2, Permission.ADMINISTER, PermissionManager.TARGET_SYSTEM)).andReturn(true);
 
-        final MockControl mockUser2Control = MockControl.createControl(User.class);
-        final User mockUser2 = (User) mockUser2Control.getMock();
-        mockUser2Control.replay();
-
-        final MockControl mockUserAccessorControl = MockControl.createControl(UserAccessor.class);
-        final UserAccessor mockUserAccessor = (UserAccessor) mockUserAccessorControl.getMock();
-
-        mockUserAccessor.getUser("tommy");
-        mockUserAccessorControl.setReturnValue(null);
-        mockUserAccessor.isSuperUser(mockUser);
-        mockUserAccessorControl.setReturnValue(false);
-
-        mockUserAccessor.getUser("noaccess");
-        mockUserAccessorControl.setReturnValue(mockUser);
-        mockUserAccessor.isSuperUser(mockUser);
-        mockUserAccessorControl.setReturnValue(false);
-
-        mockUserAccessor.getUser("sysadmin");
-        mockUserAccessorControl.setReturnValue(mockUser2);
-        mockUserAccessor.isSuperUser(mockUser2);
-        mockUserAccessorControl.setReturnValue(true);
-
-        mockUserAccessorControl.replay();
-
-        final MockControl mockPermissionManagerControl = MockControl.createControl(PermissionManager.class);
-        final PermissionManager permissionManager = (PermissionManager) mockPermissionManagerControl.getMock();
-
-        permissionManager.hasPermission(mockUser, Permission.ADMINISTER, PermissionManager.TARGET_SYSTEM);
-        mockPermissionManagerControl.setReturnValue(false);
-
-        permissionManager.hasPermission(mockUser2, Permission.ADMINISTER, PermissionManager.TARGET_SYSTEM);
-        mockPermissionManagerControl.setReturnValue(true);
-        mockPermissionManagerControl.replay();
+        replay(mockUser, mockUser2, mockUserAccessor, permissionManager);
 
         final DefaultUserManager defaultUserManager = new DefaultUserManager(mockUserAccessor, permissionManager);
+        assertFalse(defaultUserManager.isSystemAdmin("tommy"));
+        assertFalse(defaultUserManager.isSystemAdmin("noaccess"));
+        assertTrue(defaultUserManager.isSystemAdmin("sysadmin"));
 
-        boolean isSystemAdmin = defaultUserManager.isSystemAdmin("tommy");
-        assertFalse(isSystemAdmin);
-
-        isSystemAdmin = defaultUserManager.isSystemAdmin("noaccess");
-        assertFalse(isSystemAdmin);
-
-        isSystemAdmin = defaultUserManager.isSystemAdmin("sysadmin");
-        assertTrue(isSystemAdmin);
-
-        mockUserControl.verify();
-        mockUser2Control.verify();
+        verify(mockUser, mockUser2);
     }
 
     public void testIsAdmin()
