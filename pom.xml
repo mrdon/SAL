@@ -33,7 +33,6 @@
         <module>sal-core</module>
         <module>sal-spring</module>
         <module>sal-trusted-apps-plugin-support</module>
-        <module>sal-crowd-plugin</module>
         <module>sal-bamboo-plugin</module>
         <module>sal-ctk-plugin</module>
         <module>sal-refimpl-plugin</module>
