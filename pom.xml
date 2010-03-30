@@ -15,15 +15,9 @@
     </parent>
 
     <properties>
-        <plugins.version>2.1.1</plugins.version>
+        <plugins.version>2.5.0.beta2</plugins.version>
         <jdkLevel>1.5</jdkLevel>
-        <fisheye-jar.version>1.7-M6-382</fisheye-jar.version>
-        <atlassian-fisheye-api.version>1.7-M6-382</atlassian-fisheye-api.version>
-        <confluence.version>2.10.2</confluence.version>
         <bamboo.version>2.5-studio-m1</bamboo.version>
-        <crowd.version>2.1.0-m1</crowd.version>
-        <legacyjira.version>3.13</legacyjira.version>
-        <jira.version>4.1-SNAPSHOT</jira.version>
     </properties>
 
     <modules>
