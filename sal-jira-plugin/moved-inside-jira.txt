@@ -1,1 +1,0 @@
-The SAL jira plugin has been moved inside JIRA itself.
