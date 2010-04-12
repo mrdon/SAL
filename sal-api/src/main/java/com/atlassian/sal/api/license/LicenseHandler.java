@@ -8,6 +8,12 @@ package com.atlassian.sal.api.license;
 public interface LicenseHandler
 {
     /**
+     * @return  the Atlassian server id of the application, or {@code null} if
+     * the server id is not set.
+     */
+    String getServerId();
+
+    /**
      * Sets the license string for the currently running application
      *
      * @param license The license string

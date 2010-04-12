@@ -21,6 +21,12 @@ public class BambooLicenseHandler implements LicenseHandler
     // -------------------------------------------------------------------------------------------------- Action Methods
     // -------------------------------------------------------------------------------------------------- Public Methods
 
+    public String getServerId()
+    {
+        // TODO: implement this by querying the product license (through the bamboo API):
+        return null;
+    }
+
     public void setLicense(String license)
     {
         boolean licenseValid = bambooLicenseManager.authenticateLicense(license);
