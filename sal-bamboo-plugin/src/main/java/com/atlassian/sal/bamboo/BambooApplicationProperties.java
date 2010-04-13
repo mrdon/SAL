@@ -3,6 +3,7 @@ package com.atlassian.sal.bamboo;
 import org.apache.log4j.Logger;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.bamboo.util.BuildUtils;
+import com.atlassian.bamboo.Bamboo;
 import com.atlassian.bamboo.configuration.AdministrationConfigurationManager;
 import com.atlassian.config.HomeLocator;
 
