@@ -24,10 +24,13 @@ public interface PluginUpgradeTask
 
 
     /**
-     * Perform the upgrade task.
+     * Perform the upgrade task. An exception should be thrown if the upgrade fails and cannot be recovered from. A
+     * collection of error or warning messages should be returned if there a problems with the upgrade that are not
+     * severe enough to halt the execution of the entire upgrade process. An exception should be thrown if the upgrade
+     * process cannot continue.
      *
-     * @return any errors that occur.
-     * @throws Exception if upgrade fails
+     * @return a collection of warnings about the upgrade
+     * @throws Exception if the upgrade fails
      */
     public Collection<Message> doUpgrade() throws Exception;
 
