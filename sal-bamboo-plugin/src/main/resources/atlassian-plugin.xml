@@ -19,8 +19,8 @@
    <interface>com.atlassian.sal.api.component.ComponentLocator</interface>
  </component>
 
-  <component key="requestFactory" class="com.atlassian.sal.core.net.HttpClientRequestFactory" name="Request Factory" public="true">
-    <interface>com.atlassian.sal.api.net.RequestFactory</interface>
+  <component key="requestFactory" class="com.atlassian.sal.core.net.HttpClientRequestFactory" name="Non-Marshalling Request Factory" public="true">
+    <interface>com.atlassian.sal.api.net.NonMarshallingRequestFactory</interface>
   </component>
 
   <component key="searchQueryParser" class="com.atlassian.sal.core.search.query.DefaultSearchQueryParser" name="Search Query Parser" public="true">

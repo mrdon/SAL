@@ -3,6 +3,7 @@ package com.atlassian.sal.core.net;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import com.atlassian.sal.api.net.NonMarshallingRequestFactory;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
@@ -10,12 +11,15 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.atlassian.sal.api.net.RequestFactory;
 import com.atlassian.sal.api.net.Request.MethodType;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.core.trusted.CertificateFactory;
 
-public class HttpClientRequestFactory implements RequestFactory<HttpClientRequest>
+/**
+ * Does NOT support json/xml oject marshalling. Use the atlassian-rest implementation of
+ * {@link com.atlassian.sal.api.net.RequestFactory} instead.
+ */
+public class HttpClientRequestFactory implements NonMarshallingRequestFactory<HttpClientRequest>
 {
     private static final Logger log = Logger.getLogger(HttpClientRequestFactory.class);
 
@@ -62,8 +66,7 @@ public class HttpClientRequestFactory implements RequestFactory<HttpClientReques
     /**
      * Applies a set of parameters to a client
      *
-     * @param client the client to which parameters are applied
-     * @param connectionParameters the parameters which will be applied
+     * @param httpClient the client to which parameters are applied
      */
     protected void configureConnectionParameters(final HttpClient httpClient)
     {

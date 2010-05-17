@@ -67,6 +67,11 @@ public class MockRequest implements Request<MockRequest, MockResponse>
         return this;
     }
 
+    public MockRequest setEntity(Object entity)
+    {
+        throw new UnsupportedOperationException();
+    }
+
     public MockRequest setRequestContentType(final String contentType)
     {
         this.requestContentType = contentType;

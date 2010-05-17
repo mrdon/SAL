@@ -8,9 +8,9 @@
     <component-import key="trustedApplicationsManager" interface="com.atlassian.security.auth.trustedapps.TrustedApplicationsManager" />
     <component-import key="salUserManagerManager" interface="com.atlassian.sal.api.user.UserManager" />
 
-    <component name="Request Factory" key="requestFactory" 
+    <component name="Non-Marshalling Request Factory" key="requestFactory"
                class="com.atlassian.sal.core.net.HttpClientRequestFactory" system="true" public="true">
-        <interface>com.atlassian.sal.api.net.RequestFactory</interface>
+        <interface>com.atlassian.sal.api.net.NonMarshallingRequestFactory</interface>
     </component>
     <component name="Refimpl Certificate Factory" key="certificateFactory"
                class="com.atlassian.sal.refimpl.trusted.RefImplCertificateFactory" system="true">

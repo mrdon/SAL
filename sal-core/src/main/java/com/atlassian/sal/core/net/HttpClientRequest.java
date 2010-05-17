@@ -149,6 +149,11 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
         return this;
     }
 
+    public HttpClientRequest setEntity(Object entity)
+    {
+        throw new UnsupportedOperationException("This SAL request does not support object marshaling. Use the RequestFactory component instead.");
+    }
+
     public HttpClientRequest setRequestContentType(final String requestContentType)
     {
         this.requestContentType = requestContentType;
@@ -459,6 +464,11 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
     public Map<String, List<String>> getHeaders()
     {
         return Collections.unmodifiableMap(headers);
+    }
+
+    public MethodType getMethodType()
+    {
+        return methodType;
     }
 
     @Override

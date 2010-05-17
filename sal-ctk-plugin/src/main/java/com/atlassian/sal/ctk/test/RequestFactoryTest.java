@@ -1,5 +1,6 @@
 package com.atlassian.sal.ctk.test;
 
+import com.atlassian.sal.api.net.NonMarshallingRequestFactory;
 import org.springframework.stereotype.Component;
 
 import com.atlassian.sal.api.net.Request;
@@ -16,7 +17,7 @@ public class RequestFactoryTest implements CtkTest
     private final RequestFactory<Request<?, ?>> requestFactory;
     private boolean passed = false;
 
-    public RequestFactoryTest(final RequestFactory<Request<?, ?>> requestFactory)
+    public RequestFactoryTest(final NonMarshallingRequestFactory<Request<?, ?>> requestFactory)
     {
         this.requestFactory = requestFactory;
     }

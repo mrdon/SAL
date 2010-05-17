@@ -41,8 +41,13 @@ public class HttpClientResponse implements Response
 			throw new ResponseException(e.getMessage(), e);
 		}
 	}
-	
-	public int getStatusCode()
+
+    public <T> T getEntity(Class<T> entityClass) throws ResponseException
+    {
+        throw new UnsupportedOperationException("This SAL request does not support object marshalling. Use the RequestFactory component instead.");
+    }
+
+    public int getStatusCode()
 	{
 		return method.getStatusCode();
 	}

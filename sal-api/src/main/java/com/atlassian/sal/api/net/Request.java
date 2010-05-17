@@ -53,6 +53,14 @@ public interface Request<T extends Request<?, ?>, R extends Response>
     T setRequestBody(String requestBody);
 
     /**
+     * Set an entity as the request body
+     *
+     * @param entity the request entity to be marshalled, not null
+     * @return this Request object
+     */
+    T setEntity(Object entity);
+
+    /**
      * Sets Content-Type of the body of the request. In default implementation only requests of type {@link MethodType#POST} and {@link MethodType#POST} can have request body.
      *
      * @param contentType the contentType of the request

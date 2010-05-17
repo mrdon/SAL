@@ -5,6 +5,8 @@ import com.atlassian.sal.api.net.Request.MethodType;
 /**
  * Factory to create {@link Request}s. Requests are used to make network calls.
  *
+ * The rest plugin provides the default implementation for this interface.
+ *
  * @param <T> The type of request to create
  * @since 2.0
  */

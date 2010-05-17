@@ -28,6 +28,15 @@ public interface Response
     InputStream getResponseBodyAsStream() throws ResponseException;
 
     /**
+     * Unmarshall the response body as the specified type
+     *
+     * @param entityClass the type of the response
+     * @return the unmarshalled object
+     * @throws ResponseException if there was difficulty reading the response or unmarshalling the object
+     */
+    <T> T getEntity(Class<T> entityClass) throws ResponseException;
+
+    /**
      * @return status test of the response
      */
     String getStatusText();

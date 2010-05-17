@@ -1,6 +1,7 @@
 package com.atlassian.sal.testresources.net;
 
 import com.atlassian.sal.api.net.Response;
+import com.atlassian.sal.api.net.ResponseException;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -51,6 +52,11 @@ public class MockResponse implements Response
     public void setResponseBodyAsStream(InputStream responseBodyAsStream)
     {
         this.responseBodyAsStream = responseBodyAsStream;
+    }
+
+    public <T> T getEntity(Class<T> entityClass) throws ResponseException
+    {
+        throw new UnsupportedOperationException();
     }
 
     public String getStatusText()
