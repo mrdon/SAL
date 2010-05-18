@@ -76,6 +76,16 @@ public class TestAbstractStringPluginSettings
     }
 
     @Test
+    public void testEmptyMap()
+    {
+        final Map<String, String> value = new HashMap<String, String>();
+        acceptor.put(KEY, value);
+        final Object actual = acceptor.get(KEY);
+        assertTrue(actual instanceof Map);
+        assertTrue(((Map) actual).isEmpty());
+    }
+
+    @Test
     public void testProperties()
     {
         final Properties value = new Properties();

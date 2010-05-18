@@ -135,14 +135,19 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
             final String[] items = nval.split("\n");
             for (String item : items)
             {
-                String[] pair = item.split(VERTICAL_TAB);
-                if (pair.length != 2)
+                if (item.length() > 0)
                 {
-                    log.error("Could not parse map element: << " + item + " >> \n" +
-                        "Full list: \n" + nval);
+                    String[] pair = item.split(VERTICAL_TAB);
+                    if (pair.length != 2)
+                    {
+                        log.error("Could not parse map element: << " + item + " >> \n" +
+                            "Full list: \n" + nval);
+                    }
+                    else
+                    {
+                        map.put(pair[0], pair[1]);
+                    }    
                 }
-
-                map.put(pair[0], pair[1]);
             }
 
             return map;
