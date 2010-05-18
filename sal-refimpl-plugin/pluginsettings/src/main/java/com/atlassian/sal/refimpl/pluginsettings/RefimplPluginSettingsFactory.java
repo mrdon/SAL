@@ -62,31 +62,7 @@ public class RefimplPluginSettingsFactory implements PluginSettingsFactory
         }
         if (file != null && file.length() > 0)
         {
-            InputStream is = null;
-            try
-            {
-                is = new FileInputStream(file);
-                properties.loadFromXML(is);
-            }
-            catch (Exception e)
-            {
-                log.error("Error loading plugin settings properties, using memory store", e);
-                file = null;
-            }
-            finally
-            {
-                if (is != null)
-                {
-                    try
-                    {
-                        is.close();
-                    }
-                    catch (IOException ioe)
-                    {
-                        log.error("Error closing file", ioe);
-                    }
-                }
-            }
+            file = load(file);
         }
         if (file != null)
         {
@@ -94,6 +70,36 @@ public class RefimplPluginSettingsFactory implements PluginSettingsFactory
             log.info("Using " + file.getAbsolutePath() + " as plugin settings store");
         }
         this.file = file;
+    }
+
+    private File load(File file)
+    {
+        InputStream is = null;
+        try
+        {
+            is = new FileInputStream(file);
+            properties.loadFromXML(is);
+        }
+        catch (Exception e)
+        {
+            log.error("Error loading plugin settings properties, using memory store", e);
+            file = null;
+        }
+        finally
+        {
+            if (is != null)
+            {
+                try
+                {
+                    is.close();
+                }
+                catch (IOException ioe)
+                {
+                    log.error("Error closing file", ioe);
+                }
+            }
+        }
+        return file;
     }
 
     public PluginSettings createSettingsForKey(String key)
