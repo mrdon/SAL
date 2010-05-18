@@ -34,6 +34,11 @@ public class BambooI18nResolver extends AbstractI18nResolver
         return getI18nBean().getText(key, arguments);
     }
 
+    public Map<String, String> getAllTranslationsForPrefix(String prefix)
+    {
+        return getI18nBean().getAllTranslationsForPrefix(prefix);
+    }
+
     public Map<String, String> getAllTranslationsForPrefix(String prefix, Locale locale)
     {
         return getI18nBean(locale).getAllTranslationsForPrefix(prefix);

@@ -63,6 +63,20 @@ public class RefimplI18nResolver extends AbstractI18nResolver
         return message;
     }
 
+    public Map<String, String> getAllTranslationsForPrefix(String prefix)
+    {
+        assertNotNull(prefix, "prefix");
+
+        Map<String, String> translationsWithPrefix = new HashMap<String, String>();
+        for (Plugin plugin : pluginResourceBundleNames.keySet())
+        {
+
+            addMatchingTranslationsToMap(prefix, Locale.getDefault(), plugin, pluginResourceBundleNames.get(plugin),
+                                         translationsWithPrefix);
+        }
+        return translationsWithPrefix;
+    }
+
     public Map<String, String> getAllTranslationsForPrefix(String prefix, Locale locale)
     {
         assertNotNull(prefix, "prefix");
