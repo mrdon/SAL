@@ -7,7 +7,7 @@ package com.atlassian.sal.api.transaction;
  *
  * @since 2.0
  */
-public interface TransactionCallback
+public interface TransactionCallback<T>
 {
     /**
      * Runs an action in a transaction and returns a optional value.
@@ -15,5 +15,5 @@ public interface TransactionCallback
      * @return Optional result of the operation. May be null
      * @throws RuntimeException if anything went wrong.  The caller will be responsible for rolling back.
      */
-    Object doInTransaction();
+    T doInTransaction();
 }

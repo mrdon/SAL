@@ -17,5 +17,5 @@ public interface TransactionTemplate
      * @param action The callback
      * @return The object returned from the callback
      */
-    Object execute(TransactionCallback action);
+    <T> T execute(TransactionCallback<T> action);
 }
