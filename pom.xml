@@ -142,4 +142,12 @@
         <developerConnection>scm:svn:https://studio.atlassian.com/svn/SAL/trunk</developerConnection>
         <url>https://studio.atlassian.com/svn/SAL/trunk</url>
     </scm>
+
+  <distributionManagement>
+    <site>
+	<id>atlassian-documentation</id>
+	<url>dav:https://docs.atlassian.com/sal/${project.version}</url>
+    </site>
+  </distributionManagement>
+
 </project>
