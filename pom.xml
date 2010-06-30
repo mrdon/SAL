@@ -28,7 +28,6 @@
         <module>sal-trusted-apps-plugin-support</module>
         <module>sal-bamboo-plugin</module>
         <module>sal-ctk-plugin</module>
-        <module>sal-refimpl-plugin</module>
     </modules>
 
     <build>
