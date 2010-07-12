@@ -3,7 +3,6 @@ package com.atlassian.sal.core.backup;
 import com.atlassian.sal.api.backup.Backup;
 import com.atlassian.sal.api.backup.BackupRegistry;
 import com.google.common.collect.ImmutableSet;
-import org.apache.log4j.Logger;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -14,7 +13,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class MemoryBackupRegistry implements BackupRegistry
 {
-    private final Logger log = Logger.getLogger(this.getClass());
     private final Set<Backup> backups;
 
     public MemoryBackupRegistry()
