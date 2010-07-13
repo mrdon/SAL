@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.atlassian.sal</groupId>
         <artifactId>sal-parent</artifactId>
-        <version>2.1.1-SNAPSHOT</version>
+        <version>2.1.1.alpha127897991884</version>
     </parent>
 
     <artifactId>sal-trusted-apps-plugin-support</artifactId>
