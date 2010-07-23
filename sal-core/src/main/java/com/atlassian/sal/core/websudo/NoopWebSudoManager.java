@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class NoopWebSudoManager implements WebSudoManager
 {
-    public boolean isWebSudoProtected(final HttpServletRequest request)
+    public boolean canExecuteRequest(final HttpServletRequest request)
     {
         return true; // Code protected by WebSudo should still be executed if the host application doesn't support WebSudo
     }

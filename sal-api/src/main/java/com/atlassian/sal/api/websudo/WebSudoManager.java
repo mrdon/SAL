@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
  *  @Override
  * public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
  * {
- *      if(webSudoManager.isWebSudoProtected(request)) {
+ *      if(webSudoManager.canExecuteRequest(request)) {
  *          // do something
  *      } else {
  *          webSudoManager.enforceWebSudoProtection(request, response);
@@ -26,20 +26,21 @@ public interface WebSudoManager
 {
 
     /**
-     * Check whether this request is protected by a WebSudo session.
+     * Check whether this request can be executed. This checks if the request is already part of
+     * a WebSudo session or if WebSudo is enabled at all.
      * <p/> Calling this method has no side effects.
      *
      * @param request the current {@link HttpServletRequest}
-     * @return {@code true} if this request is protected by a WebSudo session, {@code false} otherwise.
+     * @return {@code true} if this request is protected by a WebSudo session or WebSudo is disabled, {@code false} otherwise.
      */
-    boolean isWebSudoProtected(HttpServletRequest request);
+    boolean canExecuteRequest(HttpServletRequest request);
 
     /**
      * Ensure that the current request is protected by a WebSudo session. Typically this will result in a redirect
      * to a WebSudo form which in turn redirects to the original request.
      * <p/>
      * This is a no op if this request is already
-     * protected by a WebSudo session (i.e. {@link #isWebSudoProtected(javax.servlet.http.HttpServletRequest)} would return true).
+     * protected by a WebSudo session (i.e. {@link #canExecuteRequest(javax.servlet.http.HttpServletRequest)} would return true).
      *
      * @param request  the current {@link HttpServletRequest}
      * @param response the current {@link HttpServletResponse}
