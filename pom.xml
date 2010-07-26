@@ -10,7 +10,7 @@
     <parent>
         <groupId>com.atlassian.pom</groupId>
         <artifactId>atlassian-public-pom</artifactId>
-        <version>23</version>
+        <version>24</version>
     </parent>
 
     <properties>
