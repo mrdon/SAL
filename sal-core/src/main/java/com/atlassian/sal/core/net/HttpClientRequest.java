@@ -3,6 +3,7 @@ package com.atlassian.sal.core.net;
 import com.atlassian.sal.api.net.Request;
 import com.atlassian.sal.api.net.ResponseException;
 import com.atlassian.sal.api.net.ResponseHandler;
+import com.atlassian.sal.api.net.ReturningResponseHandler;
 import com.atlassian.sal.api.net.auth.Authenticator;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.core.net.auth.BaseAuthenticator;
@@ -36,10 +37,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * HttpClient implementation of Request interface
@@ -227,11 +226,8 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see com.atlassian.sal.api.net.Request#execute()
-     */
-
-    public void execute(final ResponseHandler<HttpClientResponse> responseHandler) throws ResponseException
+    public <E> E executeAndReturn(ReturningResponseHandler<HttpClientResponse, E> httpClientResponseResponseHandler)
+            throws ResponseException
     {
         final HttpMethod method = makeMethod();
         processHeaders(method);
@@ -246,7 +242,7 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
         try
         {
             executeMethod(method, 0);
-            responseHandler.handle(new HttpClientResponse(method));
+            return httpClientResponseResponseHandler.handle(new HttpClientResponse(method));
         }
         catch (IOException ioe)
         {
@@ -263,6 +259,22 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
                 httpConnectionManager.closeIdleConnections(0);
             }
         }
+    }
+
+    /* (non-Javadoc)
+     * @see com.atlassian.sal.api.net.Request#execute()
+     */
+    public void execute(final ResponseHandler<HttpClientResponse> responseHandler)
+            throws ResponseException
+    {
+        executeAndReturn(new ReturningResponseHandler<HttpClientResponse, Void>()
+        {
+            public Void handle(final HttpClientResponse response) throws ResponseException
+            {
+                responseHandler.handle(response);
+                return null;
+            }
+        });
     }
 
     private static void exhaustResponseContents(final HttpMethod response)
@@ -318,23 +330,19 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
         }
     }
 
-
     public String execute() throws ResponseException
     {
-        final Set<String> stringHolder = new HashSet<String>();
-        execute(new ResponseHandler<HttpClientResponse>()
+        return executeAndReturn(new ReturningResponseHandler<HttpClientResponse, String>()
         {
-            public void handle(final HttpClientResponse response) throws ResponseException
+            public String handle(final HttpClientResponse response) throws ResponseException
             {
                 if (!response.isSuccessful())
                 {
                     throw new ResponseException("Unexpected response received. Status code: " + response.getStatusCode());
                 }
-                stringHolder.add(response.getResponseBodyAsString());
+                return response.getResponseBodyAsString();
             }
         });
-
-        return stringHolder.isEmpty() ? "" : stringHolder.iterator().next();
     }
     // ------------------------------------------------------------------------------------------------------------------------------------
     // -------------------------------------------------- private methods ------------------------------------------------------------------
@@ -474,6 +482,7 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
     @Override
     public String toString()
     {
-        return methodType + " " + url + ", Parameters: " + parameters + (StringUtils.isBlank(requestBody) ? "" : "\nRequest body:\n" + requestBody);
+        return methodType + " " + url + ", Parameters: " + parameters +
+                (StringUtils.isBlank(requestBody) ? "" : "\nRequest body:\n" + requestBody);
     }
 }

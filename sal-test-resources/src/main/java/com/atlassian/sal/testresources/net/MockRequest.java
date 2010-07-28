@@ -1,9 +1,6 @@
 package com.atlassian.sal.testresources.net;
 
-import com.atlassian.sal.api.net.Request;
-import com.atlassian.sal.api.net.Response;
-import com.atlassian.sal.api.net.ResponseException;
-import com.atlassian.sal.api.net.ResponseHandler;
+import com.atlassian.sal.api.net.*;
 import com.atlassian.sal.api.net.auth.Authenticator;
 
 import java.util.ArrayList;
@@ -34,7 +31,7 @@ public class MockRequest implements Request<MockRequest, MockResponse>
     private String basicPassword;
     private String seraphUser;
     private String seraphPassword;
-    private Response response;
+    private MockResponse response;
     private String responseBody;
 
     public MockRequest(final MethodType methodType, final String url)
@@ -133,6 +130,15 @@ public class MockRequest implements Request<MockRequest, MockResponse>
         seraphUser = username;
         seraphPassword = password;
         return this;
+    }
+
+    public <RET> RET executeAndReturn(ReturningResponseHandler<MockResponse, RET> responseHandler) throws ResponseException
+    {
+        if (response == null)
+        {
+            response = new MockResponse();
+        }
+        return responseHandler.handle(response);
     }
 
     public void execute(final ResponseHandler responseHandler) throws ResponseException
@@ -234,7 +240,7 @@ public class MockRequest implements Request<MockRequest, MockResponse>
         return response;
     }
 
-    public void setResponse(final Response response)
+    public void setResponse(final MockResponse response)
     {
         this.response = response;
     }

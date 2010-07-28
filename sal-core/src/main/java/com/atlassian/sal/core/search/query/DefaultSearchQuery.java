@@ -22,7 +22,6 @@ public class DefaultSearchQuery implements SearchQuery
         append(query);
 	}
 
-   
     public SearchQuery setParameter(String name, String value)
     {
     	parameters.put(name, new BasicSearchParameter(name, value));
@@ -33,7 +32,7 @@ public class DefaultSearchQuery implements SearchQuery
 	{
 		final SearchParameter value = parameters.get(name);
 		
-		return value==null?null:value.getValue();
+		return value == null ? null : value.getValue();
 	}
 
 	public String buildQueryString()
@@ -71,20 +70,18 @@ public class DefaultSearchQuery implements SearchQuery
 		return this;
 	}
 
-
 	public String getSearchString()
 	{
 		return URIUtil.decode(searchString.toString());
 	}
 
-
 	public int getParameter(String name, int defaultValue)
 	{
-		final String value = getParameter(name);
 		try
 		{
-			return Integer.parseInt(value);
-		} catch (NumberFormatException e)
+			return Integer.parseInt(getParameter(name));
+		}
+        catch (NumberFormatException e)
 		{
 			// ignore
 		}

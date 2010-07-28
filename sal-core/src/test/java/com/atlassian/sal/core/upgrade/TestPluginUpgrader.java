@@ -4,7 +4,6 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
-import com.atlassian.sal.core.upgrade.PluginUpgrader;
 import com.mockobjects.dynamic.C;
 import com.mockobjects.dynamic.Mock;
 import junit.framework.TestCase;

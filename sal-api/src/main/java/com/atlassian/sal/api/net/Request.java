@@ -5,14 +5,13 @@ import com.atlassian.sal.api.net.auth.Authenticator;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Interface Request represents a request to retrieve data. To execute a request call {@link Request#execute(ResponseHandler)}.
  *
  * @param <T> the type of request used for method chaining
  * @since 2.0
  */
-public interface Request<T extends Request<?, ?>, R extends Response>
+public interface Request<T extends Request<?, ?>, RESP extends Response>
 {
     /**
      * Represents type of network request
@@ -152,7 +151,7 @@ public interface Request<T extends Request<?, ?>, R extends Response>
      * @param responseHandler Callback handler of the response.
      * @throws ResponseException If the response cannot be retrieved
      */
-    void execute(ResponseHandler<R> responseHandler) throws ResponseException;
+    void execute(ResponseHandler<RESP> responseHandler) throws ResponseException;
 
     /**
      * Executes a request and if response is successful, returns response as a string. @see {@link Response#getResponseBodyAsString()}
@@ -162,5 +161,12 @@ public interface Request<T extends Request<?, ?>, R extends Response>
      */
     String execute() throws ResponseException;
 
-
+    /**
+     * Executes the request and returns a result value.
+     *
+     * @param responseHandler Callback handler of the response.
+     * @throws ResponseException If the response cannot be retrieved
+     * @since   v2.2.0
+     */
+    <RET> RET executeAndReturn(ReturningResponseHandler<RESP, RET> responseHandler) throws ResponseException;
 }
