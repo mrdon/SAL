@@ -70,22 +70,22 @@ public class DefaultSearchQuery implements SearchQuery
 		return this;
 	}
 
-	public String getSearchString()
-	{
-		return URIUtil.decode(searchString.toString());
-	}
+    public String getSearchString()
+    {
+        return URIUtil.decode(searchString.toString());
+    }
 
-	public int getParameter(String name, int defaultValue)
-	{
-		try
-		{
-			return Integer.parseInt(getParameter(name));
-		}
+    public int getParameter(String name, int defaultValue)
+    {
+        try
+        {
+            return Integer.parseInt(getParameter(name));
+        }
         catch (NumberFormatException e)
-		{
-			// ignore
-		}
-		return defaultValue;
-	}
-	
+        {
+            // ignore
+        }
+        return defaultValue;
+    }
+
 }
