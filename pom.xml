@@ -28,6 +28,9 @@
         <module>sal-trusted-apps-plugin-support</module>
         <module>sal-bamboo-plugin</module>
         <module>sal-ctk-plugin</module>
+        <!-- from here DataSourceProvider modules, to be removed once inntegrated into the products -->
+        <module>sal-dsp-backport</module>
+        <module>sal-confluence-dsp</module>
     </modules>
 
     <build>
@@ -53,6 +56,7 @@
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
                     <version>1.4.1</version>
+                    <extensions>true</extensions>
                 </plugin>
                 <plugin>
                     <!-- Deploy to the maven1 repo, necessary as maven1 can't resolve snapshots -->

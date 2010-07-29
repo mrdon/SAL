@@ -1,0 +1,88 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.sal</groupId>
+        <artifactId>sal-parent</artifactId>
+        <version>2.1.0-ao-2-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>sal-confluence-dsp</artifactId>
+    <packaging>bundle</packaging>
+
+    <name>Shared Access Layer Confluence DataSourceProvider</name>
+    <description>Confluence's implementation of the DataSourceProvider API</description>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>atlassian-plugin.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>atlassian-plugin.xml</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>com.atlassian.sal.confluence.dsp</Bundle-SymbolicName>
+                        <Export-Package/>
+                        <Import-Package>
+                            com.atlassian.hibernate,
+                            com.atlassian.sal.api.sql,
+                            java.sql,
+                            javax.naming;resolution:=optional,
+                            javax.sql,
+                            net.sf.hibernate,
+                        </Import-Package>
+                        <Private-Package>
+                            com.atlassian.sal.confluence.*,
+                        </Private-Package>
+                        <Spring-Context>*;timeout:=60</Spring-Context>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.confluence</groupId>
+            <artifactId>confluence</artifactId>
+            <version>3.4-SNAPSHOT</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>tangosol-coherence</groupId>
+                    <artifactId>coherence</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>tangosol-coherence</groupId>
+                    <artifactId>tangosol</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>hibernate</groupId>
+            <artifactId>hibernate</artifactId>
+            <version>2.1.8-atlassian</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>

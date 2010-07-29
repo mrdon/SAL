@@ -8,7 +8,8 @@
 
     <artifactId>sal-api</artifactId>
     <packaging>jar</packaging>
-    <name>Shared Application Access Layer API</name>
+    <name>Shared Access Layer API</name>
+    <description>Atlassian's Shared Application Access Layer API</description>
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -21,11 +22,10 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <archive>
-                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-                    </archive>
+                    <useDefaultManifestFile>true</useDefaultManifestFile>
                 </configuration>
             </plugin>
             <plugin>
