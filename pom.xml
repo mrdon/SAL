@@ -28,9 +28,10 @@
         <module>sal-trusted-apps-plugin-support</module>
         <module>sal-bamboo-plugin</module>
         <module>sal-ctk-plugin</module>
-        <!-- from here DataSourceProvider modules, to be removed once inntegrated into the products -->
+        <!-- from here DataSourceProvider modules, to be removed once integrated into the products -->
         <module>sal-dsp-backport</module>
         <module>sal-confluence-dsp</module>
+        <module>sal-jira-dsp</module>
     </modules>
 
     <build>
@@ -148,8 +149,8 @@
 
   <distributionManagement>
     <site>
-	<id>atlassian-documentation</id>
-	<url>dav:https://docs.atlassian.com/sal/${project.version}</url>
+        <id>atlassian-documentation</id>
+        <url>dav:https://docs.atlassian.com/sal/${project.version}</url>
     </site>
   </distributionManagement>
 

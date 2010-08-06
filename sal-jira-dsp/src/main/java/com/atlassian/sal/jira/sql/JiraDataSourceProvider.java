@@ -1,46 +1,44 @@
-package com.atlassian.sal.confluence.sql;
+package com.atlassian.sal.jira.sql;
 
-import com.atlassian.hibernate.PluginHibernateSessionFactory;
 import com.atlassian.sal.api.sql.DataSourceProvider;
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Session;
+import org.ofbiz.core.entity.ConnectionFactory;
+import org.ofbiz.core.entity.GenericEntityException;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public final class ConfluenceDataSourceProvider implements DataSourceProvider
+public final class JiraDataSourceProvider implements DataSourceProvider
 {
-    private final SessionFactoryDataSource dataSource;
+    private final DataSource ds;
 
-    public ConfluenceDataSourceProvider(PluginHibernateSessionFactory sessionFactory)
+    public JiraDataSourceProvider()
     {
-        this.dataSource = new SessionFactoryDataSource(sessionFactory);
+        ds = new OfBizDataSource("defaultDS");
     }
 
     public DataSource getDataSource()
     {
-        return dataSource;
+        return ds;
     }
 
-    private static class SessionFactoryDataSource extends AbstractDataSource
+    private static class OfBizDataSource extends AbstractDataSource
     {
-        private final PluginHibernateSessionFactory sessionFactory;
+        private final String helperName;
 
-        public SessionFactoryDataSource(PluginHibernateSessionFactory sessionFactory)
+        public OfBizDataSource(String helperName)
         {
-            this.sessionFactory = sessionFactory;
+            this.helperName = helperName;
         }
 
         public Connection getConnection() throws SQLException
         {
-            final Session session = sessionFactory.getSession();
             try
             {
-                return new UncloseableConnection(session.connection());
+                return ConnectionFactory.getConnection(helperName);
             }
-            catch (HibernateException e)
+            catch (GenericEntityException e)
             {
                 throw new SQLException(e.getMessage());
             }
