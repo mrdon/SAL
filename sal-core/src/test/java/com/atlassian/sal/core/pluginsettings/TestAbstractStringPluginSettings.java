@@ -2,6 +2,7 @@ package com.atlassian.sal.core.pluginsettings;
 
 import java.util.*;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -22,6 +23,15 @@ public class TestAbstractStringPluginSettings
     {
         String value = "this is the value";
         
+        acceptor.put(KEY, value);
+        assertEquals("Values should be equal.", value, acceptor.get(KEY));
+    }
+
+    @Test
+    public void testSpecialCharsString()
+    {
+        String value = "this\tis\bthe\nvalue\rand\ffun";
+
         acceptor.put(KEY, value);
         assertEquals("Values should be equal.", value, acceptor.get(KEY));
     }
@@ -50,6 +60,29 @@ public class TestAbstractStringPluginSettings
     }
 
     @Test
+    public void testSpecialCharsInList()
+    {
+        final List<String> value = new ArrayList<String>();
+
+        final String first = "At\tfirst\bwhen\nI\rsee\fyou cry";
+        final String second = "\tit\bmakes\nme\rsmile\f";
+
+        value.add(first);
+        value.add(second);
+        acceptor.put(KEY, value);
+
+        final Object actual = acceptor.get(KEY);
+
+        assertTrue(actual instanceof List);
+
+        final List<String> real = (List) actual;
+
+        assertEquals("List size should be the same", 2, real.size());
+        assertEquals("The content should match the original data", first, real.get(0));
+        assertEquals("The content should match the original data", second, real.get(1));
+    }
+
+    @Test
     public void testMap()
     {
         final Map<String, String> value = new HashMap<String, String>();
@@ -73,6 +106,29 @@ public class TestAbstractStringPluginSettings
         assertMapEntryEquals("Map should retrieve the correct value for each key", real, first);
         assertMapEntryEquals("Map should retrieve the correct value for each key", real, second);
         assertMapEntryEquals("Map should retrieve the correct value for each key", real, third);
+    }
+
+    @Test
+    public void testSpecialCharsInMap()
+    {
+        final Map<String, String> value = new HashMap<String, String>();
+        final String[] first = {"one", "one\tthing\bI\ndon't\rknow\fwhy"};
+        final String[] second = {"two", "I\tdoesn't\beven\nmatter\rhow\fhard you try"};
+
+        mapPut(value, first);
+        mapPut(value, second);
+
+        acceptor.put(KEY, value);
+
+        final Object actual = acceptor.get(KEY);
+
+        assertTrue(actual instanceof Map);
+
+        final Map real = (Map) actual;
+
+        assertEquals("The size should be the same as what was entered.", 2, real.entrySet().size());
+        assertMapEntryEquals("The content should match the original data", real, first);
+        assertMapEntryEquals("The content should match the original data", real, second);
     }
 
     @Test

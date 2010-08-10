@@ -17,6 +17,7 @@
         <plugins.version>2.5.0.rc1</plugins.version>
         <jdkLevel>1.5</jdkLevel>
         <bamboo.version>2.5-studio-m1</bamboo.version>
+        <google.collections.version>1.0</google.collections.version>
     </properties>
 
     <modules>
@@ -122,6 +123,12 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>com.atlassian.bundles</groupId>
+            <artifactId>google-collections</artifactId>
+            <version>${google.collections.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

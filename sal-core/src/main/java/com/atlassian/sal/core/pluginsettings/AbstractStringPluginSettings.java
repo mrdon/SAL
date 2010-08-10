@@ -1,12 +1,12 @@
 package com.atlassian.sal.core.pluginsettings;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.Map.Entry;
 
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
+import com.google.common.collect.Lists;
+import com.google.common.base.Function;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
 
@@ -22,7 +22,6 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     private static final String PROPERTIES_IDENTIFIER = "java.util.Properties";
     private static final String LIST_IDENTIFIER = "#java.util.List";
     private static final String MAP_IDENTIFIER = "#java.util.Map";
-    private static final String VERTICAL_TAB = "\f";
 
     /**
      * Puts a setting value.
@@ -65,27 +64,27 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
         else if (value instanceof List)
         {
             final StringBuilder sb = new StringBuilder();
-            sb.append(LIST_IDENTIFIER).append("\n");
+            sb.append(LIST_IDENTIFIER).append(EscapeUtils.NEW_LINE);
             for (final Iterator i = ((List) value).iterator(); i.hasNext();)
             {
-                sb.append(i.next().toString());
+                sb.append(EscapeUtils.escape(i.next().toString()));
                 if (i.hasNext())
-                    sb.append('\n');
+                    sb.append(EscapeUtils.NEW_LINE);
             }
             putActual(key, sb.toString());
         }
         else if (value instanceof Map)
         {
             final StringBuilder sb = new StringBuilder();
-            sb.append(MAP_IDENTIFIER).append("\n");
+            sb.append(MAP_IDENTIFIER).append(EscapeUtils.NEW_LINE);
             for (final Iterator<Entry> i = ((Map) value).entrySet().iterator(); i.hasNext();)
             {
                 final Entry entry = i.next();
                 sb.append(entry.getKey().toString());
-                sb.append(VERTICAL_TAB);
-                sb.append(entry.getValue().toString());
+                sb.append(EscapeUtils.VERTICAL_TAB);
+                sb.append(EscapeUtils.escape(entry.getValue().toString()));
                 if (i.hasNext())
-                    sb.append('\n');
+                    sb.append(EscapeUtils.NEW_LINE);
             }
             putActual(key, sb.toString());
         }
@@ -122,22 +121,31 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
         }
         else if (val != null && val.startsWith(LIST_IDENTIFIER))
         {
-            final String[] items = val.split("\n");
-            final ArrayList<String> list = new ArrayList<String>(items.length - 1);
-            list.addAll(Arrays.asList(items).subList(1, items.length));
+            final String[] lines = val.split(EscapeUtils.NEW_LINE + "");
 
-            return list;
+            // remove the first item since it's the list identifier.
+            final List<String> rawItems = Arrays.asList(lines).subList(1, lines.length);
+
+            // unescape each of the items.
+            final List<String> items = Lists.transform(rawItems, new Function<String, String>()
+                                                                 {
+                                                                        public String apply(String from)
+                                                                        {
+                                                                            return EscapeUtils.unescape(from);
+                                                                        }
+                                                                 });
+            return new ArrayList<String>(items);
         }
         else if (val != null && val.startsWith(MAP_IDENTIFIER))
         {
             String nval = val.substring(MAP_IDENTIFIER.length() + 1);
             final HashMap<String, String> map = new HashMap<String, String>();
-            final String[] items = nval.split("\n");
+            final String[] items = nval.split(EscapeUtils.NEW_LINE + "");
             for (String item : items)
             {
                 if (item.length() > 0)
                 {
-                    String[] pair = item.split(VERTICAL_TAB);
+                    String[] pair = item.split(EscapeUtils.VERTICAL_TAB + "");
                     if (pair.length != 2)
                     {
                         log.error("Could not parse map element: << " + item + " >> \n" +
@@ -145,7 +153,7 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
                     }
                     else
                     {
-                        map.put(pair[0], pair[1]);
+                        map.put(pair[0], EscapeUtils.unescape(pair[1]));
                     }    
                 }
             }
@@ -197,4 +205,5 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
      * @param key The key to remove
      */
     protected abstract void removeActual(String key);
+
 }
