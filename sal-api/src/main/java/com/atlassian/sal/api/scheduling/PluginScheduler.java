@@ -17,20 +17,22 @@ public interface PluginScheduler
      * is fully started. You should implement {@link com.atlassian.sal.api.lifecycle.LifecycleAware} and call scheduleJob()
      * only on {@link com.atlassian.sal.api.lifecycle.LifecycleAware#onStart()}
      *
-     * @param name           A unique name of the job
-     * @param job            The class for the job
+     * @param jobKey         A unique key of the job
+     * @param jobClass       The class for the job
      * @param jobDataMap     Any data that needs to be passed to the job.  This map instance will always be the same
      *                       instance that is given to the job when it executes.
      * @param startTime      The time the job is to start.
      * @param repeatInterval How long the interval between repeats, in milliseconds.  Note, some implementations
      */
-    void scheduleJob(String name, Class<? extends PluginJob> job, Map<String, Object> jobDataMap, Date startTime,
-                     long repeatInterval);
+    void scheduleJob(String jobKey,
+                     Class<? extends PluginJob> jobClass, Map<String, Object> jobDataMap,
+                     Date startTime, long repeatInterval);
 
     /**
-     * Unschedule the given job
+     * Unschedule the given job. If the job doesn't exist then IllegalArgumentException will be thrown.
      *
-     * @param string The job name to unschedule
+     * @param jobKey The job key to unschedule
+     * @throws  IllegalArgumentException If the job doesn't exist thus cannot be unscheduled.
      */
-    void unscheduleJob(String string);
+    void unscheduleJob(String jobKey);
 }
