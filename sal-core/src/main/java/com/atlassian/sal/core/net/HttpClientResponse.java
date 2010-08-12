@@ -65,7 +65,8 @@ public class HttpClientResponse implements Response
 
     public String getHeader(String name)
     {
-        return method.getResponseHeader(name).getValue();
+        final Header header = method.getResponseHeader(name);
+        return header == null ? null : header.getValue();
     }
 
     public Map<String, String> getHeaders()

@@ -50,8 +50,10 @@ public interface Response
      * Get's the header by the given name
      *
      * @param name The name of the header
-     * @return The value of the header.  This will include all values, comma seperated, if multiple header fields with
-     *         the given name were specified, as per RFC2616.
+     * @return The value of the header.  This will include all values, comma
+     * separated, if multiple header fields with the given name were specified,
+     * as per RFC2616. When the specified header key is not present,
+     * {@code null} is returned.
      */
     String getHeader(String name);
 
