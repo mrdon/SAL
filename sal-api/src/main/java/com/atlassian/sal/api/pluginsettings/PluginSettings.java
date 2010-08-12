@@ -16,7 +16,6 @@ import java.util.Map;
  * </ul>
  * {@link List} and {@link Map} types must contain only {@link String}.
  * <p/>
- * Setting keys and nested keys (in maps and properties) may not contain special chars in Java such as "\t", "\n", "\f".
  * Instances are assumed to be not threadsafe and mutable.
  *
  * @since 2.0

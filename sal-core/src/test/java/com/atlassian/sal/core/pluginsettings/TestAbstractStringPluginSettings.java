@@ -167,6 +167,36 @@ public class TestAbstractStringPluginSettings
     }
 
     @Test
+    public void testSpecialCharsInKeys()
+    {
+        String key1 = "this\tis\bthe\nkey\rsample\fhohoho1";
+        String value1 = "value1";
+
+        String key2 = "this\tis\bthe\nkey\rsample\fhohoho2";
+        List<String> value2 = Arrays.asList("value2");
+
+        String key3 = "this\tis\bthe\nkey\rsample\fhohoho3";
+        Map<String, String> value3 = new HashMap<String, String>();
+        value3.put(key3 + "inner1", "value3inner1");
+        value3.put(key3 + "inner2", "value3inner2");
+
+        String key4 = "this\tis\bthe\nkey\rsample\fhohoho4";
+        Properties value4 = new Properties();
+        value4.setProperty(key4 + "inner1", "value4inner1");
+        value4.setProperty(key4 + "inner2", "value4inner2");
+
+        acceptor.put(key1, value1);
+        acceptor.put(key2, value2);
+        acceptor.put(key3, value3);
+        acceptor.put(key4, value4);
+
+        assertEquals("Values should be equal.", value1, acceptor.get(key1));
+        assertEquals("Values should be equal.", value2, acceptor.get(key2));
+        assertEquals("Values should be equal.", value3, acceptor.get(key3));
+        assertEquals("Values should be equal.", value4, acceptor.get(key4));
+    }
+
+    @Test
     public void testPutReturnValueNull()
     {
         List<String> value = Arrays.asList("one", "two", "three");

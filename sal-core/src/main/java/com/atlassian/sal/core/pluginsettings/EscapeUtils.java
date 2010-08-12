@@ -12,8 +12,10 @@ import java.io.Writer;
  *
  * For example, in that case if the data read from the backing store is "this is \\me", we're not sure whether
  * it's escaped or non-escaped.
+ *
+ * @since 2.2.0
  */
-public class EscapeUtils
+class EscapeUtils
 {
     // Not for instantiation.
     private EscapeUtils()

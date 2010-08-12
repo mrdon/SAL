@@ -80,7 +80,7 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
             for (final Iterator<Entry> i = ((Map) value).entrySet().iterator(); i.hasNext();)
             {
                 final Entry entry = i.next();
-                sb.append(entry.getKey().toString());
+                sb.append(EscapeUtils.escape(entry.getKey().toString()));
                 sb.append(EscapeUtils.VERTICAL_TAB);
                 sb.append(EscapeUtils.escape(entry.getValue().toString()));
                 if (i.hasNext())
@@ -153,7 +153,8 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
                     }
                     else
                     {
-                        map.put(pair[0], EscapeUtils.unescape(pair[1]));
+                        map.put(EscapeUtils.unescape(pair[0]),
+                                EscapeUtils.unescape(pair[1]));
                     }    
                 }
             }
