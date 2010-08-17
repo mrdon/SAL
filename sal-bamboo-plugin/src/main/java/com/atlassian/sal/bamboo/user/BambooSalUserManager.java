@@ -66,7 +66,27 @@ public class BambooSalUserManager implements UserManager
         return null;
     }
 
-    
+    public String getRemoteUserFullname()
+    {
+        final User user = getBambooUser(getRemoteUsername());
+        if (user == null)
+        {
+            return null;
+        }
+        return user.getFullName();
+    }
+
+    public String getRemoteUserFullname(final HttpServletRequest request)
+    {
+        final User user = getBambooUser(getRemoteUsername(request));
+        if (user == null)
+        {
+            return null;
+        }
+        return user.getFullName();
+    }
+
+
     public boolean isUserInGroup(String username, String group)
     {
         return bambooUserManager.hasMembership(group, username);
@@ -103,4 +123,14 @@ public class BambooSalUserManager implements UserManager
     }
     // ------------------------------------------------------------------------------------------------- Helper Methods
     // -------------------------------------------------------------------------------------- Basic Accessors / Mutators
+
+    private User getBambooUser(String username)
+    {
+        if (username == null)
+        {
+            return null;
+        }
+        return bambooUserManager.getUser(username);
+    }
+
 }
