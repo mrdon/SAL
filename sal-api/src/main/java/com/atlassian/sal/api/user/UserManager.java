@@ -28,22 +28,13 @@ public interface UserManager
     String getRemoteUsername(HttpServletRequest request);
 
     /**
-     * Returns the full name of the currently logged in user or null if no user can be found.  If possible, please use
-     * {@link #getRemoteUsername(HttpServletRequest)}.
+     * Returns the full name of the specified user or null if no user can be found.
      *
-     * @return The full name of the logged in user or null
+     * @param username the username for which we should lookup the fullname
+     * @return The full name of the provied user or null
      * @since 2.2.0
      */
-    String getRemoteUserFullname();
-
-    /**
-     * Returns the full name of the currently logged in user or null if no user can be found.
-     *
-     * @param request The request to retrieve the username from
-     * @return The full name of the logged in user or null
-     * @since 2.2.0
-     */
-    String getRemoteUserFullname(HttpServletRequest request);
+    String getUserFullname(String username);
 
     /**
      * Returns whether the user is in the specify group

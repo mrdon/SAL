@@ -66,26 +66,15 @@ public class BambooSalUserManager implements UserManager
         return null;
     }
 
-    public String getRemoteUserFullname()
+    public String getUserFullname(String username)
     {
-        final User user = getBambooUser(getRemoteUsername());
+        final User user = getBambooUser(username);
         if (user == null)
         {
             return null;
         }
         return user.getFullName();
     }
-
-    public String getRemoteUserFullname(final HttpServletRequest request)
-    {
-        final User user = getBambooUser(getRemoteUsername(request));
-        if (user == null)
-        {
-            return null;
-        }
-        return user.getFullName();
-    }
-
 
     public boolean isUserInGroup(String username, String group)
     {
