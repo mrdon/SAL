@@ -9,6 +9,7 @@
     <artifactId>sal-api</artifactId>
     <packaging>jar</packaging>
     <name>Shared Application Access Layer API</name>
+    <description>A plugin that provides API for Shared Application Access Layer</description>
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
