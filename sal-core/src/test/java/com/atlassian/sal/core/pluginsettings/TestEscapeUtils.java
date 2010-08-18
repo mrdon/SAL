@@ -33,4 +33,16 @@ public class TestEscapeUtils
         String value = "this \nis the \fvalue";
         assertEquals(value, EscapeUtils.unescape(value));
     }
+
+    @Test
+    public void testFullCycle()
+    {
+        runCheckFullCycle("this \nis the \fvalue");
+        runCheckFullCycle("this \\nis the \\fvalue");
+    }
+
+    private void runCheckFullCycle(String value)
+    {
+        assertEquals(value, EscapeUtils.unescape(EscapeUtils.escape(value)));
+    }
 }

@@ -65,6 +65,11 @@ class EscapeUtils
                 out.write('\\');
                 out.write('n');
             }
+            else if (ch == '\\')
+            {
+                out.write('\\');
+                out.write('\\');
+            }
             else
             {
                out.write(ch);
