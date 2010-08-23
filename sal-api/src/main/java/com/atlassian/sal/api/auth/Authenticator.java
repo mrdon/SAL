@@ -98,7 +98,7 @@ public interface Authenticator
 
             public String getKey()
             {
-                return "no.authentication.attempted";
+                return "No authentication attempted";
             }
         };
 
@@ -111,7 +111,7 @@ public interface Authenticator
 
             public String getKey()
             {
-                return "success";
+                return "Successful authentication";
             }
         };
 

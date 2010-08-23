@@ -13,7 +13,10 @@ import java.util.Map;
 public interface I18nResolver
 {
     /**
-     * Given a key and a list of arguments this method returns the i18ned text if it can be resolved.
+     * Given a key and a list of arguments:-
+     *   1) this method returns the i18ned text formatted with the arguments if the key can be resolved.
+     *   2) otherwise, the key itself will be returned (after formatting).
+     *
      * Arguments may also be of the form {@link Message} which means they will be resolved as well before
      * being included as an argument.
      *
@@ -31,7 +34,10 @@ public interface I18nResolver
     String getText(String key);
 
     /**
-     * Given a {@link Message} this method returns the i18ned text if it can be resolved.
+     * Given a {@link Message} this method:-
+     *    1) returns the i18ned text formatted with the message arguments if the message key can be resolved.
+     *    2) Otherwise, returns the message key (formatted with the message arguments).
+     *
      * @param message The message to i18n
      * @return I18ned string
      */

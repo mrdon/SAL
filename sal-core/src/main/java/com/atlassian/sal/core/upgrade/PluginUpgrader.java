@@ -1,5 +1,7 @@
 package com.atlassian.sal.core.upgrade;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -94,7 +96,12 @@ public class PluginUpgrader
         }
         catch (final Throwable e)
         {
-            errors.add(new DefaultMessage("upgrade.unexpected.exception", e));
+            // stringify the stacktrace.
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+
+            // use a message here intentionally instead of key. it won't get translated.
+            errors.add(new DefaultMessage("Unexpected exception caught during plugin upgrade: " + sw.toString()));
             log.error("Upgrade failed: " + e.getMessage(), e);
         }
         finally
