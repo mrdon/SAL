@@ -28,13 +28,12 @@ public interface UserManager
     String getRemoteUsername(HttpServletRequest request);
 
     /**
-     * Returns the full name of the specified user or null if no user can be found.
-     *
-     * @param username the username for which we should lookup the fullname
-     * @return The full name of the provied user or null
+     * Returns a {@code UserProfile object} for the specified user or null if no user can be found
+     * @param username The username of the user whose profile is requested
+     * @return The user's profile or null
      * @since 2.2.0
      */
-    String getUserFullname(String username);
+    UserProfile getUserProfile(String username);
 
     /**
      * Returns whether the user is in the specify group

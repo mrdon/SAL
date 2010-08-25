@@ -1,20 +1,23 @@
 package com.atlassian.sal.bamboo.user;
 
-import org.apache.log4j.Logger;
-import org.acegisecurity.Authentication;
-import org.acegisecurity.userdetails.UserDetails;
-import org.acegisecurity.context.SecurityContextHolder;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserResolutionException;
-import com.atlassian.bamboo.user.BambooUserManager;
-import com.atlassian.bamboo.security.BambooPermissionManager;
-import com.atlassian.bamboo.security.GlobalApplicationSecureObject;
-import com.atlassian.user.User;
-import com.atlassian.seraph.config.SecurityConfig;
-import com.atlassian.seraph.config.SecurityConfigFactory;
+import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
+
+import com.atlassian.bamboo.security.BambooPermissionManager;
+import com.atlassian.bamboo.security.GlobalApplicationSecureObject;
+import com.atlassian.bamboo.user.BambooUserManager;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
+import com.atlassian.sal.api.user.UserResolutionException;
+import com.atlassian.seraph.config.SecurityConfig;
+import com.atlassian.seraph.config.SecurityConfigFactory;
+import com.atlassian.user.User;
+
+import org.acegisecurity.Authentication;
+import org.acegisecurity.context.SecurityContextHolder;
+import org.acegisecurity.userdetails.UserDetails;
+import org.apache.log4j.Logger;
 
 public class BambooSalUserManager implements UserManager
 {
@@ -66,16 +69,6 @@ public class BambooSalUserManager implements UserManager
         return null;
     }
 
-    public String getUserFullname(String username)
-    {
-        final User user = getBambooUser(username);
-        if (user == null)
-        {
-            return null;
-        }
-        return user.getFullName();
-    }
-
     public boolean isUserInGroup(String username, String group)
     {
         return bambooUserManager.hasMembership(group, username);
@@ -92,6 +85,16 @@ public class BambooSalUserManager implements UserManager
         {
             return false;
         }
+    }
+
+    public UserProfile getUserProfile(String username)
+    {
+        final User user = getBambooUser(username);
+        if (user == null)
+        {
+            return null;
+        }
+        return new BambooUserProfile(user);
     }
 
     public boolean isAdmin(String username)
