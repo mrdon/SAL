@@ -44,6 +44,12 @@ public final class BambooUserProfile implements UserProfile
         return null;
     }
 
+    public URI getProfilePictureUri()
+    {
+        // Bamboo does not support user profile pictures
+        return null;
+    }
+
     public URI getProfilePageUri()
     {
         return URI.create("/browse/user/" + username);
