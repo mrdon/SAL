@@ -28,10 +28,7 @@
         <module>sal-trusted-apps-plugin-support</module>
         <module>sal-bamboo-plugin</module>
         <module>sal-ctk-plugin</module>
-        <!-- from here DataSourceProvider modules, to be removed once integrated into the products -->
-        <module>sal-dsp-backport</module>
-        <module>sal-confluence-dsp</module>
-        <module>sal-jira-dsp</module>
+        <module>sal-backup-backport</module>
     </modules>
 
     <build>

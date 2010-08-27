@@ -6,12 +6,46 @@
         <version>2.1.0-ao-5-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sal-dsp-backport</artifactId>
+    <artifactId>sal-backup-backport</artifactId>
     <packaging>bundle</packaging>
+    <name>Shared Access Layer - Backup backport</name>
 
-    <name>Shared Access Layer DataSourceProvider Backport</name>
-    <description>This is the backport of the DataSourceProvider API, provided as an OSGi bundle</description>
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <includeArtifactIds>sal-api</includeArtifactIds>
+                            <includes>com/atlassian/sal/api/backup/**/*</includes>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <Import-Package/>
+                        <Private-Package/>
+                        <Export-Package>
+                            com.atlassian.sal.api.backup*;version="${project.version}",
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     <dependencies>
         <dependency>
             <groupId>com.atlassian.sal</groupId>
@@ -20,39 +54,4 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Export-Package>
-                            com.atlassian.sal.api.sql;version=2.1.0,
-                        </Export-Package>
-                        <Spring-Context>*;timeout:=60</Spring-Context>
-                    </instructions>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.1</version>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>unpack-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <includeArtifactIds>sal-api</includeArtifactIds>
-                            <includes>com/atlassian/sal/api/sql/**</includes>
-                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>
