@@ -13,7 +13,7 @@ import java.util.Locale;
  */
 public abstract class AbstractI18nResolver implements I18nResolver
 {
-    private static Serializable[] EMPTY_SERIALIZABLE = new Serializable[0];
+    private static final Serializable[] EMPTY_SERIALIZABLE = new Serializable[0];
 
     public String getText(String key, Serializable... arguments)
     {
