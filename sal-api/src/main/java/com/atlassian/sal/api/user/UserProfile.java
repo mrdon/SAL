@@ -38,7 +38,7 @@ public interface UserProfile
 
     /**
      * Returns a URI for the user's profile picture. The returned URI will point
-     * to an image of the user's profile picture no larger than the requested size.
+     * to an image of the user's profile picture no smaller than the requested size.
      *
      * The URI will either be relative to the application's base URI, or absolute if
      * the profile picture is being served by an external server
@@ -48,7 +48,7 @@ public interface UserProfile
      * @return a URI pointing to an image of the user's profile picture, or {@code null}
      * if a profile picture was not provided, the application does not support
      * profile pictures as profile data, or the application was unable to provide an
-     * image smaller than or equal to the requested size
+     * image larger than or equal to the requested size
      */
     URI getProfilePictureUri(int width, int height);
 
