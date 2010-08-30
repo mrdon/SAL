@@ -13,6 +13,8 @@ import java.util.Locale;
  */
 public abstract class AbstractI18nResolver implements I18nResolver
 {
+    private static Serializable[] EMPTY_SERIALIZABLE = new Serializable[0];
+
     public String getText(String key, Serializable... arguments)
     {
         Serializable[] resolvedArguments = new Serializable[arguments.length];
@@ -34,7 +36,7 @@ public abstract class AbstractI18nResolver implements I18nResolver
 
     public String getText(String key)
     {
-        return getText(key, new Object[0]);
+        return resolveText(key, EMPTY_SERIALIZABLE);
     }
 
     public String getText(Message message)
