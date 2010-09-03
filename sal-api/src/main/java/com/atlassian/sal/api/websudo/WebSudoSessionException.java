@@ -1,7 +1,7 @@
 package com.atlassian.sal.api.websudo;
 
 /**
- * 
+ * Thrown if there is a problem with the WebSudo session (missing or expired) for a request that requires WebSudo.
  *
  * @since 2.2
  */

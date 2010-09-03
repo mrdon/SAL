@@ -57,6 +57,7 @@ public interface WebSudoManager
      *
      * @param request  the current {@link HttpServletRequest}
      * @throws WebSudoSessionException if the current {@code request} is not protected by WebSudo.
+     * @since 2.2.0-beta10
      */
     void willExecuteWebSudoRequest(HttpServletRequest request) throws WebSudoSessionException;
 }
