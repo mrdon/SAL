@@ -18,7 +18,7 @@
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-spring</artifactId>
-            <version>${plugins.version}</version>
+            <version>${plug.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
