@@ -1,6 +1,7 @@
 package com.atlassian.sal.core.websudo;
 
 import com.atlassian.sal.api.websudo.WebSudoManager;
+import com.atlassian.sal.api.websudo.WebSudoSessionException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +18,11 @@ public class NoopWebSudoManager implements WebSudoManager
     }
 
     public void enforceWebSudoProtection(final HttpServletRequest request, final HttpServletResponse response)
+    {
+        // NO OP
+    }
+
+    public void willExecuteWebSudoRequest(HttpServletRequest request) throws WebSudoSessionException
     {
         // NO OP
     }

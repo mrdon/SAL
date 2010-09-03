@@ -12,9 +12,10 @@ import javax.servlet.http.HttpServletResponse;
  *  @Override
  * public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
  * {
- *      if(webSudoManager.canExecuteRequest(request)) {
+ *      try {
+ *          webSudoManager.willExecuteWebSudoRequest(request);
  *          // do something
- *      } else {
+ *      } catch(WebSudoSessionException wes) {
  *          webSudoManager.enforceWebSudoProtection(request, response);
  *      }
  * }
@@ -46,4 +47,16 @@ public interface WebSudoManager
      * @param response the current {@link HttpServletResponse}
      */
     void enforceWebSudoProtection(HttpServletRequest request, HttpServletResponse response);
+
+    /**
+     * Mark the current request as a request for a WebSudo protected resource.
+     * <p/>
+     * Throws a {@link WebSudoSessionException} if the current {@code request} is not protected by WebSudo.
+     * <p/>
+     * This notifies the host application that the {@code request} is a request for a WebSudp protected resource.  
+     *
+     * @param request  the current {@link HttpServletRequest}
+     * @throws WebSudoSessionException if the current {@code request} is not protected by WebSudo.
+     */
+    void willExecuteWebSudoRequest(HttpServletRequest request) throws WebSudoSessionException;
 }
