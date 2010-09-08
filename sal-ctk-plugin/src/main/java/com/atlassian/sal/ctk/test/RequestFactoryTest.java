@@ -1,31 +1,35 @@
 package com.atlassian.sal.ctk.test;
 
-import com.atlassian.sal.api.net.NonMarshallingRequestFactory;
-import org.springframework.stereotype.Component;
+import com.atlassian.functest.junit.SpringAwareTestCase;
 
 import com.atlassian.sal.api.net.Request;
 import com.atlassian.sal.api.net.RequestFactory;
 import com.atlassian.sal.api.net.Response;
 import com.atlassian.sal.api.net.ResponseException;
 import com.atlassian.sal.api.net.ResponseHandler;
-import com.atlassian.sal.ctk.CtkTest;
-import com.atlassian.sal.ctk.CtkTestResults;
 
-@Component
-public class RequestFactoryTest implements CtkTest
+import org.junit.Test;
+import static org.junit.Assert.assertTrue;
+
+public class RequestFactoryTest extends SpringAwareTestCase
 {
-    private final RequestFactory<Request<?, ?>> requestFactory;
+    private RequestFactory<Request<?, ?>> requestFactory;
     private boolean passed = false;
 
-    public RequestFactoryTest(final NonMarshallingRequestFactory<Request<?, ?>> requestFactory)
+    public void setRequestFactory(RequestFactory<Request<?, ?>> requestFactory)
     {
         this.requestFactory = requestFactory;
     }
 
-    public void execute(final CtkTestResults results) throws ResponseException
+    @Test
+    public void testInjection()
     {
-        results.assertTrue("RequestFactory must be injectable", requestFactory != null);
+        assertTrue("RequestFactory must be injectable", requestFactory != null);
+    }
 
+    @Test
+    public void testRequestExecution() throws ResponseException
+    {
         Request<?, ?> request = requestFactory.createRequest(Request.MethodType.GET, "http://google.com");
 
         request.execute(new ResponseHandler()
@@ -35,7 +39,7 @@ public class RequestFactoryTest implements CtkTest
                 passed = response.getResponseBodyAsString().contains("Google");
             }
         });
-        results.assertTrue("Should be able to call http://google.com and get result that contains 'google'", passed);
+        assertTrue("Should be able to call http://google.com and get result that contains 'google'", passed);
 
         request = requestFactory.createRequest(Request.MethodType.GET, "http://demo.jira.com");
         request.addSeraphAuthentication("admin", "admin");
@@ -47,6 +51,6 @@ public class RequestFactoryTest implements CtkTest
                 passed = response.getResponseBodyAsString().contains("Joe Administrator");
             }
         });
-        results.assertTrueOrWarn("Should be able to call http://demo.jira.com and log in using seraph authentication", passed);
+        assertTrue("Should be able to call http://demo.jira.com and log in using seraph authentication", passed);
     }
 }

@@ -1,37 +1,45 @@
 package com.atlassian.sal.ctk.test;
 
-import com.atlassian.sal.ctk.CtkTest;
-import com.atlassian.sal.ctk.CtkTestResults;
+import com.atlassian.functest.junit.SpringAwareTestCase;
 import com.atlassian.sal.api.executor.ThreadLocalDelegateExecutorFactory;
 import com.atlassian.sal.api.user.UserManager;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Callable;
 
-import org.springframework.stereotype.Component;
+import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The thread local delegate executor factory should at least transfer the user state
  */
-@Component
-public class ThreadLocalDelegateExecutorFactoryTest implements CtkTest
+public class ThreadLocalDelegateExecutorFactoryTest extends SpringAwareTestCase
 {
-    private final ThreadLocalDelegateExecutorFactory threadLocalDelegateExecutorFactory;
-    private final UserManager userManager;
+    private ThreadLocalDelegateExecutorFactory threadLocalDelegateExecutorFactory;
+    private UserManager userManager;
 
-    public ThreadLocalDelegateExecutorFactoryTest(ThreadLocalDelegateExecutorFactory threadLocalDelegateExecutorFactory,
-        UserManager userManager)
+    public void setThreadLocalDelegateExecutorFactory(ThreadLocalDelegateExecutorFactory threadLocalDelegateExecutorFactory)
     {
         this.threadLocalDelegateExecutorFactory = threadLocalDelegateExecutorFactory;
+    }
+
+    public void setUserManager(UserManager userManager)
+    {
         this.userManager = userManager;
     }
 
-    public void execute(final CtkTestResults results) throws Exception
+    @Test
+    public void testInjection()
     {
-        results.assertTrue("ThreadLocalDelegateExecutorFactory should be injectable",
-            threadLocalDelegateExecutorFactory != null);
-        results.assertTrue("UserManager should be injectable", userManager != null);
+        assertTrue("ThreadLocalDelegateExecutorFactory should be injectable", threadLocalDelegateExecutorFactory != null);
+    }
+
+    @Test
+    public void testExecution() throws ExecutionException, InterruptedException
+    {
+        assertTrue("UserManager should be injectable", userManager != null);
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         ExecutorService wrappedExecutorService = threadLocalDelegateExecutorFactory.createExecutorService(
@@ -43,15 +51,16 @@ public class ThreadLocalDelegateExecutorFactoryTest implements CtkTest
                 return userManager.getRemoteUsername();
             }
         };
+
         String userInCallingThread = userManager.getRemoteUsername();
         String userInExecutorThread = wrappedExecutorService.submit(userRetriever).get();
         if (userInCallingThread != null)
         {
-            results.assertTrue(
+            assertTrue(
                 "User in executor thread not equal to user in calling thread, expected: '" + userInCallingThread +
                     "' but was '" + userInExecutorThread + "'.", userInCallingThread.equals(userInExecutorThread));
         }
         // Check that the wrapping executor cleaned up after itself, by running the same check on the unwrapped executor
-        results.assertTrue("Executor thread not cleaned up", executorService.submit(userRetriever).get() == null);
+        assertTrue("Executor thread not cleaned up", executorService.submit(userRetriever).get() == null);
     }
 }

@@ -1,29 +1,23 @@
 package com.atlassian.sal.ctk.test;
 
-import com.atlassian.sal.api.message.I18nResolver;
-import com.atlassian.sal.api.message.Message;
-import com.atlassian.sal.api.auth.AuthenticationController;
+import com.atlassian.functest.junit.SpringAwareTestCase;
 import com.atlassian.sal.api.auth.AuthenticationListener;
-import com.atlassian.sal.ctk.CtkTest;
-import com.atlassian.sal.ctk.CtkTestResults;
-import org.springframework.stereotype.Component;
 
-import java.util.Locale;
-import java.util.Map;
+import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
-@Component
-public class AuthenticationListenerTest implements CtkTest
+public class AuthenticationListenerTest extends SpringAwareTestCase
 {
-	private final AuthenticationListener authenticationListener;
+	private AuthenticationListener authenticationListener;
 
-    public AuthenticationListenerTest(AuthenticationListener authenticationListener)
+    public void setAuthenticationListener(AuthenticationListener authenticationListener)
     {
         this.authenticationListener = authenticationListener;
     }
 
-
-    public void execute(final CtkTestResults results)
+    @Test
+    public void testInjection()
 	{
-		results.assertTrue("AuthenticationListener should be injectable", authenticationListener != null);
+		assertTrue("AuthenticationListener should be injectable", authenticationListener != null);
 	}
 }

@@ -1,29 +1,23 @@
 package com.atlassian.sal.ctk.test;
 
-import com.atlassian.sal.api.message.I18nResolver;
-import com.atlassian.sal.api.message.Message;
+import com.atlassian.functest.junit.SpringAwareTestCase;
 import com.atlassian.sal.api.auth.AuthenticationController;
-import com.atlassian.sal.api.auth.AuthenticationListener;
-import com.atlassian.sal.ctk.CtkTest;
-import com.atlassian.sal.ctk.CtkTestResults;
-import org.springframework.stereotype.Component;
 
-import java.util.Locale;
-import java.util.Map;
+import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
-@Component
-public class AuthenticationControllerTest implements CtkTest
+public class AuthenticationControllerTest extends SpringAwareTestCase
 {
-	private final AuthenticationController controller;
+	private AuthenticationController controller;
 
-    public AuthenticationControllerTest(AuthenticationController controller)
+    public void setController(AuthenticationController controller)
     {
         this.controller = controller;
     }
 
-
-    public void execute(final CtkTestResults results)
+    @Test
+    public void testInjection()
 	{
-		results.assertTrue("AuthenticationController should be injectable", controller != null);
+        assertTrue("AuthenticationController should be injectable", controller != null);
 	}
 }

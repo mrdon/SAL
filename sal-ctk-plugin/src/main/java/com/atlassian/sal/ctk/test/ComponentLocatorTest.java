@@ -2,41 +2,42 @@ package com.atlassian.sal.ctk.test;
 
 import java.util.Collection;
 
-import org.springframework.stereotype.Component;
+import com.atlassian.functest.junit.SpringAwareTestCase;
 
 import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.sal.api.component.ComponentLocator;
-import com.atlassian.sal.ctk.CtkTest;
-import com.atlassian.sal.ctk.CtkTestResults;
-import com.atlassian.sal.spi.HostContextAccessor;
 
-@Component
-public class ComponentLocatorTest implements CtkTest
+import org.junit.Test;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+public class ComponentLocatorTest extends SpringAwareTestCase
 {
-
-    public void execute(final CtkTestResults results)
+    @Test
+    public void testAccessibility()
     {
         try
         {
             final PluginController mgr = ComponentLocator.getComponent(PluginController.class);
-            results.assertTrue("PluginController accessible in ComponentLocator", mgr != null);
+            assertTrue("PluginController accessible in ComponentLocator", mgr != null);
 
             final Collection<PluginController> c = ComponentLocator.getComponents(PluginController.class);
-            results.assertTrue("Should be at least one PluginController found", c != null && !c.isEmpty());
-            results.assertTrueOrWarn("There should be only one PluginController", c.size()==1);
+            assertTrue("Should be at least one PluginController found", c != null && !c.isEmpty());
+            assertTrue("There should be only one PluginController", c.size()==1);
 
             final PluginAccessor accessor = ComponentLocator.getComponent(PluginAccessor.class);
-            results.assertTrue("PluginAccessor accessible in ComponentLocator", accessor != null);
+            assertTrue("PluginAccessor accessible in ComponentLocator", accessor != null);
 
             final Collection<PluginAccessor> ca = ComponentLocator.getComponents(PluginAccessor.class);
-            results.assertTrue("Should be at least one PluginAccessor found", ca != null && !ca.isEmpty());
-            results.assertTrueOrWarn("There should be only one PluginAccessor", ca.size()==1);
+            assertTrue("Should be at least one PluginAccessor found", ca != null && !ca.isEmpty());
+            assertTrue("There should be only one PluginAccessor", ca.size()==1);
 
-            results.assertTrueOrWarn("PluginAccessor should be accessible in ComponentLocator", ComponentLocator.getComponent(PluginAccessor.class) != null);
-        } catch (final UnsupportedOperationException ex)
+            assertTrue("PluginAccessor should be accessible in ComponentLocator", ComponentLocator.getComponent(PluginAccessor.class) != null);
+        }
+        catch (final UnsupportedOperationException ex)
         {
-            results.fail("ComponentLocator operations should be supported");
+            fail("ComponentLocator operations should be supported");
             ex.printStackTrace();
         }
     }

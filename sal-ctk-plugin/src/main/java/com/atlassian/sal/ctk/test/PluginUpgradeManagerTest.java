@@ -1,56 +1,69 @@
 package com.atlassian.sal.ctk.test;
 
-import java.util.Collection;
-
-import com.atlassian.sal.api.message.Message;
+import com.atlassian.functest.junit.SpringAwareTestCase;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.upgrade.PluginUpgradeManager;
-import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
-import com.atlassian.sal.ctk.CtkTest;
-import com.atlassian.sal.ctk.CtkTestResults;
 
-public class PluginUpgradeManagerTest implements CtkTest, PluginUpgradeTask
+import com.atlassian.sal.ctk.UpgradeStateHolder;
+import org.junit.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+
+import static org.junit.Assert.assertTrue;
+
+public class PluginUpgradeManagerTest extends SpringAwareTestCase implements ApplicationContextAware
 {
-    private final PluginUpgradeManager upgradeManager;
-    private final PluginSettingsFactory pluginSettingsFactory;
-    private static boolean called = false;
+    private ApplicationContext applicationContext;
 
-    public PluginUpgradeManagerTest(final PluginUpgradeManager upgradeManager, final PluginSettingsFactory pluginSettingsFactory)
+    private PluginUpgradeManager upgradeManager;
+    private PluginSettingsFactory pluginSettingsFactory;
+
+    public void setUpgradeManager(PluginUpgradeManager upgradeManager)
     {
         this.upgradeManager = upgradeManager;
+    }
+
+    public void setPluginSettingsFactory(PluginSettingsFactory pluginSettingsFactory)
+    {
         this.pluginSettingsFactory = pluginSettingsFactory;
     }
 
-    public void execute(final CtkTestResults results)
+    public void setApplicationContext(ApplicationContext applicationContext)
     {
-        results.assertTrue("PluginUpgradeManager should be injectable", upgradeManager != null);
-        results.assertTrueOrWarn("Upgrade task should have been called unless not first page load", called);
-        called = false;
-        upgradeManager.upgrade();
-        results.assertTrueOrWarn("Upgrade task should not have been called after already upgraded unless not first page load)", !called);
-
-        // Yes, we just happen to know how to clear the data build number....
-        pluginSettingsFactory.createGlobalSettings().remove(getPluginKey()+":build");
+        this.applicationContext = applicationContext;
     }
 
-    public int getBuildNumber()
+    @Test
+    public void testInjection()
     {
-        return 1;
+        assertTrue("PluginUpgradeManager should be injectable", upgradeManager != null);
     }
 
-    public String getShortDescription()
+    @Test
+    public void testUpgrade()
     {
-        return "foo";
-    }
+        UpgradeStateHolder holder = (UpgradeStateHolder)applicationContext.getBean("upgradeStateHolder");
 
-    public Collection<Message> doUpgrade() throws Exception
-    {
-        called = true;
-        return null;
-    }
+        try
+        {
+            if (holder.getCalledCount() == 0)
+            {
+                upgradeManager.upgrade();
+                assertTrue("Upgrade task should have been called once since we have just called upgrade()", holder.getCalledCount() == 1);
+            }
 
-    public String getPluginKey()
-    {
-        return "com.atlassian.sal.ctk";
+            // at this stage, the count should be one since upgrade() has been called at least once.
+            // another upgrade call here should have no effect.
+            upgradeManager.upgrade();
+            assertTrue("Upgrade task should not have been called again", holder.getCalledCount() == 1);
+
+            // Yes, we just happen to know how to clear the data build number....
+            pluginSettingsFactory.createGlobalSettings().remove(holder.getPluginKey() + ":build");
+        }
+        finally
+        {
+            // reset the counter for the next test.
+            holder.reset();
+        }
     }
 }

@@ -11,10 +11,6 @@
 		</bundle-instructions>
    	</plugin-info>
 
-    <servlet key="ctk" class="com.atlassian.sal.ctk.CtkServlet">
-        <url-pattern>/ctk*</url-pattern>
-    </servlet>
-
     <component-import key="loc" interface="com.atlassian.sal.api.license.LicenseHandler" />
     <component-import key="lifecycleManager" interface="com.atlassian.sal.api.lifecycle.LifecycleManager" />
     <component-import key="i18nResolver" interface="com.atlassian.sal.api.message.I18nResolver" />
@@ -32,8 +28,17 @@
     <component-import key="authenticationListener" interface="com.atlassian.sal.api.auth.AuthenticationListener" />
     <component-import key="loginUriProvider" interface="com.atlassian.sal.api.auth.LoginUriProvider" />
 
-    <component key="lifecycleTest" class="com.atlassian.sal.ctk.test.LifecycleAwareTest" public="true">
+    <component key="refappInfoProvider" class="com.atlassian.sal.ctk.RefappInfoProvider"/>
+
+    <component key="lifeCycleStateHolder" class="com.atlassian.sal.ctk.LifeCycleAwareStateHolder" public="true">
         <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
     </component>
+
+    <component key="upgradeStateHolder" class="com.atlassian.sal.ctk.UpgradeStateHolder" public="true">
+        <interface>com.atlassian.sal.api.upgrade.PluginUpgradeTask</interface>
+    </component>
+
+    <!-- this declares all the tests -->
+    <junit key="junit" cliPort="3333" package="com.atlassian.sal.ctk.test"/>
 
 </atlassian-plugin>

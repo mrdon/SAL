@@ -1,15 +1,15 @@
 package com.atlassian.sal.ctk.test;
 
-import org.springframework.stereotype.Component;
+import com.atlassian.functest.junit.SpringAwareTestCase;
 
 import com.atlassian.sal.api.license.LicenseHandler;
-import com.atlassian.sal.ctk.CtkTest;
-import com.atlassian.sal.ctk.CtkTestResults;
 
-@Component
-public class LicenseHandlerTest implements CtkTest
+import org.junit.Test;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+public class LicenseHandlerTest extends SpringAwareTestCase
 {
-    final LicenseHandler handler;
     static final String VALID_LICENSE = "AAAB+A0ODAoPeNptU9uSojAQfecrqNpnLcSZvVjF1joIte7IRRHlwaqpAI1GIYEkoMzXb7ztyux25\n" +
             "SWnO336nCSf1pCqDmLqQJdr9PQ8ev6sWsFS1TXtq5JhvoMW+jOcAOGwbEswbIlZLWxG6gQayGkJT\n" +
             "HHrIgbmZSEHxo2BJkMxKREoES4qwPg1XYzVQNQppkpCSdaXCdyAIVgNil+zZIc4TJAA40zb04a9g\n" +
@@ -21,21 +21,30 @@ public class LicenseHandlerTest implements CtkTest
             "qriHP9sBxWOyjLbkOiwfo3LKjukG/L3Uh6fnsngYsvHp3f1+LHy/hMesYtzj8BvfuQs3DAsAhQk2\n" +
             "2xkBLtW8VW42BXyyBpENLE4iQIUNrBQJqb3pmuxooZ9ycz3ikK96ns=X01nr";
 
-    public LicenseHandlerTest(final LicenseHandler handler)
-	{
-		this.handler = handler;
-	}
+    private LicenseHandler handler;
 
-    public void execute(final CtkTestResults results)
+    public void setHandler(LicenseHandler handler)
     {
-        results.assertTrue("License handler should be injectable", handler != null);
+        this.handler = handler;
+    }
+
+    @Test
+    public void testInjection()
+    {
+        assertTrue("License handler should be injectable", handler != null);
+    }
+
+    @Test
+    public void testSetLicense()
+    {
         try
 		{
 			handler.setLicense("somecrap");
-			results.fail("Should throw IllegalArgumentException for invalid licenses");
-		} catch (final IllegalArgumentException ex)
+			fail("Should throw IllegalArgumentException for invalid licenses");
+		}
+        catch (final IllegalArgumentException ex)
 		{
-			results.pass("Should throw IllegalArgumentException for invalid licenses");
+			// good
 		}
 
         try
@@ -43,7 +52,7 @@ public class LicenseHandlerTest implements CtkTest
             handler.setLicense(VALID_LICENSE);
         } catch (final Exception ex)
         {
-            results.assertTrueOrWarn("Should accept a valid 2.0 license", false);
+            assertTrue("Should accept a valid 2.0 license", false);
         }
     }
 }

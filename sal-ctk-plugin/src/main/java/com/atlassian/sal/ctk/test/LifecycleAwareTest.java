@@ -1,32 +1,26 @@
 package com.atlassian.sal.ctk.test;
 
-import com.atlassian.sal.api.lifecycle.LifecycleAware;
-import com.atlassian.sal.api.lifecycle.LifecycleManager;
-import com.atlassian.sal.ctk.CtkTest;
-import com.atlassian.sal.ctk.CtkTestResults;
+import com.atlassian.functest.junit.SpringAwareTestCase;
+import com.atlassian.sal.ctk.LifeCycleAwareStateHolder;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
-public class LifecycleAwareTest implements LifecycleAware, CtkTest
+import org.junit.Test;
+import static org.junit.Assert.assertTrue;
+
+public class LifecycleAwareTest extends SpringAwareTestCase implements ApplicationContextAware
 {
-    private boolean called = false;
-    private boolean calledTwice = false;
-    private final LifecycleManager lifecycleManager;
+    private ApplicationContext applicationContext;
 
-    public LifecycleAwareTest(LifecycleManager lifecycleManager)
+    public void setApplicationContext(ApplicationContext applicationContext)
     {
-        this.lifecycleManager = lifecycleManager;
+        this.applicationContext = applicationContext;
     }
 
-    public void onStart()
+    @Test
+    public void testCallCount()
     {
-        if (called)
-            calledTwice = true;
-        called = true;
-    }
-
-    public void execute(CtkTestResults results)
-    {
-        lifecycleManager.start();
-        results.assertTrue("LifecycleAware component should be called (may need restart)", called);
-        results.assertTrue("LifecycleAware component should be called only once", !calledTwice);
+        LifeCycleAwareStateHolder stateHolder = (LifeCycleAwareStateHolder)applicationContext.getBean("lifeCycleStateHolder");
+        assertTrue("LifecycleAware component should be called only once", stateHolder.getCalledCount() == 1);
     }
 }

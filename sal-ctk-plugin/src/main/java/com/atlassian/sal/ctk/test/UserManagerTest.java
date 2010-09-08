@@ -1,33 +1,41 @@
 package com.atlassian.sal.ctk.test;
 
-import org.springframework.stereotype.Component;
+import com.atlassian.functest.junit.SpringAwareTestCase;
 
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.ctk.CtkTest;
-import com.atlassian.sal.ctk.CtkTestResults;
 
-@Component
-public class UserManagerTest implements CtkTest
+import com.atlassian.sal.ctk.AppSpecificInfoProvider;
+import org.junit.Test;
+import static org.junit.Assert.assertTrue;
+
+public class UserManagerTest extends SpringAwareTestCase
 {
-    private final UserManager userManager;
+    private UserManager userManager;
+    private AppSpecificInfoProvider infoProvider;
 
-    public UserManagerTest(final UserManager userManager)
-	{
-		this.userManager = userManager;
-	}
-
-    public void execute(final CtkTestResults results)
+    public void setUserManager(UserManager userManager)
     {
-        results.assertTrue("UserManager should be injectable", userManager != null);
+        this.userManager = userManager;
+    }
 
+    public void setInfoProvider(AppSpecificInfoProvider infoProvider)
+    {
+        this.infoProvider = infoProvider;
+    }
+
+    @Test
+    public void testInjection()
+    {
+        assertTrue("UserManager should be injectable", userManager != null);
+    }
+
+    @Test
+    public void testGetUsers()
+    {
         final String remoteUsername = userManager.getRemoteUsername();
-		results.assertTrueOrWarn("Should return null for username when not logged in. Currently logged user: " + remoteUsername, remoteUsername == null);
-        results.assertTrueOrWarn("Should be able to login with admin/admin", userManager.authenticate("admin", "admin"));
-
-        results.assertTrueOrWarn("Should have username of admin", "admin".equals(remoteUsername));
-
-        results.assertTrueOrWarn("admin user should be sysadmin", userManager.isSystemAdmin("admin"));
-
-        results.assertTrue("somedumbadmin user should not be sysadmin", !userManager.isSystemAdmin("somedumbadmin"));
+		assertTrue("Should return null for username when not logged in. Currently logged user: " + remoteUsername, remoteUsername == null);
+        assertTrue("Should be able to login with admin/admin", userManager.authenticate(infoProvider.getAdminUsername(), infoProvider.getAdminPassword()));
+        assertTrue("admin user should be sysadmin", userManager.isSystemAdmin(infoProvider.getAdminUsername()));
+        assertTrue("somedumbadmin user should not be sysadmin", !userManager.isSystemAdmin("some_dumb_admin_blah_blah_wahaha"));
     }
 }

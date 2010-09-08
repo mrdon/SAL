@@ -4,44 +4,49 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.stereotype.Component;
+import com.atlassian.functest.junit.SpringAwareTestCase;
 
 import com.atlassian.sal.api.scheduling.PluginJob;
 import com.atlassian.sal.api.scheduling.PluginScheduler;
-import com.atlassian.sal.ctk.CtkTest;
-import com.atlassian.sal.ctk.CtkTestResults;
 
-@Component
-public class PluginSchedulerTest implements CtkTest
+import org.junit.Test;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+
+public class PluginSchedulerTest extends SpringAwareTestCase
 {
-    private final PluginScheduler scheduler;
+    private PluginScheduler scheduler;
 
-    public PluginSchedulerTest(final PluginScheduler scheduler)
-	{
-		this.scheduler = scheduler;
-	}
-
-    public void execute(final CtkTestResults results) throws InterruptedException
+    public void setScheduler(PluginScheduler scheduler)
     {
+        this.scheduler = scheduler;
+    }
 
-        results.assertTrue("PluginScheduler should be injectable", scheduler != null);
+    @Test
+    public void testInjection()
+    {
+        assertTrue("PluginScheduler should be injectable", scheduler != null);
+    }
 
+    @Test
+    public void testScheduleUnschedule() throws InterruptedException
+    {
         scheduler.scheduleJob("jobname", TestJob.class, new HashMap<String, Object>(), new Date(), 10000000);
         Thread.sleep(3000);
 
-        results.assertTrue("Should be able to schedule job and have it called within 3 seconds", TestJob.called);
+        assertTrue("Should be able to schedule job and have it called within 3 seconds", TestJob.called);
 
         scheduler.unscheduleJob("jobname");
-
-        results.pass("Should be able to unschedule job");
 
         try
         {
             scheduler.unscheduleJob("jobname");
-            results.fail("Should throw IllegalArgumentException when unscheduling unknown job");
-        } catch (final IllegalArgumentException ex)
+            fail("Should throw IllegalArgumentException when unscheduling unknown job");
+        }
+        catch (final IllegalArgumentException ex)
         {
-            results.pass("Should throw IllegalArgumentException when unscheduling unknown job");
+            // good
         }
     }
 

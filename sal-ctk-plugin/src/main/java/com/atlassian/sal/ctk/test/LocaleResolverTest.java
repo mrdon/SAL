@@ -1,28 +1,33 @@
 package com.atlassian.sal.ctk.test;
 
+import com.atlassian.functest.junit.SpringAwareTestCase;
 import com.atlassian.sal.api.message.LocaleResolver;
-import com.atlassian.sal.ctk.CtkTest;
-import com.atlassian.sal.ctk.CtkTestResults;
-import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 import java.util.Set;
 
-@Component
-public class LocaleResolverTest implements CtkTest
-{
-    private final LocaleResolver localeResolver;
+import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
-    public LocaleResolverTest(LocaleResolver localeResolver)
+public class LocaleResolverTest extends SpringAwareTestCase
+{
+    private LocaleResolver localeResolver;
+
+    public void setLocaleResolver(LocaleResolver localeResolver)
     {
         this.localeResolver = localeResolver;
     }
 
-    public void execute(final CtkTestResults results) throws Exception
+    @Test
+    public void testInjection()
     {
-        results.assertTrue("LocaleResolver should be injectable", localeResolver != null);
-        
+        assertTrue("LocaleResolver should be injectable", localeResolver != null);
+    }
+
+    @Test
+    public void testMinimumSupportedLocales()
+    {
         final Set<Locale> localeSet = localeResolver.getSupportedLocales();
-        results.assertTrue("LocaleResolver should return at least one supported locale", localeSet.size() >= 1);
+        assertTrue("LocaleResolver should return at least one supported locale", localeSet.size() >= 1);
     }
 }

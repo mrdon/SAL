@@ -1,29 +1,34 @@
 package com.atlassian.sal.ctk.test;
 
-import org.springframework.stereotype.Component;
+import com.atlassian.functest.junit.SpringAwareTestCase;
 
 import com.atlassian.sal.api.search.SearchProvider;
 import com.atlassian.sal.api.search.SearchResults;
-import com.atlassian.sal.ctk.CtkTest;
-import com.atlassian.sal.ctk.CtkTestResults;
 
-@Component
-public class SearchProviderTest implements CtkTest
+import org.junit.Test;
+import static org.junit.Assert.assertTrue;
+
+public class SearchProviderTest extends SpringAwareTestCase
 {
-    private final SearchProvider searchProvider;
+    private SearchProvider searchProvider;
 
-    public SearchProviderTest(final SearchProvider searchProvider)
-	{
-		this.searchProvider = searchProvider;
-	}
-
-    public void execute(final CtkTestResults results)
+    public void setSearchProvider(SearchProvider searchProvider)
     {
-        results.assertTrue("SearchProvider should be injectable", searchProvider != null);
+        this.searchProvider = searchProvider;
+    }
 
+    @Test
+    public void testInjection()
+    {
+        assertTrue("SearchProvider should be injectable", searchProvider != null);
+    }
+
+    @Test
+    public void testSearch()
+    {
         final SearchResults sresults = searchProvider.search(null, "the");
-        results.assertTrue("Should always return results", sresults != null);
 
-        results.assertTrueOrWarn("Search time should be greater than zero", sresults.getSearchTime() > 0);
+        assertTrue("Should always return results", sresults != null);
+        assertTrue("Search time should be greater than zero", sresults.getSearchTime() > 0);
     }
 }
