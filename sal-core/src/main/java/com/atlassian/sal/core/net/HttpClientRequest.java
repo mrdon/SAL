@@ -161,14 +161,14 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
 
     public HttpClientRequest addRequestParameters(final String... params)
     {
-        if (params.length % 2 != 0)
+        if (methodType != MethodType.POST)
         {
-            throw new IllegalArgumentException("You must enter even number of arguments");
+            throw new UnsupportedOperationException("Only POST methods accept request parameters. For all other HTTP methods types http parameters have to be part of the URL string.");
         }
 
-        if (methodType != MethodType.POST && methodType != MethodType.PUT)
+        if (params.length % 2 != 0)
         {
-            throw new IllegalArgumentException("Only POST and PUT methods accept req");
+            throw new IllegalArgumentException("You must enter an even number of arguments");
         }
 
         for (int i = 0; i < params.length; i += 2)

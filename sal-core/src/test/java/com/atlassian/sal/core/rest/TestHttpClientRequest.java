@@ -112,20 +112,33 @@ public class TestHttpClientRequest extends TestCase
             HttpClientRequest request = new HttpClientRequest(EasyMock.createMock(HttpClient.class), MethodType.GET, "http://url",
                     mock(CertificateFactory.class), mock(UserManager.class));
             request.addRequestParameters("doIt", "quickly!");
-            fail("Should throw exception that only POST and PUT methods can have parameters.");
+            fail("Should throw exception that only the POST method can have parameters.");
         }
-        catch (IllegalArgumentException e)
+        catch (UnsupportedOperationException e)
         {
             // expected
         }
 
-        // Lets try to add uneven number of parameters
+        // Lets try to add parameters to PUT method
         try
         {
             HttpClientRequest request = new HttpClientRequest(EasyMock.createMock(HttpClient.class), MethodType.PUT, "http://url",
                     mock(CertificateFactory.class), mock(UserManager.class));
             request.addRequestParameters("Isaid", "doIt", "now");
-            fail("Should throw exception about uneven number of parameters.");
+            fail("Should throw exception that only the POST method can have parameters.");
+        }
+        catch (UnsupportedOperationException e)
+        {
+            // expected
+        }
+
+        // Lets try to add uneven amount of parameters to POST method
+        try
+        {
+            HttpClientRequest request = new HttpClientRequest(EasyMock.createMock(HttpClient.class), MethodType.POST, "http://url",
+                    mock(CertificateFactory.class), mock(UserManager.class));
+            request.addRequestParameters("doIt", "quickly!", "now");
+            fail("Should throw exception that You must enter an even number of arguments.");
         }
         catch (IllegalArgumentException e)
         {

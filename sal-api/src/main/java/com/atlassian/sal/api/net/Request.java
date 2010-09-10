@@ -44,7 +44,7 @@ public interface Request<T extends Request<?, ?>, RESP extends Response>
     T setUrl(String url);
 
     /**
-     * Sets the body of the request. In default implementation only requests of type {@link MethodType#POST} and {@link MethodType#POST} can have request body.
+     * Sets the body of the request. In default implementation only requests of type {@link MethodType#POST} and {@link MethodType#PUT} can have a request body.
      *
      * @param requestBody the body of the request
      * @return a reference to this object.
@@ -60,7 +60,7 @@ public interface Request<T extends Request<?, ?>, RESP extends Response>
     T setEntity(Object entity);
 
     /**
-     * Sets Content-Type of the body of the request. In default implementation only requests of type {@link MethodType#POST} and {@link MethodType#POST} can have request body.
+     * Sets Content-Type of the body of the request. In default implementation only requests of type {@link MethodType#POST} and {@link MethodType#PUT} can have a request body.
      *
      * @param contentType the contentType of the request
      * @return a reference to this object.
@@ -68,7 +68,7 @@ public interface Request<T extends Request<?, ?>, RESP extends Response>
     T setRequestContentType(String contentType);
 
     /**
-     * Sets parameters of the request. In default implementation only requests of type {@link MethodType#POST} and {@link MethodType#POST} can have parameters.
+     * Sets parameters of the request. In default implementation only requests of type {@link MethodType#POST} can have parameters.
      * For other requests include parameters in url. This method accepts an even number of arguments, in form of name, value, name, value, name, value, etc
      *
      * @param params parameters of the request in as name, value pairs
