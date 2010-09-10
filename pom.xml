@@ -15,6 +15,7 @@
 
     <properties>
         <plug.version>2.6.0-beta2</plug.version>
+        <fp.version>0.2-alpha1</fp.version>
         <jdkLevel>1.5</jdkLevel>
         <bamboo.version>2.5-studio-m1</bamboo.version>
     </properties>
