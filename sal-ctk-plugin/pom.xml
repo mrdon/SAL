@@ -67,11 +67,9 @@
                     <productVersion>2.7.0-alpha30</productVersion>
                     <log4jProperties>src/test/resources/log4j.properties</log4jProperties>
                     <systemPropertyVariables>
-                        
                         <xvfb.enable>false</xvfb.enable>
                         <baseurl>http://localhost:5990/refapp</baseurl>
                         <plugin.resource.directories>${basedir}/src/main/resources</plugin.resource.directories>
-                        <JAVA_OPTS>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005</JAVA_OPTS>
                     </systemPropertyVariables>
                     <instructions>
                         <Spring-Context>
@@ -85,7 +83,7 @@
                         <pluginArtifact>
                             <groupId>com.atlassian.functest</groupId>
                             <artifactId>functest-plugin</artifactId>
-                            <version>0.2-alpha1</version>
+                            <version>${fp.version}</version>
                         </pluginArtifact>
                     </pluginArtifacts>
                </configuration>
