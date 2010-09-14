@@ -1,4 +1,6 @@
-package com.atlassian.sal.ctk;
+package com.atlassian.sal.ctk.refapp;
+
+import com.atlassian.sal.ctk.AppSpecificInfoProvider;
 
 /**
  * Info provider for refapp which has "admin"/"admin" user pass as default.

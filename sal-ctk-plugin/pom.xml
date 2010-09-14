@@ -70,15 +70,8 @@
                         <xvfb.enable>false</xvfb.enable>
                         <baseurl>http://localhost:5990/refapp</baseurl>
                         <plugin.resource.directories>${basedir}/src/main/resources</plugin.resource.directories>
+                        <webdriver.browser>htmlunit</webdriver.browser>
                     </systemPropertyVariables>
-                    <instructions>
-                        <Spring-Context>
-                            *;timeout:=60
-                        </Spring-Context>
-                        <Import-Package>
-                            *;resolution:=optional
-                        </Import-Package>
-                    </instructions>
                     <pluginArtifacts>
                         <pluginArtifact>
                             <groupId>com.atlassian.functest</groupId>
@@ -88,13 +81,6 @@
                     </pluginArtifacts>
                </configuration>
            </plugin>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 </project>
