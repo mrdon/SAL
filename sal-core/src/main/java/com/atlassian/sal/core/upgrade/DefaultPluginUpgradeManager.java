@@ -19,6 +19,10 @@ import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
 
 /**
  * Processes plugin upgrade operations.  Upgrades are triggered by the start lifecycle event.
+ *
+ * NOTE: Currently, this implementation only runs upgrade tasks when the plugins system is initialized or restarted.
+ * If your plugin is disabled and it provides an upgrade task and a user then enables your plugin, the upgrade task
+ * will not run until the plugins system or application is restarted.
  */
 public class DefaultPluginUpgradeManager implements PluginUpgradeManager, LifecycleAware
 {
