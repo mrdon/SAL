@@ -1,15 +1,18 @@
 package com.atlassian.sal.core.rest;
 
 import com.atlassian.sal.api.net.Request.MethodType;
+import com.atlassian.sal.api.net.Response;
 import com.atlassian.sal.api.net.ResponseException;
 import com.atlassian.sal.api.net.ResponseHandler;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.core.net.HttpClientRequest;
+import com.atlassian.sal.core.net.HttpClientResponse;
 import com.atlassian.sal.core.net.auth.HttpClientAuthenticator;
 import com.atlassian.sal.core.trusted.CertificateFactory;
 import junit.framework.TestCase;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -103,7 +106,51 @@ public class TestHttpClientRequest extends TestCase
         // and assert results
         mockControl.verify();
     }
+    
+    public void testNoFollowRedirect() throws IOException
+    {
+        // create mock GetMethod - it should not redirect automatically
+        final IMocksControl mockControl = EasyMock.createNiceControl();
+        final GetMethod mockGetMethod = mockControl.createMock(GetMethod.class);
+        mockGetMethod.getResponseHeader("location");
+        mockControl.andReturn(new Header("location", "http://someRedirectionUrl")).anyTimes();
+        mockControl.replay();
 
+        // create HttpClient that will return 301 Moved Permanently
+        final IMocksControl httpClientMockControl = EasyMock.createNiceControl();
+        final HttpClient httpClientMock = httpClientMockControl.createMock(HttpClient.class);
+        httpClientMock.executeMethod(mockGetMethod);
+        httpClientMockControl.andReturn(302).anyTimes();
+        httpClientMockControl.replay();
+
+        // create a request that will return mockGetMethod
+        HttpClientRequest request = new HttpClientRequest(httpClientMock, MethodType.GET, "http://url",
+                mock(CertificateFactory.class), mock(UserManager.class))
+        {
+            @Override
+            protected HttpMethod makeMethod()
+            {
+                return mockGetMethod;
+            }
+        };
+        request.setFollowRedirects(false);
+        
+               
+        // now use it
+        try
+        {
+            request.execute(EasyMock.createMock(ResponseHandler.class));
+            
+        }
+        catch (ResponseException e)
+        {
+            fail(e.getMessage());
+        }
+
+        // and assert results
+        mockControl.verify();
+    }
+    
     public void testAddRequestParametersFails()
     {
         // Lets try to add parameters to GET method

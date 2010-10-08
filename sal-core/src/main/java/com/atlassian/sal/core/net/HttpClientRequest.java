@@ -60,6 +60,7 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
     private final UserManager userManager;
     private String requestBody;
     private String requestContentType;
+    private boolean followRedirects = true;
 
     public HttpClientRequest(final HttpClient httpClient, final MethodType methodType, final String url,
                              final CertificateFactory certificateFactory, final UserManager userManager)
@@ -203,7 +204,13 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
         headers.put(headerName, new ArrayList<String>(Arrays.asList(headerValue)));
         return this;
     }
-
+    
+    public HttpClientRequest setFollowRedirects(boolean follow)
+    {
+        this.followRedirects = follow;
+        return this;
+    }
+    
     public HttpClientRequest addHeaders(final String... params)
     {
         if (params.length % 2 != 0)
@@ -389,7 +396,7 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
             // execute the method.
             final int statusCode = httpClient.executeMethod(method);
 
-            if (statusCode >= 300 && statusCode <= 399)
+            if (followRedirects && statusCode >= 300 && statusCode <= 399)
             {
                 String redirectLocation;
                 final Header locationHeader = method.getResponseHeader("location");
@@ -485,4 +492,6 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
         return methodType + " " + url + ", Parameters: " + parameters +
                 (StringUtils.isBlank(requestBody) ? "" : "\nRequest body:\n" + requestBody);
     }
+
+    
 }

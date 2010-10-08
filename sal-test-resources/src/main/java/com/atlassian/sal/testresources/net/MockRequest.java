@@ -33,6 +33,7 @@ public class MockRequest implements Request<MockRequest, MockResponse>
     private String seraphPassword;
     private MockResponse response;
     private String responseBody;
+    private boolean followRedirects = true;
 
     public MockRequest(final MethodType methodType, final String url)
     {
@@ -92,13 +93,18 @@ public class MockRequest implements Request<MockRequest, MockResponse>
         list.add(headerValue);
         return this;
     }
-
+    
     public MockRequest setHeader(final String headerName, final String headerValue)
     {
         headers.put(headerName, new ArrayList<String>(Arrays.asList(headerValue)));
         return this;
     }
-
+    
+    public MockRequest setFollowRedirects(boolean follow)
+    {
+        this.followRedirects  = follow;
+        return this;
+    }
     public MockRequest addAuthentication(final Authenticator authenticator)
     {
         authenticators.add(authenticator);

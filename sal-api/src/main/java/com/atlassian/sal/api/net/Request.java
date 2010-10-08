@@ -138,7 +138,18 @@ public interface Request<T extends Request<?, ?>, RESP extends Response>
      * @see RequestFactory#supportsHeader()
      */
     T setHeader(String headerName, String headerValue);
-
+    
+    /**
+     * Sets whether the request should transparently follow a redirect from the server. The 
+     * default behavior is that when a response is received with a status code in the 300s, a new request 
+     * is made using the location header of the response without notifying the client. Set this to false to 
+     * turn this behavior off.
+     * 
+     * @param follow set this to false to have the request not transparently follow redirects.
+     * @return a reference to this object.
+     */    
+    T setFollowRedirects(boolean follow);
+    
     /**
      * @return an immutable Map of headers added to the request so far
      * @since 2.1
