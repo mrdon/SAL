@@ -237,6 +237,7 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
             throws ResponseException
     {
         final HttpMethod method = makeMethod();
+        method.setFollowRedirects(followRedirects);
         processHeaders(method);
         processAuthenticator(method);
         processParameters(method);
