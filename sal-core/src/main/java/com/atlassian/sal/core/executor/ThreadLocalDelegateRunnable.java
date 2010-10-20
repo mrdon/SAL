@@ -1,7 +1,5 @@
 package com.atlassian.sal.core.executor;
 
-import com.atlassian.sal.core.executor.ThreadLocalContextManager;
-
 /**
  * A delegating runnable that copies the thread local state into the executing thread.
  *
