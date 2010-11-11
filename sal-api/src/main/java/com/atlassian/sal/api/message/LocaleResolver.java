@@ -13,9 +13,9 @@ public interface LocaleResolver
 {
     /**
      * Given a request, resolve the {@link Locale} that should be used in internationalization and localization.
-     * The locale should be determined by first checking the remote users preferences, then checking the preferred 
-     * locale as specified in the request and finally defaulting to the system locale if no preferred locale is set.  
-     * 
+     * The locale should be determined by first checking the remote users preferences, then defaulting to the
+     * application default locale if no preferred locale is set.
+     *
      * @param request Request to check 
      * @return Locale to be used in i18n and l10n. {@link Locale#getDefault()} if none found.
      */
