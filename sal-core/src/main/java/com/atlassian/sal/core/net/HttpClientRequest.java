@@ -70,6 +70,10 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
         this.url = url;
         this.certificateFactory = certificateFactory;
         this.userManager = userManager;
+        if (isEntityEnclosingMethod())
+        {
+            followRedirects = false;
+        }
     }
 
     public HttpClientRequest setUrl(final String url)
@@ -142,11 +146,16 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
     public HttpClientRequest setRequestBody(final String requestBody)
     {
         this.requestBody = requestBody;
-        if (methodType != MethodType.POST && methodType != MethodType.PUT)
+        if (!isEntityEnclosingMethod())
         {
             throw new IllegalArgumentException("Only POST and PUT methods can have request body");
         }
         return this;
+    }
+
+    private boolean isEntityEnclosingMethod()
+    {
+        return (methodType == MethodType.POST || methodType == MethodType.PUT);
     }
 
     public HttpClientRequest setEntity(Object entity)
@@ -207,6 +216,10 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
     
     public HttpClientRequest setFollowRedirects(boolean follow)
     {
+        if (isEntityEnclosingMethod() && follow)
+        {
+            throw new IllegalStateException("Entity enclosing requests cannot be redirected without user intervention!");
+        }
         this.followRedirects = follow;
         return this;
     }

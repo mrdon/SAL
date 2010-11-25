@@ -1,7 +1,6 @@
 package com.atlassian.sal.core.rest;
 
 import com.atlassian.sal.api.net.Request.MethodType;
-import com.atlassian.sal.api.net.Response;
 import com.atlassian.sal.api.net.ResponseException;
 import com.atlassian.sal.api.net.ResponseHandler;
 import com.atlassian.sal.api.user.UserManager;
@@ -12,12 +11,13 @@ import com.atlassian.sal.core.trusted.CertificateFactory;
 import junit.framework.TestCase;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
 import org.easymock.classextension.EasyMock;
 import org.easymock.classextension.IMocksControl;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -150,7 +150,95 @@ public class TestHttpClientRequest extends TestCase
         // and assert results
         mockControl.verify();
     }
-    
+
+    public void testFollowRedirectForPostMethodsNotPossible() throws Exception
+    {
+        final HttpClient httpClientMock = EasyMock.createMock(HttpClient.class);
+
+        // create a request that will return mockGetMethod
+        HttpClientRequest request = new HttpClientRequest(httpClientMock, MethodType.POST, "http://url",
+                mock(CertificateFactory.class), mock(UserManager.class));
+        try
+        {
+            request.setFollowRedirects(true);
+            fail("Should have thrown an exception because we can't follow redirects for Post methods");
+        } catch (IllegalStateException ex)
+        {
+            //Expected
+            assertEquals("Entity enclosing requests cannot be redirected without user intervention!", ex.getMessage());
+        }
+    }
+
+
+    public void testFollowRedirectForPutMethodsNotPossible() throws Exception
+    {
+        final HttpClient httpClientMock = EasyMock.createMock(HttpClient.class);
+
+        // create a request that will return mockGetMethod
+        HttpClientRequest request = new HttpClientRequest(httpClientMock, MethodType.PUT, "http://url",
+                mock(CertificateFactory.class), mock(UserManager.class));
+
+        try
+        {
+            request.setFollowRedirects(true);
+            fail("Should have thrown an exception because we can't follow redirects for Post methods");
+        } catch (IllegalStateException ex)
+        {
+            //Expected
+            assertEquals("Entity enclosing requests cannot be redirected without user intervention!", ex.getMessage());
+        }
+    }
+
+    public void testExecutePostMethodNoFollowRedirects() throws Exception
+    {
+        final HttpClient httpClientMock = mock(HttpClient.class);
+        final PostMethod postMethod = mock(PostMethod.class);
+
+        // create a request that will return mockGetMethod
+        HttpClientRequest request = new HttpClientRequest(httpClientMock, MethodType.POST, "http://url",
+                mock(CertificateFactory.class), mock(UserManager.class))
+        {
+            @Override
+            protected HttpMethod makeMethod()
+            {
+                return postMethod;
+            }
+        };
+
+        request.execute(new ResponseHandler<HttpClientResponse>(){
+            public void handle(final HttpClientResponse response) throws ResponseException
+            {
+
+            }
+        });
+        Mockito.verify(postMethod).setFollowRedirects(false);
+    }
+
+    public void testExecutePutMethodNoFollowRedirects() throws Exception
+    {
+        final HttpClient httpClientMock = mock(HttpClient.class);
+        final PutMethod putMethod = mock(PutMethod.class);
+
+        // create a request that will return mockGetMethod
+        HttpClientRequest request = new HttpClientRequest(httpClientMock, MethodType.PUT, "http://url",
+                mock(CertificateFactory.class), mock(UserManager.class))
+        {
+            @Override
+            protected HttpMethod makeMethod()
+            {
+                return putMethod;
+            }
+        };
+
+        request.execute(new ResponseHandler<HttpClientResponse>(){
+            public void handle(final HttpClientResponse response) throws ResponseException
+            {
+
+            }
+        });
+        Mockito.verify(putMethod).setFollowRedirects(false);
+    }
+
     public void testAddRequestParametersFails()
     {
         // Lets try to add parameters to GET method
