@@ -45,18 +45,35 @@ public interface UserManager
     boolean isUserInGroup(String username, String group);
 
     /**
-     * Returns {@code true} or {@code false} depending on whether a user has been granted the system admin permission.
+     * Returns {@code true} or {@code false} depending on whether a user has been granted the system administrator
+     * permission. A system administrator has full administrative permissions in the application, including permission
+     * to perform operations that may affect the underlying operating system, such as specifying filesystem paths,
+     * installing plugins, configuring mail servers and logging, performing backups and restores, etc. Only check for
+     * system administrator when performing this type of operation. Operations that do not affect the underlying system
+     * should use {@link #isAdmin(String)} instead.
      *
      * @param username The username of the user to check
      * @return {@code true} or {@code false} depending on whether a user has been granted the system admin permission.
+     * @see <a href="http://confluence.atlassian.com/display/JIRA/Managing+Global+Permissions#ManagingGlobalPermissions-About%27JIRASystemAdministrators%27and%27JIRAAdministrators%27">About 'JIRA System Administrators' and 'JIRA Administrators'</a>
+     * @see <a href="http://confluence.atlassian.com/display/DOC/Global+Permissions+Overview#GlobalPermissionsOverview-confluenceadmin">Comparing the System Administrator with the Confluence Administrator Permission</a>
      */
     boolean isSystemAdmin(String username);
 
     /**
-     * Returns {@code true} or {@code false} depending on whether a user has been granted the admin permission
+     * Returns {@code true} or {@code false} depending on whether a user has been granted the administrator permission.
+     * An administrator may have restricted administrative permissions that only apply to application-level
+     * configuration that cannot affect the underlying operating system. Only check for administrator permission when
+     * performing this type of operation. Operations that can affect security, the filesystem, or allow arbitrary code
+     * execution must check {@link #isSystemAdmin(String)} instead.
+     * <p/>
+     * Note that system administrator permission implies administrator permission. That is, any username for which
+     * {@code userManager.isSystemAdmin(username)} returns {@code true} will also return {@code true} for
+     * {@code userManager.isAdmin(username)}.
      * 
      * @param username The username of the user to check
      * @return {@code true} or {@code false} depending on whether the user has been granted the admin permission
+     * @see <a href="http://confluence.atlassian.com/display/JIRA/Managing+Global+Permissions#ManagingGlobalPermissions-About%27JIRASystemAdministrators%27and%27JIRAAdministrators%27">About 'JIRA System Administrators' and 'JIRA Administrators'</a>
+     * @see <a href="http://confluence.atlassian.com/display/DOC/Global+Permissions+Overview#GlobalPermissionsOverview-confluenceadmin">Comparing the System Administrator with the Confluence Administrator Permission</a>
      */
     boolean isAdmin(String username);
 
