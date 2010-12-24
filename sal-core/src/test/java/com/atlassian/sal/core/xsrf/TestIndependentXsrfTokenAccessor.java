@@ -11,7 +11,7 @@ import static com.atlassian.sal.core.xsrf.IndependentXsrfTokenAccessor.XSRF_COOK
 import static org.junit.Assert.*;
 
 /**
- * @since v2.4
+ * @since 2.4
  */
 public class TestIndependentXsrfTokenAccessor
 {

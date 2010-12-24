@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * XSRF token accessor that manages its own tokens, not using the underlying applications XSRF tokens
  *
- * @since v2.4
+ * @since 2.4
  */
 public class IndependentXsrfTokenAccessor implements XsrfTokenAccessor
 {

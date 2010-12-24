@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Gives access to the applications XSRF tokens
  *
- * @since v2.4
+ * @since 2.4
  */
 public interface XsrfTokenAccessor
 {
