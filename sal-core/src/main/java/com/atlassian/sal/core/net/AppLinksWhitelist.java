@@ -25,7 +25,7 @@ public class AppLinksWhitelist implements Whitelist
         this.appLinkService = checkNotNull(appLinkService, "appLinkService");
     }
     
-    public boolean allow(URI uri)
+    public boolean allows(URI uri)
     {
         return any(appLinks(), prefixes(checkNotNull(uri, "uri")));
     }

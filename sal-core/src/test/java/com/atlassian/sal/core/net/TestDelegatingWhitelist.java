@@ -17,35 +17,35 @@ public class TestDelegatingWhitelist
     public void uriIsRejectedWhenNoDelegatesArePresent()
     {
         Whitelist whitelist = new DelegatingWhitelist(ImmutableList.<Whitelist>of());
-        assertFalse(whitelist.allow(URI.create("http://example.com")));
+        assertFalse(whitelist.allows(URI.create("http://example.com")));
     }
     
     @Test
     public void uriIsRejectedWhenAllDelegatesRejectTheUri()
     {
         Whitelist whitelist = new DelegatingWhitelist(ImmutableList.of(alwaysReject(), alwaysReject(), alwaysReject()));
-        assertFalse(whitelist.allow(URI.create("http://example.com")));
+        assertFalse(whitelist.allows(URI.create("http://example.com")));
     }
 
     @Test
     public void uriIsAllowedWhenTheFirstDelegateAllowsTheUri()
     {
         Whitelist whitelist = new DelegatingWhitelist(ImmutableList.of(alwaysAllow(), alwaysReject(), alwaysReject()));
-        assertTrue(whitelist.allow(URI.create("http://example.com")));
+        assertTrue(whitelist.allows(URI.create("http://example.com")));
     }
 
     @Test
     public void uriIsAllowedWhenTheLastDelegateAllowsTheUri()
     {
         Whitelist whitelist = new DelegatingWhitelist(ImmutableList.of(alwaysReject(), alwaysReject(), alwaysAllow()));
-        assertTrue(whitelist.allow(URI.create("http://example.com")));
+        assertTrue(whitelist.allows(URI.create("http://example.com")));
     }
 
     @Test
     public void urisIsAllowedWhenTheMiddleDelegateAllowsTheUri()
     {
         Whitelist whitelist = new DelegatingWhitelist(ImmutableList.of(alwaysReject(), alwaysAllow(), alwaysReject()));
-        assertTrue(whitelist.allow(URI.create("http://example.com")));
+        assertTrue(whitelist.allows(URI.create("http://example.com")));
     }
     
     private Whitelist alwaysAllow()
@@ -57,7 +57,7 @@ public class TestDelegatingWhitelist
     {
         INSTANCE;
 
-        public boolean allow(URI uri)
+        public boolean allows(URI uri)
         {
             return true;
         }
@@ -72,7 +72,7 @@ public class TestDelegatingWhitelist
     {
         INSTANCE;
 
-        public boolean allow(URI uri)
+        public boolean allows(URI uri)
         {
             return false;
         }

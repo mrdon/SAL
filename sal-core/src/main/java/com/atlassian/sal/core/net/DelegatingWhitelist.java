@@ -22,7 +22,7 @@ public class DelegatingWhitelist implements Whitelist
         this.whitelists = checkNotNull(whitelists, "whitelists");
     }
     
-    public boolean allow(URI uri)
+    public boolean allows(URI uri)
     {
         return any(whitelists, allows(checkNotNull(uri, "uri")));
     }
@@ -43,7 +43,7 @@ public class DelegatingWhitelist implements Whitelist
 
         public boolean apply(Whitelist whitelist)
         {
-            return whitelist.allow(uri);
+            return whitelist.allows(uri);
         }
     }
 }

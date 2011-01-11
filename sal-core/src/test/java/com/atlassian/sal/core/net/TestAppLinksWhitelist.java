@@ -38,7 +38,7 @@ public class TestAppLinksWhitelist
     public void uriIsRejectedWhenThereAreNoAppLinks()
     {
         when(appLinkService.getApplicationLinks()).thenReturn(ImmutableList.<ApplicationLink>of());
-        assertFalse(whitelist.allow(REQUEST_URI));
+        assertFalse(whitelist.allows(REQUEST_URI));
     }
     
     @Test
@@ -46,7 +46,7 @@ public class TestAppLinksWhitelist
     {
         Iterable<ApplicationLink> appLinks = ImmutableList.of(newAppLink(URI.create("http://localhost:8800")));
         when(appLinkService.getApplicationLinks()).thenReturn(appLinks);
-        assertFalse(whitelist.allow(REQUEST_URI));
+        assertFalse(whitelist.allows(REQUEST_URI));
     }
     
     @Test
@@ -54,7 +54,7 @@ public class TestAppLinksWhitelist
     {
         Iterable<ApplicationLink> appLinks = ImmutableList.of(newAppLink(URI.create("http://example.com/")));
         when(appLinkService.getApplicationLinks()).thenReturn(appLinks);
-        assertTrue(whitelist.allow(REQUEST_URI));
+        assertTrue(whitelist.allows(REQUEST_URI));
     }
     
     @Test
@@ -62,7 +62,7 @@ public class TestAppLinksWhitelist
     {
         Iterable<ApplicationLink> appLinks = ImmutableList.of(newAppLink(URI.create("http://EXAMPLE.COM/")));
         when(appLinkService.getApplicationLinks()).thenReturn(appLinks);
-        assertTrue(whitelist.allow(REQUEST_URI));
+        assertTrue(whitelist.allows(REQUEST_URI));
     }
     
     private ApplicationLink newAppLink(URI rpcUri)
