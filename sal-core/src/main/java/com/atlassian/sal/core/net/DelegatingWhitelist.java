@@ -24,10 +24,10 @@ public class DelegatingWhitelist implements Whitelist
     
     public boolean allows(URI uri)
     {
-        return any(whitelists, allows(checkNotNull(uri, "uri")));
+        return any(whitelists, allowsP(checkNotNull(uri, "uri")));
     }
 
-    private Predicate<Whitelist> allows(URI uri)
+    private Predicate<Whitelist> allowsP(URI uri)
     {
         return new WhitelistAllows(uri);
     }
