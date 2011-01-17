@@ -19,4 +19,11 @@ public interface XsrfTokenValidator
      */
     boolean validateFormEncodedToken(HttpServletRequest request);
 
+    /**
+     * Returns the name of the http parameter name that is used to store the xsrf token in the form.
+     *
+     * @return the name of the http parameter name
+     */
+    String getXsrfParameterName();
+
 }
