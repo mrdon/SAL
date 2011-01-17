@@ -15,7 +15,7 @@ public interface XsrfTokenAccessor
      * not the token submitted as part of a form.
      *
      * @param request The request to get the token from
-     * @param response The response to add the cookie to if necessary
+     * @param response The response to add the cookie to if necessary, can be null, if create is false.
      * @param create Whether a new token should be created if there is none in the request.  The new token should be
      *               persistent across subsequent requests, ie, added to the users session or a cookie.
      * @return The token for the request, or null if no token was found and create was false
