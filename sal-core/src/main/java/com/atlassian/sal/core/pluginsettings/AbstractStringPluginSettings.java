@@ -36,6 +36,7 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     public Object put(String key, Object value)
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
+        Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters");
         if (value == null)
         {
             return remove(key);
@@ -105,6 +106,7 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     public Object get(String key)
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
+        Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters");
         final String val = getActual(key);
         if (val != null && val.startsWith("#" + PROPERTIES_IDENTIFIER))
         {
@@ -176,6 +178,7 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     public Object remove(String key)
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
+        Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters");
         Object oldValue = get(key);
         if (oldValue != null)
         {

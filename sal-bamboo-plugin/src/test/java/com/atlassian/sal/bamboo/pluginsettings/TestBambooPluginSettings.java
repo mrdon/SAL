@@ -1,5 +1,6 @@
 package com.atlassian.sal.bamboo.pluginsettings;
 
+import org.apache.commons.lang.StringUtils;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import static org.mockito.Mockito.*;
@@ -32,11 +33,35 @@ public class TestBambooPluginSettings
         verify(mockBandanaManager).getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, "key", false);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetWithNullKey()
+    {
+        bambooPluginSettings.get(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetWithLongKey()
+    {
+        bambooPluginSettings.get(StringUtils.repeat("a", 101));
+    }
+
     @Test
     public void testPut()
     {
         assertNull(bambooPluginSettings.put("key", "value"));
         verify(mockBandanaManager).setValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, "key", "value");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testPutWithNullKey()
+    {
+        bambooPluginSettings.put(null, "foo");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testPutWithLongKey()
+    {
+        bambooPluginSettings.put(StringUtils.repeat("a", 101), "foo");
     }
 
     @Test
@@ -58,5 +83,17 @@ public class TestBambooPluginSettings
     {
         when(mockBandanaManager.getValue(PlanAwareBandanaContext.GLOBAL_CONTEXT, "key", false)).thenReturn("old");
         assertEquals("old", bambooPluginSettings.remove("key"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRemoveWithNullKey()
+    {
+        bambooPluginSettings.remove(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRemoveWithLongKey()
+    {
+        bambooPluginSettings.remove(StringUtils.repeat("a", 101));
     }
 }
