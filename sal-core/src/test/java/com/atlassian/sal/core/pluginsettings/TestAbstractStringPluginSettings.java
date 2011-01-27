@@ -3,6 +3,7 @@ package com.atlassian.sal.core.pluginsettings;
 import java.util.*;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -25,6 +26,30 @@ public class TestAbstractStringPluginSettings
         
         acceptor.put(KEY, value);
         assertEquals("Values should be equal.", value, acceptor.get(KEY));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetWithNullKey()
+    {
+        acceptor.get(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetWithLongKey()
+    {
+        acceptor.get(StringUtils.repeat("a", 101));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testPutWithNullKey()
+    {
+        acceptor.put(null, "foo");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testPutWithLongKey()
+    {
+        acceptor.put(StringUtils.repeat("a", 101), "foo");
     }
 
     @Test
@@ -224,6 +249,18 @@ public class TestAbstractStringPluginSettings
         List<String> oldValue = Arrays.asList("two", "three", "four");
         acceptor.put(KEY, oldValue);
         assertEquals(oldValue, acceptor.remove(KEY));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRemoveWithNullKey()
+    {
+        acceptor.remove(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRemoveWithLongKey()
+    {
+        acceptor.remove(StringUtils.repeat("a", 101));
     }
 
     private void assertPropertiesEntryEquals(String errMsg, Properties real, String[] kvPair)

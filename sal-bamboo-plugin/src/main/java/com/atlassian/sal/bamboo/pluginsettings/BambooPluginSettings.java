@@ -3,6 +3,7 @@ package com.atlassian.sal.bamboo.pluginsettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.bandana.BandanaManager;
 import com.atlassian.bamboo.bandana.BambooBandanaContext;
+import org.apache.commons.lang.Validate;
 
 import java.util.Properties;
 import java.util.List;
@@ -26,6 +27,8 @@ public class BambooPluginSettings implements PluginSettings
 
     public Object put(final String key, final Object val)
     {
+        Validate.notNull(key, "The plugin settings key cannot be null");
+        Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters");
         if ((val instanceof Properties) || (val instanceof List) || (val instanceof String) || (val instanceof Map) || (val == null))
         {
             final Object removed = bandanaManager.getValue(ctx, key, false);
@@ -40,11 +43,15 @@ public class BambooPluginSettings implements PluginSettings
 
     public Object get(final String key)
     {
+        Validate.notNull(key, "The plugin settings key cannot be null");
+        Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters");
         return bandanaManager.getValue(ctx, key, false);
     }
 
     public Object remove(final String key)
     {
+        Validate.notNull(key, "The plugin settings key cannot be null");
+        Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters");
         return put(key, null);
     }
     // ------------------------------------------------------------------------------------------------- Helper Methods
