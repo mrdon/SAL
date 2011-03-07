@@ -41,7 +41,7 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
         Validate.isTrue(key.length() <= 255, "The plugin settings key cannot be more than 255 characters");
         if (isDeveloperMode)
         {
-            Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters is dev mode");
+            Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters in developer mode");
         }
         if (value == null)
         {

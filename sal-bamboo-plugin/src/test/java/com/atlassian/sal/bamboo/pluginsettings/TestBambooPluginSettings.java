@@ -1,16 +1,20 @@
 package com.atlassian.sal.bamboo.pluginsettings;
 
+import java.math.BigDecimal;
+
+import com.atlassian.bamboo.bandana.PlanAwareBandanaContext;
+import com.atlassian.bandana.BandanaManager;
+
 import org.apache.commons.lang.StringUtils;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import com.atlassian.bandana.BandanaManager;
-import com.atlassian.bamboo.bandana.PlanAwareBandanaContext;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import java.math.BigDecimal;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SuppressWarnings({"JUnitTestMethodWithNoAssertions", "UnusedDeclaration"})
 public class TestBambooPluginSettings
@@ -39,10 +43,12 @@ public class TestBambooPluginSettings
         bambooPluginSettings.get(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetWithLongKey()
+    @Test
+    public void getAcceptsAnyKeyLength()
     {
         bambooPluginSettings.get(StringUtils.repeat("a", 101));
+        bambooPluginSettings.get(StringUtils.repeat("a", 255));
+        bambooPluginSettings.get(StringUtils.repeat("a", 256));
     }
 
     @Test
@@ -58,10 +64,17 @@ public class TestBambooPluginSettings
         bambooPluginSettings.put(null, "foo");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testPutWithLongKey()
+    @Test
+    public void putWithLongKeysSucceed()
     {
         bambooPluginSettings.put(StringUtils.repeat("a", 101), "foo");
+        bambooPluginSettings.put(StringUtils.repeat("a", 255), "foo");
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void putWithVeryLongKeyFails()
+    {
+        bambooPluginSettings.put(StringUtils.repeat("a", 256), "foo");
     }
 
     @Test
@@ -91,9 +104,27 @@ public class TestBambooPluginSettings
         bambooPluginSettings.remove(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testRemoveWithLongKey()
+    @Test
+    public void removeAcceptsAnyKeyLength()
     {
         bambooPluginSettings.remove(StringUtils.repeat("a", 101));
+        bambooPluginSettings.remove(StringUtils.repeat("a", 255));
+        bambooPluginSettings.remove(StringUtils.repeat("a", 256));
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void putWithLongKeyFailsInDevMode()
+    {
+        String previousValue = System.setProperty("atlassian.dev.mode", "true");
+        try
+        {
+            // A new instance to pick up the system property
+            bambooPluginSettings = new BambooPluginSettings(mockBandanaManager, PlanAwareBandanaContext.GLOBAL_CONTEXT);
+            bambooPluginSettings.put(StringUtils.repeat("a", 101), "foo");
+        }
+        finally
+        {
+            System.setProperty("atlassian.dev.mode", StringUtils.defaultString(previousValue));
+        }
     }
 }

@@ -14,6 +14,7 @@ public class BambooPluginSettings implements PluginSettings
     // ------------------------------------------------------------------------------------------------------- Constants
     // ------------------------------------------------------------------------------------------------- Type Properties
     private final BambooBandanaContext ctx;
+    private final boolean isDeveloperMode = Boolean.getBoolean("atlassian.dev.mode");
     // ---------------------------------------------------------------------------------------------------- Dependencies
     private final BandanaManager bandanaManager;
     // ---------------------------------------------------------------------------------------------------- Constructors
@@ -28,7 +29,11 @@ public class BambooPluginSettings implements PluginSettings
     public Object put(final String key, final Object val)
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
-        Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters");
+        Validate.isTrue(key.length() <= 255, "The plugin settings key cannot be more than 255 characters");
+        if (isDeveloperMode)
+        {
+            Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters in developer mode");
+        }
         if ((val instanceof Properties) || (val instanceof List) || (val instanceof String) || (val instanceof Map) || (val == null))
         {
             final Object removed = bandanaManager.getValue(ctx, key, false);
@@ -44,15 +49,15 @@ public class BambooPluginSettings implements PluginSettings
     public Object get(final String key)
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
-        Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters");
         return bandanaManager.getValue(ctx, key, false);
     }
 
     public Object remove(final String key)
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
-        Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters");
-        return put(key, null);
+        final Object removed = bandanaManager.getValue(ctx, key, false);
+        bandanaManager.setValue(ctx, key, null);
+        return removed;
     }
     // ------------------------------------------------------------------------------------------------- Helper Methods
     // -------------------------------------------------------------------------------------- Basic Accessors / Mutators
