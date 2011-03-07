@@ -23,7 +23,7 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     private static final String LIST_IDENTIFIER = "#java.util.List";
     private static final String MAP_IDENTIFIER = "#java.util.Map";
 
-    private static final boolean isDeveloperMode = Boolean.getBoolean("atlassian.dev.mode");
+    private final boolean isDeveloperMode = Boolean.getBoolean("atlassian.dev.mode");
     
     /**
      * Puts a setting value.
@@ -39,9 +39,9 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
         Validate.isTrue(key.length() <= 255, "The plugin settings key cannot be more than 255 characters");
-        if (isDeveloperMode && key.length() > 100)
+        if (isDeveloperMode)
         {
-            log.warn("PluginSettings.get with excessive key length: " + key);
+            Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters is dev mode");
         }
         if (value == null)
         {

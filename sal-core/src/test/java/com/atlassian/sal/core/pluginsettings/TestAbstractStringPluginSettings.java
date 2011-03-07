@@ -72,7 +72,17 @@ public class TestAbstractStringPluginSettings
     @Test
     public void putWithVeryLongKeyIsAcceptedBySalLayer()
     {
-        acceptor.put(StringUtils.repeat("a", 255), "foo");
+        String previousValue = System.setProperty("atlassian.dev.mode", "false");
+        try
+        {
+            // A new instance to pick up the system property
+            acceptor = new PluginSettingsAcceptor();
+            acceptor.put(StringUtils.repeat("a", 255), "foo");
+        }
+        finally
+        {
+            System.setProperty("atlassian.dev.mode", StringUtils.defaultString(previousValue));
+        }
     }
     
     @Test(expected = IllegalArgumentException.class)
@@ -81,6 +91,22 @@ public class TestAbstractStringPluginSettings
         acceptor.put(StringUtils.repeat("a", 256), "foo");
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void putWithLongKeyFailsInDevMode()
+    {
+        String previousValue = System.setProperty("atlassian.dev.mode", "true");
+        try
+        {
+            // A new instance to pick up the system property
+            acceptor = new PluginSettingsAcceptor();
+            acceptor.put(StringUtils.repeat("a", 101), "foo");
+        }
+        finally
+        {
+            System.setProperty("atlassian.dev.mode", StringUtils.defaultString(previousValue));
+        }
+    }
+    
     @Test
     public void testSpecialCharsString()
     {
