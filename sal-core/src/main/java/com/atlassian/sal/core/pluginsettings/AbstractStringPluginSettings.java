@@ -72,7 +72,7 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
         {
             final StringBuilder sb = new StringBuilder();
             sb.append(LIST_IDENTIFIER).append(EscapeUtils.NEW_LINE);
-            for (final Iterator<?> i = ((List<?>) value).iterator(); i.hasNext();)
+            for (final Iterator i = ((List) value).iterator(); i.hasNext();)
             {
                 sb.append(EscapeUtils.escape(i.next().toString()));
                 if (i.hasNext())
@@ -84,9 +84,9 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
         {
             final StringBuilder sb = new StringBuilder();
             sb.append(MAP_IDENTIFIER).append(EscapeUtils.NEW_LINE);
-            for (final Iterator<? extends Entry<?, ?>> i = ((Map<?, ?>) value).entrySet().iterator(); i.hasNext();)
+            for (final Iterator<Entry> i = ((Map) value).entrySet().iterator(); i.hasNext();)
             {
-                final Entry<?, ?> entry = i.next();
+                final Entry entry = i.next();
                 sb.append(EscapeUtils.escape(entry.getKey().toString()));
                 sb.append(EscapeUtils.VERTICAL_TAB);
                 sb.append(EscapeUtils.escape(entry.getValue().toString()));
