@@ -23,6 +23,13 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     private static final String LIST_IDENTIFIER = "#java.util.List";
     private static final String MAP_IDENTIFIER = "#java.util.Map";
 
+    /**
+     * Only some applications support >100 character keys, so plugins should
+     * not depend on it. In developer mode this restriction is enforced to
+     * highlight plugin bugs. As some applications support more, and some
+     * existing plugins rely on this behaviour, the limit is relaxed in
+     * production.
+     */
     private final boolean isDeveloperMode = Boolean.getBoolean("atlassian.dev.mode");
     
     /**
