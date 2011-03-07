@@ -23,6 +23,8 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     private static final String LIST_IDENTIFIER = "#java.util.List";
     private static final String MAP_IDENTIFIER = "#java.util.Map";
 
+    private static final boolean isDeveloperMode = Boolean.getBoolean("atlassian.dev.mode");
+    
     /**
      * Puts a setting value.
      *
@@ -36,7 +38,11 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     public Object put(String key, Object value)
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
-        Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters");
+        Validate.isTrue(key.length() <= 255, "The plugin settings key cannot be more than 255 characters");
+        if (isDeveloperMode && key.length() > 100)
+        {
+            log.warn("PluginSettings.get with excessive key length: " + key);
+        }
         if (value == null)
         {
             return remove(key);
@@ -66,7 +72,7 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
         {
             final StringBuilder sb = new StringBuilder();
             sb.append(LIST_IDENTIFIER).append(EscapeUtils.NEW_LINE);
-            for (final Iterator i = ((List) value).iterator(); i.hasNext();)
+            for (final Iterator<?> i = ((List<?>) value).iterator(); i.hasNext();)
             {
                 sb.append(EscapeUtils.escape(i.next().toString()));
                 if (i.hasNext())
@@ -78,9 +84,9 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
         {
             final StringBuilder sb = new StringBuilder();
             sb.append(MAP_IDENTIFIER).append(EscapeUtils.NEW_LINE);
-            for (final Iterator<Entry> i = ((Map) value).entrySet().iterator(); i.hasNext();)
+            for (final Iterator<? extends Entry<?, ?>> i = ((Map<?, ?>) value).entrySet().iterator(); i.hasNext();)
             {
-                final Entry entry = i.next();
+                final Entry<?, ?> entry = i.next();
                 sb.append(EscapeUtils.escape(entry.getKey().toString()));
                 sb.append(EscapeUtils.VERTICAL_TAB);
                 sb.append(EscapeUtils.escape(entry.getValue().toString()));
@@ -106,7 +112,10 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     public Object get(String key)
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
-        Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters");
+        if (isDeveloperMode && key.length() > 100)
+        {
+            log.warn("PluginSettings.get with excessive key length: " + key);
+        }
         final String val = getActual(key);
         if (val != null && val.startsWith("#" + PROPERTIES_IDENTIFIER))
         {
@@ -178,7 +187,10 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     public Object remove(String key)
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
-        Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters");
+        if (isDeveloperMode && key.length() > 100)
+        {
+            log.warn("PluginSettings.get with excessive key length: " + key);
+        }
         Object oldValue = get(key);
         if (oldValue != null)
         {

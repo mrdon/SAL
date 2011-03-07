@@ -1,12 +1,19 @@
 package com.atlassian.sal.core.pluginsettings;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestAbstractStringPluginSettings
 {
@@ -34,22 +41,44 @@ public class TestAbstractStringPluginSettings
         acceptor.get(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetWithLongKey()
+    @Test
+    public void getWithLongKeyDoesNotCauseError()
     {
-        acceptor.get(StringUtils.repeat("a", 101));
+        assertNull(acceptor.get(StringUtils.repeat("a", 101)));
     }
 
+    @Test
+    public void getWithVeryLongKeyDoesNotCauseError()
+    {
+        assertNull(acceptor.get(StringUtils.repeat("a", 256)));
+    }
+    
     @Test(expected = IllegalArgumentException.class)
     public void testPutWithNullKey()
     {
         acceptor.put(null, "foo");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testPutWithLongKey()
+    @Test
+    public void putWith100CharacterKeyIsAlwaysAccepted()
     {
-        acceptor.put(StringUtils.repeat("a", 101), "foo");
+        acceptor.put(StringUtils.repeat("a", 100), "foo");
+    }
+    
+    /**
+     * The SAL layer accepts this key. The underlying storage layer
+     * may fail in a real application.
+     */
+    @Test
+    public void putWithVeryLongKeyIsAcceptedBySalLayer()
+    {
+        acceptor.put(StringUtils.repeat("a", 255), "foo");
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void putWithOverlyLongKeyFails()
+    {
+        acceptor.put(StringUtils.repeat("a", 256), "foo");
     }
 
     @Test
@@ -77,7 +106,7 @@ public class TestAbstractStringPluginSettings
         
         assertTrue(actual instanceof List);
         
-        final List<String> real = (List) actual;
+        final List<?> real = (List<?>) actual;
         
         assertEquals("List size should be the same", 2, real.size());
         assertEquals("List should still be in order", first, real.get(0));
@@ -100,7 +129,7 @@ public class TestAbstractStringPluginSettings
 
         assertTrue(actual instanceof List);
 
-        final List<String> real = (List) actual;
+        final List<?> real = (List<?>) actual;
 
         assertEquals("List size should be the same", 2, real.size());
         assertEquals("The content should match the original data", first, real.get(0));
@@ -125,7 +154,7 @@ public class TestAbstractStringPluginSettings
         
         assertTrue(actual instanceof Map);
         
-        final Map real = (Map) actual;
+        final Map<?, ?> real = (Map<?, ?>) actual;
         
         assertEquals("The size should be the same as what was entered.", 3, real.entrySet().size());
         assertMapEntryEquals("Map should retrieve the correct value for each key", real, first);
@@ -149,7 +178,7 @@ public class TestAbstractStringPluginSettings
 
         assertTrue(actual instanceof Map);
 
-        final Map real = (Map) actual;
+        final Map<?, ?> real = (Map<?, ?>) actual;
 
         assertEquals("The size should be the same as what was entered.", 2, real.entrySet().size());
         assertMapEntryEquals("The content should match the original data", real, first);
@@ -163,7 +192,7 @@ public class TestAbstractStringPluginSettings
         acceptor.put(KEY, value);
         final Object actual = acceptor.get(KEY);
         assertTrue(actual instanceof Map);
-        assertTrue(((Map) actual).isEmpty());
+        assertTrue(((Map<?, ?>) actual).isEmpty());
     }
 
     @Test
@@ -257,12 +286,18 @@ public class TestAbstractStringPluginSettings
         acceptor.remove(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testRemoveWithLongKey()
+    @Test
+    public void removeWithLongKeyDoesNotFail()
     {
-        acceptor.remove(StringUtils.repeat("a", 101));
+        assertNull(acceptor.remove(StringUtils.repeat("a", 101)));
     }
 
+    @Test
+    public void removeWitVeryhLongKeyDoesNotFail()
+    {
+        assertNull(acceptor.remove(StringUtils.repeat("a", 256)));
+    }
+    
     private void assertPropertiesEntryEquals(String errMsg, Properties real, String[] kvPair)
     {
         assertEquals(errMsg, kvPair[1], real.getProperty(kvPair[0]));
@@ -273,7 +308,7 @@ public class TestAbstractStringPluginSettings
         properties.setProperty(values[0], values[1]);
     }
 
-    private static void assertMapEntryEquals(String errMsg, Map real, String[] kvPair)
+    private static void assertMapEntryEquals(String errMsg, Map<?, ?> real, String[] kvPair)
     {
         assertEquals(errMsg, kvPair[1], real.get(kvPair[0]));
     }
@@ -286,7 +321,7 @@ public class TestAbstractStringPluginSettings
 
     private static final class PluginSettingsAcceptor extends AbstractStringPluginSettings
     {
-        private final Map<String,String> backingStore = new HashMap();
+        private final Map<String,String> backingStore = new HashMap<String, String>();
         
         protected void putActual(String key, String val)
         {
