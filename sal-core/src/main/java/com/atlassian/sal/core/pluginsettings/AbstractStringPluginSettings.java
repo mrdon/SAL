@@ -24,6 +24,15 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     private static final String MAP_IDENTIFIER = "#java.util.Map";
 
     /**
+     * Only some applications support >100 character keys, so plugins should
+     * not depend on it. In developer mode this restriction is enforced to
+     * highlight plugin bugs. As some applications support more, and some
+     * existing plugins rely on this behaviour, the limit is relaxed in
+     * production.
+     */
+    private final boolean isDeveloperMode = Boolean.getBoolean("atlassian.dev.mode");
+    
+    /**
      * Puts a setting value.
      *
      * @param key Setting key.  Cannot be null
@@ -36,7 +45,11 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     public Object put(String key, Object value)
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
-        Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters");
+        Validate.isTrue(key.length() <= 255, "The plugin settings key cannot be more than 255 characters");
+        if (isDeveloperMode)
+        {
+            Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters in developer mode");
+        }
         if (value == null)
         {
             return remove(key);
@@ -106,7 +119,10 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     public Object get(String key)
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
-        Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters");
+        if (isDeveloperMode && key.length() > 100)
+        {
+            log.warn("PluginSettings.get with excessive key length: " + key);
+        }
         final String val = getActual(key);
         if (val != null && val.startsWith("#" + PROPERTIES_IDENTIFIER))
         {
@@ -178,7 +194,10 @@ public abstract class AbstractStringPluginSettings implements PluginSettings
     public Object remove(String key)
     {
         Validate.notNull(key, "The plugin settings key cannot be null");
-        Validate.isTrue(key.length() <= 100, "The plugin settings key cannot be more than 100 characters");
+        if (isDeveloperMode && key.length() > 100)
+        {
+            log.warn("PluginSettings.get with excessive key length: " + key);
+        }
         Object oldValue = get(key);
         if (oldValue != null)
         {

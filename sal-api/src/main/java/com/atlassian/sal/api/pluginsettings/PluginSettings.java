@@ -16,7 +16,8 @@ import java.util.Properties;
  * </ul>
  * {@link List} and {@link Map} types must contain only {@link String}.
  * <p/>
- * The maximum length of a key is 100 characters.
+ * Implementations are only required to support keys up to 100 characters long. Some may support up to 255
+ * characters, but keys should be kept as short as possible.
  * <p/>
  * Instances are assumed to be not threadsafe and mutable.
  *
