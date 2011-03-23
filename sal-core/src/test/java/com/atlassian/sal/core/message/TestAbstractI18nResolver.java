@@ -27,6 +27,11 @@ public class TestAbstractI18nResolver extends TestCase
         {
             throw new UnsupportedOperationException();
         }
+
+        public String getRawText(final String key)
+        {
+            throw new UnsupportedOperationException();
+        }
     };
 
     public void testGetTextWithOnlyKeyParameter()

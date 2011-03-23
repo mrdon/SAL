@@ -13,6 +13,13 @@ import java.util.Map;
 public interface I18nResolver
 {
     /**
+     * Retrieve the unformatted message text associated with this key.
+     * @param key key for the i18ned message
+     * @return the unformatted message text if key is found, otherwise returns key itself.
+     */
+    String getRawText(String key);
+
+    /**
      * Given a key and a list of arguments:-
      *   1) this method returns the i18ned text formatted with the arguments if the key can be resolved.
      *   2) otherwise, the key itself will be returned (after formatting).
