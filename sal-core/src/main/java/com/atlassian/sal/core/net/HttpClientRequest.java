@@ -74,6 +74,9 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
     public HttpClientRequest setUrl(final String url)
     {
         this.url = url;
+        // Reconfigure the proxy setting for the new URL
+        // as it may or may not need to go through the system proxy
+        configureProxy();
         return this;
     }
 
@@ -376,6 +379,15 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
                 break;
         }
         return method;
+    }
+
+    /**
+     * Configures the proxy for the underlying HttpClient.
+     *
+     */
+    protected void configureProxy()
+    {
+        new HttpClientProxyConfig().configureProxy(this.httpClient, this.url);
     }
 
     private void executeMethod(final HttpMethod method, int redirectCounter) throws IOException
