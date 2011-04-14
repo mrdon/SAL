@@ -127,6 +127,10 @@ public class HttpClientRequestFactory implements NonMarshallingRequestFactory<Ht
 
     private boolean isNonProxyHost(final String host)
     {
+        if (StringUtils.isBlank(host))
+        {
+            return true;
+        }
         final String httpNonProxyHosts = System.getProperty("http.nonProxyHosts");
         if (StringUtils.isBlank(httpNonProxyHosts))
         {
