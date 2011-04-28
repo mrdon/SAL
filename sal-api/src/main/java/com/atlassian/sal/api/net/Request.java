@@ -52,6 +52,17 @@ public interface Request<T extends Request<?, ?>, RESP extends Response>
     T setRequestBody(String requestBody);
 
     /**
+     * Sets file parts of the request. File parts can only be added if the request body is empty.
+     * Only requests of type {@link MethodType#POST} and {@link MethodType#PUT} can have file parts.
+     *
+     * @param files the file parts
+     * @return a reference to this object.
+     *
+     * @since 2.5
+     */
+    T setFiles(List<RequestFilePart> files);
+
+    /**
      * Set an entity as the request body
      *
      * @param entity the request entity to be marshalled, not null

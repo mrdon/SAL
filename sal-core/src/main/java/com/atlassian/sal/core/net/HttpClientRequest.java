@@ -1,6 +1,7 @@
 package com.atlassian.sal.core.net;
 
 import com.atlassian.sal.api.net.Request;
+import com.atlassian.sal.api.net.RequestFilePart;
 import com.atlassian.sal.api.net.ResponseException;
 import com.atlassian.sal.api.net.ResponseHandler;
 import com.atlassian.sal.api.net.ReturningResponseHandler;
@@ -25,7 +26,11 @@ import org.apache.commons.httpclient.methods.OptionsMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.TraceMethod;
+import org.apache.commons.httpclient.methods.multipart.FilePart;
+import org.apache.commons.httpclient.methods.multipart.FilePartSource;
+import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -61,6 +66,7 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
     private String requestBody;
     private String requestContentType;
     private boolean followRedirects = true;
+    private List<RequestFilePart> files;
 
     public HttpClientRequest(final HttpClient httpClient, final MethodType methodType, final String url,
                              final CertificateFactory certificateFactory, final UserManager userManager)
@@ -148,11 +154,29 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
 
     public HttpClientRequest setRequestBody(final String requestBody)
     {
-        this.requestBody = requestBody;
         if (!isEntityEnclosingMethod())
         {
             throw new IllegalArgumentException("Only POST and PUT methods can have request body");
         }
+        if (files != null)
+        {
+            throw new IllegalStateException("This request contains already file parts! The request body can only be set, if the request does not contain file parts.");
+        }
+        this.requestBody = requestBody;
+        return this;
+    }
+
+    public HttpClientRequest setFiles(final List<RequestFilePart> files)
+    {
+        if (!isEntityEnclosingMethod())
+        {
+            throw new IllegalArgumentException("Only POST and PUT methods can have a multi part body with file parts.");
+        }
+        if (requestBody != null)
+        {
+            throw new IllegalStateException("The request body is not empty! The request can only have file parts if the request is empty.");
+        }
+        this.files = files;
         return this;
     }
 
@@ -460,8 +484,9 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
         {
             return;    // only POST and PUT method can apply
         }
+        EntityEnclosingMethod entityEnclosingMethod = (EntityEnclosingMethod) method;
         // Add post parameters
-        if ((method instanceof PostMethod) && !this.parameters.isEmpty())
+        if ((entityEnclosingMethod instanceof PostMethod) && !this.parameters.isEmpty())
         {
             final PostMethod postMethod = (PostMethod) method;
             postMethod.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
@@ -478,20 +503,48 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
         // Set request body
         if (this.requestBody != null)
         {
-            final EntityEnclosingMethod entityEnclosingMethod = (EntityEnclosingMethod) method;
-            final String contentType = requestContentType + "; charset=UTF-8";
-            ByteArrayInputStream inputStream;
+            setRequestBody(entityEnclosingMethod);
+        }
+
+        if (files != null && !files.isEmpty())
+        {
+            setFileParts(entityEnclosingMethod);
+        }
+    }
+
+    private void setFileParts(final EntityEnclosingMethod entityEnclosingMethod)
+    {
+        final List<FilePart> fileParts = new ArrayList<FilePart>();
+        for (RequestFilePart file : files)
+        {
             try
             {
-                inputStream = new ByteArrayInputStream(requestBody.getBytes("UTF-8"));
+                FilePartSource partSource = new FilePartSource(file.getFileName(), file.getFile());
+                FilePart filePart = new FilePart(file.getParameterName(), partSource, file.getContentType(), null);
+                fileParts.add(filePart);
             }
-            catch (final UnsupportedEncodingException e)
+            catch (IOException e)
             {
                 throw new RuntimeException(e);
             }
-            entityEnclosingMethod.setRequestEntity(new InputStreamRequestEntity(inputStream, contentType));
-
         }
+        MultipartRequestEntity entity = new MultipartRequestEntity(fileParts.toArray(new FilePart[fileParts.size()]), new HttpMethodParams());
+        entityEnclosingMethod.setRequestEntity(entity);
+    }
+
+    private void setRequestBody(final EntityEnclosingMethod method)
+    {
+        final String contentType = requestContentType + "; charset=UTF-8";
+        ByteArrayInputStream inputStream;
+        try
+        {
+            inputStream = new ByteArrayInputStream(requestBody.getBytes("UTF-8"));
+        }
+        catch (final UnsupportedEncodingException e)
+        {
+            throw new RuntimeException(e);
+        }
+        method.setRequestEntity(new InputStreamRequestEntity(inputStream, contentType));
     }
 
     private void processAuthenticator(final HttpMethod method)
