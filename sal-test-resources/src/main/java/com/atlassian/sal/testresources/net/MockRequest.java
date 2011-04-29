@@ -1,11 +1,6 @@
 package com.atlassian.sal.testresources.net;
 
-import com.atlassian.sal.api.net.Request;
-import com.atlassian.sal.api.net.RequestFilePart;
-import com.atlassian.sal.api.net.Response;
-import com.atlassian.sal.api.net.ResponseException;
-import com.atlassian.sal.api.net.ResponseHandler;
-import com.atlassian.sal.api.net.ReturningResponseHandler;
+import com.atlassian.sal.api.net.*;
 import com.atlassian.sal.api.net.auth.Authenticator;
 
 import java.util.ArrayList;
@@ -68,11 +63,6 @@ public class MockRequest implements Request<MockRequest, MockResponse>
     {
         this.requestBody = requestBody;
         return this;
-    }
-
-    public MockRequest setFiles(final List<RequestFilePart> files)
-    {
-        return null;
     }
 
     public MockRequest setEntity(Object entity)
