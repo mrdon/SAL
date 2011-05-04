@@ -17,8 +17,6 @@ import static org.junit.Assert.assertTrue;
 
 public class TestAbstractStringPluginSettings
 {
-	private static final int VERY_LONG_STRING = 99000;
-	
     private PluginSettingsAcceptor acceptor;
     private static final String KEY = "some key";
 
@@ -52,7 +50,7 @@ public class TestAbstractStringPluginSettings
     @Test
     public void getWithVeryLongKeyDoesNotCauseError()
     {
-        assertNull(acceptor.get(StringUtils.repeat("a", VERY_LONG_STRING)));
+        assertNull(acceptor.get(StringUtils.repeat("a", 256)));
     }
     
     @Test(expected = IllegalArgumentException.class)

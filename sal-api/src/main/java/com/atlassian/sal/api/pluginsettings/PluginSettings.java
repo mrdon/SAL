@@ -16,10 +16,11 @@ import java.util.Properties;
  * </ul>
  * {@link List} and {@link Map} types must contain only {@link String}.
  * <p/>
- * Implementations are only required to support writes of keys upto 255 characters in length
- * and are expected to throw an exception if the key is longer than 255 characters.
+ * Implementations are only required to support writes of keys upto 100 characters in length
+ * and are expected to throw an exception if the key is longer than 255 characters.  
+ * Keys should be kept as short as possible.
  * 
- * Reads and removes must support keys with a maximum length of 99000 character.
+ * Reads and removes must support keys longer than 256 characters.
  * <p/>
  * Instances are assumed to be not threadsafe and mutable.
  *
@@ -39,9 +40,10 @@ public interface PluginSettings
     /**
      * Puts a setting value.
      *
-     * @param key   Setting key.  Cannot be null
+     * @param key   Setting key.  Cannot be null, keys longer than 100 characters are not supported.
      * @param value Setting value.  Must be one of {@link String}, {@link List}, {@link Properties}, {@link Map}, or null.
-     *              null will remove the item from the settings.
+     *              null will remove the item from the settings.  If the value is a {@link String} it should not be longer 
+     *              than 99000 characters long. 
      * @return The setting value that was over ridden. Null if none existed.
      * @throws IllegalArgumentException if value is not {@link String}, {@link List}, {@link Properties}, {@link Map},
      *                                  or null, or if the key is null or longer than 255 characters
