@@ -34,6 +34,7 @@ public interface PluginSettings
      *
      * @param key The setting key.  Cannot be null
      * @return The setting value. May be null
+     * @throws IllegalArgumentException if the key is null.
      */
     Object get(String key);
 
@@ -43,10 +44,11 @@ public interface PluginSettings
      * @param key   Setting key.  Cannot be null, keys longer than 100 characters are not supported.
      * @param value Setting value.  Must be one of {@link String}, {@link List}, {@link Properties}, {@link Map}, or null.
      *              null will remove the item from the settings.  If the value is a {@link String} it should not be longer 
-     *              than 99000 characters long. 
+     *              than 99000 characters long.  Values of a type other than {@link String} will be serialized as a 
+     *              {@link String} which cannot be longer than 99000 characters long.
      * @return The setting value that was over ridden. Null if none existed.
      * @throws IllegalArgumentException if value is not {@link String}, {@link List}, {@link Properties}, {@link Map},
-     *                                  or null, or if the key is null or longer than 255 characters
+     *              or null, or if the key is null or longer than 255 characters
      */
     Object put(String key, Object value);
 
@@ -55,6 +57,7 @@ public interface PluginSettings
      *
      * @param key The setting key
      * @return The setting value that was removed. Null if nothing was removed.
+     * @throws IllegalArgumentException if the key is null.
      */
     Object remove(String key);
 }
