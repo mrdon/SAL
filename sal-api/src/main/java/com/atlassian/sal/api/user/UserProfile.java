@@ -1,6 +1,7 @@
 package com.atlassian.sal.api.user;
 
 import java.net.URI;
+import java.util.TimeZone;
 
 /**
  * Interface encapsulating a user's profile information. Any of the properties except
@@ -75,4 +76,14 @@ public interface UserProfile
      * pages
      */
     URI getProfilePageUri();
+
+
+    /**
+     * Returns the time zone of this user.
+     *
+     * @return the time zone.
+     *
+     * @since 2.6.0
+     */
+    TimeZone getTimeZone();
 }
