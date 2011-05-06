@@ -47,8 +47,8 @@ public interface PluginSettings
      *              than 99000 characters long.  Values of a type other than {@link String} will be serialized as a 
      *              {@link String} which cannot be longer than 99000 characters long.
      * @return The setting value that was over ridden. Null if none existed.
-     * @throws IllegalArgumentException if value is not {@link String}, {@link List}, {@link Properties}, {@link Map},
-     *              or null, or if the key is null or longer than 255 characters
+     * @throws IllegalArgumentException if value is not null, {@link String}, {@link List}, {@link Properties} or {@link Map},
+     *              or if the key is null or longer than 255 characters
      */
     Object put(String key, Object value);
 
