@@ -43,4 +43,10 @@ public interface ApplicationProperties
      */
     File getHomeDirectory();
 
+    /**
+     * Get the value of an application property by its key.
+     * @param key The Key of the property to retrieve.
+     * @return The value of the property or Null if the property does not exist
+     */
+    String getPropertyValue(String key);
 }
