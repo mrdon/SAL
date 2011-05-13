@@ -22,6 +22,14 @@ public interface LocaleResolver
     Locale getLocale(HttpServletRequest request);
 
     /**
+     * Resolve the Locale that should be used in internationalization and localization.  The
+     * locale should be determined by checking the preferences of the user in the current authentication
+     * context if available, then default to the application default locale if no preferred locale is set. 
+     * @return Locale to be used in i18n and l10n. {@link Locale#getDefault()} if none found.
+     */
+    Locale getLocale();
+    
+    /**
      * Returns a set of all the supported locales by the host application. This is all the language packs that
      * are installed.
      *

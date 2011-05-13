@@ -17,7 +17,12 @@ public class SystemDefaultLocaleResolver implements LocaleResolver
 {
     public Locale getLocale(HttpServletRequest request)
     {
-        return Locale.getDefault();
+        return getLocale();
+    }
+    
+    public Locale getLocale()
+    {
+    	return Locale.getDefault();
     }
 
     public Set<Locale> getSupportedLocales()
