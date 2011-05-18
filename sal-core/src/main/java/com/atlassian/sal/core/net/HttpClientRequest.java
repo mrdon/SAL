@@ -168,6 +168,10 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
 
     public HttpClientRequest setFiles(final List<RequestFilePart> files)
     {
+        if (files == null)
+        {
+            throw new IllegalArgumentException("Files cannot be null");
+        }
         if (!isEntityEnclosingMethod())
         {
             throw new IllegalArgumentException("Only POST and PUT methods can have a multi part body with file parts.");

@@ -55,8 +55,11 @@ public interface Request<T extends Request<?, ?>, RESP extends Response>
      * Sets file parts of the request. File parts can only be added if the request body is empty.
      * Only requests of type {@link MethodType#POST} and {@link MethodType#PUT} can have file parts.
      *
-     * @param files the file parts
+     * @param files the file parts, cannot be null.
      * @return a reference to this object.
+     *
+     * @throws IllegalArgumentException if the method of this request is not a POST or PUT or files is NULL.
+     * @throws IllegalStateException if the request body for this request has already been set.
      *
      * @since 2.6
      */
