@@ -26,7 +26,7 @@ import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
  */
 public class DefaultPluginUpgradeManager implements PluginUpgradeManager, LifecycleAware
 {
-	private static final Logger log = Logger.getLogger(DefaultPluginUpgradeManager.class);
+    private static final Logger log = Logger.getLogger(DefaultPluginUpgradeManager.class);
 
     private final List<PluginUpgradeTask> upgradeTasks;
     private final TransactionTemplate transactionTemplate;
@@ -77,32 +77,32 @@ public class DefaultPluginUpgradeManager implements PluginUpgradeManager, Lifecy
     }
 
     /**
-	 * @return map of all upgrade tasks (stored by pluginKey)
-	 */
-	protected Map<String, List<PluginUpgradeTask>> getUpgradeTasks()
-	{
-		final Map<String, List<PluginUpgradeTask>> pluginUpgrades = new HashMap<String, List<PluginUpgradeTask>>();
+     * @return map of all upgrade tasks (stored by pluginKey)
+     */
+    protected Map<String, List<PluginUpgradeTask>> getUpgradeTasks()
+    {
+        final Map<String, List<PluginUpgradeTask>> pluginUpgrades = new HashMap<String, List<PluginUpgradeTask>>();
 
-		// Find all implementations of PluginUpgradeTask
-    	for (final PluginUpgradeTask upgradeTask : upgradeTasks)
-		{
-    		List<PluginUpgradeTask> upgrades = pluginUpgrades.get(upgradeTask.getPluginKey());
-    		if (upgrades==null)
-    		{
-    			upgrades=new ArrayList<PluginUpgradeTask>();
-    			pluginUpgrades.put(upgradeTask.getPluginKey(), upgrades);
-    		}
-    		upgrades.add(upgradeTask);
-		}
+        // Find all implementations of PluginUpgradeTask
+        for (final PluginUpgradeTask upgradeTask : upgradeTasks)
+        {
+            List<PluginUpgradeTask> upgrades = pluginUpgrades.get(upgradeTask.getPluginKey());
+            if (upgrades==null)
+            {
+                upgrades=new ArrayList<PluginUpgradeTask>();
+                pluginUpgrades.put(upgradeTask.getPluginKey(), upgrades);
+            }
+            upgrades.add(upgradeTask);
+        }
 
-    	return pluginUpgrades;
-	}
+        return pluginUpgrades;
+    }
 
 
     @SuppressWarnings("unchecked")
     public List<Message> upgrade()
-	{
-		//JRA-737: Need to ensure upgrades run in a transaction.  Just calling upgrade here may not provide this
+    {
+        //JRA-737: Need to ensure upgrades run in a transaction.  Just calling upgrade here may not provide this
         //as no this may be executed outside of a 'normal' context where a transaction is available.
         final List<Message> messages = (List<Message>) transactionTemplate.execute(new TransactionCallback()
         {
@@ -111,37 +111,37 @@ public class DefaultPluginUpgradeManager implements PluginUpgradeManager, Lifecy
                 return upgradeInternal();
             }
         });
-		return messages;
-	}
+        return messages;
+    }
 
-	public List<Message> upgradeInternal()
-	{
+    public List<Message> upgradeInternal()
+    {
         log.info("Running plugin upgrade tasks...");
 
-		// 1. get all upgrade tasks for all plugins
-		final Map<String, List<PluginUpgradeTask>> pluginUpgrades = getUpgradeTasks();
+        // 1. get all upgrade tasks for all plugins
+        final Map<String, List<PluginUpgradeTask>> pluginUpgrades = getUpgradeTasks();
 
 
-		final ArrayList<Message> messages = new ArrayList<Message>();
+        final ArrayList<Message> messages = new ArrayList<Message>();
 
-		// 2. for each plugin, sort tasks by build number and execute them
-		for (final String pluginKey : pluginUpgrades.keySet())
-		{
-			final List<PluginUpgradeTask> upgrades = pluginUpgrades.get(pluginKey);
+        // 2. for each plugin, sort tasks by build number and execute them
+        for (final String pluginKey : pluginUpgrades.keySet())
+        {
+            final List<PluginUpgradeTask> upgrades = pluginUpgrades.get(pluginKey);
 
-			final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
-			if (plugin == null)
-				throw new IllegalArgumentException("Invalid plugin key: " + pluginKey);
+            final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
+            if (plugin == null)
+                throw new IllegalArgumentException("Invalid plugin key: " + pluginKey);
 
-			final PluginUpgrader pluginUpgrader = new PluginUpgrader(plugin, pluginSettingsFactory.createGlobalSettings(), upgrades);
-			final List<Message> upgradeMessages = pluginUpgrader.upgrade();
-			if (upgradeMessages != null)
-			{
-				messages.addAll(upgradeMessages);
-			}
-		}
+            final PluginUpgrader pluginUpgrader = new PluginUpgrader(plugin, pluginSettingsFactory.createGlobalSettings(), upgrades);
+            final List<Message> upgradeMessages = pluginUpgrader.upgrade();
+            if (upgradeMessages != null)
+            {
+                messages.addAll(upgradeMessages);
+            }
+        }
 
-		return messages;
-	}
+        return messages;
+    }
 
 }
