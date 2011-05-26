@@ -174,7 +174,10 @@ public interface Request<T extends Request<?, ?>, RESP extends Response>
      * Executes the request.
      *
      * @param responseHandler Callback handler of the response.
-     * @throws ResponseException If the response cannot be retrieved
+     * @throws ResponseProtocolException If the server returned a malformed response
+     * @throws ResponseTimeoutException If a connection timeout or read timeout occurred
+     * @throws ResponseTransportException If an I/O error occurred in request transport
+     * @throws ResponseException For all errors not otherwise specified
      */
     void execute(ResponseHandler<RESP> responseHandler) throws ResponseException;
 
@@ -182,7 +185,11 @@ public interface Request<T extends Request<?, ?>, RESP extends Response>
      * Executes a request and if response is successful, returns response as a string. @see {@link Response#getResponseBodyAsString()}
      *
      * @return response as String
-     * @throws ResponseException If the response cannot be retrieved
+     * @throws ResponseStatusException If the server returned a response that contained an error code
+     * @throws ResponseProtocolException If the server returned a malformed response
+     * @throws ResponseTimeoutException If a connection timeout or read timeout occurred
+     * @throws ResponseTransportException If an I/O error occurred in request transport
+     * @throws ResponseException For all errors not otherwise specified
      */
     String execute() throws ResponseException;
 
@@ -190,7 +197,10 @@ public interface Request<T extends Request<?, ?>, RESP extends Response>
      * Executes the request and returns a result value.
      *
      * @param responseHandler Callback handler of the response.
-     * @throws ResponseException If the response cannot be retrieved
+     * @throws ResponseProtocolException If the server returned a malformed response
+     * @throws ResponseTimeoutException If a connection timeout or read timeout occurred
+     * @throws ResponseTransportException If an I/O error occurred in request transport
+     * @throws ResponseException For all errors not otherwise specified
      * @since   v2.2.0
      */
     <RET> RET executeAndReturn(ReturningResponseHandler<RESP, RET> responseHandler) throws ResponseException;

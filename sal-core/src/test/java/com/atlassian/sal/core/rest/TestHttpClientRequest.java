@@ -1,17 +1,26 @@
 package com.atlassian.sal.core.rest;
 
 import com.atlassian.sal.api.net.Request.MethodType;
+import com.atlassian.sal.api.net.ResponseConnectTimeoutException;
 import com.atlassian.sal.api.net.ResponseException;
 import com.atlassian.sal.api.net.ResponseHandler;
+import com.atlassian.sal.api.net.ResponseProtocolException;
+import com.atlassian.sal.api.net.ResponseReadTimeoutException;
+import com.atlassian.sal.api.net.ResponseStatusException;
+import com.atlassian.sal.api.net.ResponseTransportException;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.core.net.HttpClientRequest;
 import com.atlassian.sal.core.net.HttpClientResponse;
 import com.atlassian.sal.core.net.auth.HttpClientAuthenticator;
 import com.atlassian.sal.core.trusted.CertificateFactory;
 import junit.framework.TestCase;
+
+import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.NoHttpResponseException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
@@ -20,8 +29,10 @@ import org.easymock.classextension.IMocksControl;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.easymock.EasyMock.isA;
 import static org.mockito.Mockito.mock;
 
 public class TestHttpClientRequest extends TestCase
@@ -63,7 +74,135 @@ public class TestHttpClientRequest extends TestCase
         assertEquals("Two authenticator should be called.", 2, authenticatorCounter.intValue());
     }
 
-    public void testMaxNumberOfRedirectionReached() throws IOException
+    public void testConnectTimeout() throws IOException, ResponseException
+    {
+        // create HttpClient that will throw a ConnectTimeoutException
+        final IMocksControl httpClientMockControl = EasyMock.createNiceControl();
+        final HttpClient httpClientMock = httpClientMockControl.createMock(HttpClient.class);
+        httpClientMock.executeMethod(isA(GetMethod.class));
+        httpClientMockControl.andThrow(new ConnectTimeoutException("errordescription"));
+        httpClientMockControl.replay();
+
+        HttpClientRequest request = createMockRequest(httpClientMock, MethodType.GET, "http://url");
+
+        try
+        {
+            request.execute(EasyMock.createMock(ResponseHandler.class));
+            fail("Should throw ResponseConnectTimeoutException");
+        }
+        catch (ResponseConnectTimeoutException e)
+        {
+            // expect Exception
+            assertEquals(ConnectTimeoutException.class, e.getCause().getClass());
+            assertEquals("errordescription", e.getMessage());
+        }
+    }
+
+    public void testReadTimeout() throws IOException, ResponseException
+    {
+        // create HttpClient that will throw a NoHttpResponseException
+        final IMocksControl httpClientMockControl = EasyMock.createNiceControl();
+        final HttpClient httpClientMock = httpClientMockControl.createMock(HttpClient.class);
+        httpClientMock.executeMethod(isA(GetMethod.class));
+        httpClientMockControl.andThrow(new NoHttpResponseException("errordescription"));
+        httpClientMockControl.replay();
+
+        HttpClientRequest request = createMockRequest(httpClientMock, MethodType.GET, "http://url");
+
+        try
+        {
+            request.execute(EasyMock.createMock(ResponseHandler.class));
+            fail("Should throw ResponseConnectTimeoutException");
+        }
+        catch (ResponseReadTimeoutException e)
+        {
+            // expect Exception
+            assertEquals(NoHttpResponseException.class, e.getCause().getClass());
+            assertEquals("errordescription", e.getMessage());
+        }
+    }
+
+    public void testHttpException() throws IOException, ResponseException
+    {
+        // create HttpClient that will throw an HttpException
+        final IMocksControl httpClientMockControl = EasyMock.createNiceControl();
+        final HttpClient httpClientMock = httpClientMockControl.createMock(HttpClient.class);
+        httpClientMock.executeMethod(isA(GetMethod.class));
+        httpClientMockControl.andThrow(new HttpException("errordescription"));
+        httpClientMockControl.replay();
+
+        HttpClientRequest request = createMockRequest(httpClientMock, MethodType.GET, "http://url");
+
+        try
+        {
+            request.execute(EasyMock.createMock(ResponseHandler.class));
+            fail("Should throw ResponseProtocolException");
+        }
+        catch (ResponseProtocolException e)
+        {
+            // expect Exception
+            assertEquals(HttpException.class, e.getCause().getClass());
+            assertEquals("errordescription", e.getMessage());
+        }
+    }
+
+    public void testSocketException() throws IOException, ResponseException
+    {
+        // create HttpClient that will throw a SocketException
+        final IMocksControl httpClientMockControl = EasyMock.createNiceControl();
+        final HttpClient httpClientMock = httpClientMockControl.createMock(HttpClient.class);
+        httpClientMock.executeMethod(isA(GetMethod.class));
+        httpClientMockControl.andThrow(new SocketException("errordescription"));
+        httpClientMockControl.replay();
+
+        HttpClientRequest request = createMockRequest(httpClientMock, MethodType.GET, "http://url");
+
+        try
+        {
+            request.execute(EasyMock.createMock(ResponseHandler.class));
+            fail("Should throw ResponseTransportException");
+        }
+        catch (ResponseTransportException e)
+        {
+            // expect Exception
+            assertEquals(SocketException.class, e.getCause().getClass());
+            assertEquals("errordescription", e.getMessage());
+        }
+    }
+
+    public void testStatusException() throws IOException, ResponseException
+    {
+        // create mock GetMethod that returns a 400 error
+        final IMocksControl mockControl = EasyMock.createNiceControl();
+        final GetMethod mockGetMethod = mockControl.createMock(GetMethod.class);
+        mockGetMethod.getStatusCode();
+        mockControl.andReturn(400);
+        mockControl.anyTimes();
+        mockControl.replay();
+
+        // create HttpClient that will return this response
+        final IMocksControl httpClientMockControl = EasyMock.createNiceControl();
+        final HttpClient httpClientMock = httpClientMockControl.createMock(HttpClient.class);
+        httpClientMock.executeMethod(mockGetMethod);
+        httpClientMockControl.andReturn(400);
+        httpClientMockControl.replay();
+
+        HttpClientRequest request = createMockRequest(httpClientMock, mockGetMethod, MethodType.GET, "http://url");
+
+        try
+        {
+            request.execute();
+            fail("Should throw ResponseStatusException");
+        }
+        catch (ResponseStatusException e)
+        {
+            // expect Exception
+            assertNotNull(e.getResponse());
+            assertEquals(400, e.getResponse().getStatusCode());
+        }
+    }
+    
+    public void testMaxNumberOfRedirectionReached() throws IOException, ResponseException
     {
         // create mock GetMethod - it should redirect few times
         final IMocksControl mockControl = EasyMock.createNiceControl();
@@ -81,24 +220,15 @@ public class TestHttpClientRequest extends TestCase
         httpClientMockControl.times(HttpClientRequest.MAX_REDIRECTS);
         httpClientMockControl.replay();
 
-        // create a request that will return mockGetMethod
-        HttpClientRequest request = new HttpClientRequest(httpClientMock, MethodType.GET, "http://url",
-                mock(CertificateFactory.class), mock(UserManager.class))
-        {
-            @Override
-            protected HttpMethod makeMethod()
-            {
-                return mockGetMethod;
-            }
-        };
+        HttpClientRequest request = createMockRequest(httpClientMock, mockGetMethod, MethodType.GET, "http://url");
 
         // now use it
         try
         {
             request.execute(EasyMock.createMock(ResponseHandler.class));
-            fail("Should throw IOException - maximum retries reached.");
+            fail("Should throw ResponseProtocolException - maximum retries reached.");
         }
-        catch (ResponseException e)
+        catch (ResponseProtocolException e)
         {
             // expect Exception
         }
@@ -123,18 +253,8 @@ public class TestHttpClientRequest extends TestCase
         httpClientMockControl.andReturn(302).anyTimes();
         httpClientMockControl.replay();
 
-        // create a request that will return mockGetMethod
-        HttpClientRequest request = new HttpClientRequest(httpClientMock, MethodType.GET, "http://url",
-                mock(CertificateFactory.class), mock(UserManager.class))
-        {
-            @Override
-            protected HttpMethod makeMethod()
-            {
-                return mockGetMethod;
-            }
-        };
+        HttpClientRequest request = createMockRequest(httpClientMock, mockGetMethod, MethodType.GET, "http://url");
         request.setFollowRedirects(false);
-        
                
         // now use it
         try
@@ -153,11 +273,8 @@ public class TestHttpClientRequest extends TestCase
 
     public void testFollowRedirectForPostMethodsNotPossible() throws Exception
     {
-        final HttpClient httpClientMock = EasyMock.createMock(HttpClient.class);
-
         // create a request that will return mockGetMethod
-        HttpClientRequest request = new HttpClientRequest(httpClientMock, MethodType.POST, "http://url",
-                mock(CertificateFactory.class), mock(UserManager.class));
+        HttpClientRequest request = createMockRequest(MethodType.POST, "http://url");
         try
         {
             request.setFollowRedirects(true);
@@ -172,11 +289,7 @@ public class TestHttpClientRequest extends TestCase
 
     public void testFollowRedirectForPutMethodsNotPossible() throws Exception
     {
-        final HttpClient httpClientMock = EasyMock.createMock(HttpClient.class);
-
-        // create a request that will return mockGetMethod
-        HttpClientRequest request = new HttpClientRequest(httpClientMock, MethodType.PUT, "http://url",
-                mock(CertificateFactory.class), mock(UserManager.class));
+        HttpClientRequest request = createMockRequest(MethodType.PUT, "http://url");
 
         try
         {
@@ -194,16 +307,7 @@ public class TestHttpClientRequest extends TestCase
         final HttpClient httpClientMock = mock(HttpClient.class);
         final PostMethod postMethod = mock(PostMethod.class);
 
-        // create a request that will return mockGetMethod
-        HttpClientRequest request = new HttpClientRequest(httpClientMock, MethodType.POST, "http://url",
-                mock(CertificateFactory.class), mock(UserManager.class))
-        {
-            @Override
-            protected HttpMethod makeMethod()
-            {
-                return postMethod;
-            }
-        };
+        HttpClientRequest request = createMockRequest(httpClientMock, postMethod, MethodType.POST, "http://url");
 
         request.execute(new ResponseHandler<HttpClientResponse>(){
             public void handle(final HttpClientResponse response) throws ResponseException
@@ -219,16 +323,7 @@ public class TestHttpClientRequest extends TestCase
         final HttpClient httpClientMock = mock(HttpClient.class);
         final PutMethod putMethod = mock(PutMethod.class);
 
-        // create a request that will return mockGetMethod
-        HttpClientRequest request = new HttpClientRequest(httpClientMock, MethodType.PUT, "http://url",
-                mock(CertificateFactory.class), mock(UserManager.class))
-        {
-            @Override
-            protected HttpMethod makeMethod()
-            {
-                return putMethod;
-            }
-        };
+        HttpClientRequest request = createMockRequest(httpClientMock, putMethod, MethodType.PUT, "http://url");
 
         request.execute(new ResponseHandler<HttpClientResponse>(){
             public void handle(final HttpClientResponse response) throws ResponseException
@@ -244,8 +339,7 @@ public class TestHttpClientRequest extends TestCase
         // Lets try to add parameters to GET method
         try
         {
-            HttpClientRequest request = new HttpClientRequest(EasyMock.createMock(HttpClient.class), MethodType.GET, "http://url",
-                    mock(CertificateFactory.class), mock(UserManager.class));
+            HttpClientRequest request = createMockRequest(MethodType.GET, "http://url");
             request.addRequestParameters("doIt", "quickly!");
             fail("Should throw exception that only the POST method can have parameters.");
         }
@@ -257,8 +351,7 @@ public class TestHttpClientRequest extends TestCase
         // Lets try to add parameters to PUT method
         try
         {
-            HttpClientRequest request = new HttpClientRequest(EasyMock.createMock(HttpClient.class), MethodType.PUT, "http://url",
-                    mock(CertificateFactory.class), mock(UserManager.class));
+            HttpClientRequest request = createMockRequest(MethodType.PUT, "http://url");
             request.addRequestParameters("Isaid", "doIt", "now");
             fail("Should throw exception that only the POST method can have parameters.");
         }
@@ -270,8 +363,7 @@ public class TestHttpClientRequest extends TestCase
         // Lets try to add uneven amount of parameters to POST method
         try
         {
-            HttpClientRequest request = new HttpClientRequest(EasyMock.createMock(HttpClient.class), MethodType.POST, "http://url",
-                    mock(CertificateFactory.class), mock(UserManager.class));
+            HttpClientRequest request = createMockRequest(MethodType.POST, "http://url");
             request.addRequestParameters("doIt", "quickly!", "now");
             fail("Should throw exception that You must enter an even number of arguments.");
         }
@@ -300,15 +392,7 @@ public class TestHttpClientRequest extends TestCase
 
 
         // create a request that will return mockPostMethod
-        HttpClientRequest request = new HttpClientRequest(mockHttpClient, MethodType.POST, "http://url",
-                mock(CertificateFactory.class), mock(UserManager.class))
-        {
-            @Override
-            protected HttpMethod makeMethod()
-            {
-                return mockPostMethod;
-            }
-        };
+        HttpClientRequest request = createMockRequest(mockHttpClient, mockPostMethod, MethodType.POST, "http://url");
 
         // now use it
         request.addRequestParameters("a", "b", "a", "b", "a", "c", "x", "y");
@@ -316,5 +400,29 @@ public class TestHttpClientRequest extends TestCase
 
         // and assert results
         mockControl.verify();
+    }
+
+    private HttpClientRequest createMockRequest(MethodType methodType, String url)
+    {
+        return createMockRequest(EasyMock.createMock(HttpClient.class), methodType, url);
+    }
+
+    private HttpClientRequest createMockRequest(HttpClient client, MethodType methodType, String url)
+    {
+        return new HttpClientRequest(client, methodType, url,
+                                     mock(CertificateFactory.class), mock(UserManager.class));
+    }
+
+    private HttpClientRequest createMockRequest(HttpClient client, final HttpMethod method, MethodType methodType,
+                                                String url)
+    {
+        return new HttpClientRequest(client, methodType, url, mock(CertificateFactory.class), mock(UserManager.class))
+            {
+                @Override
+                protected HttpMethod makeMethod()
+                {
+                    return method;
+                }
+            };
     }
 }

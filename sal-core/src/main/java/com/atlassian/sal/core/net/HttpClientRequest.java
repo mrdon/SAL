@@ -2,8 +2,13 @@ package com.atlassian.sal.core.net;
 
 import com.atlassian.sal.api.net.Request;
 import com.atlassian.sal.api.net.RequestFilePart;
+import com.atlassian.sal.api.net.ResponseConnectTimeoutException;
 import com.atlassian.sal.api.net.ResponseException;
 import com.atlassian.sal.api.net.ResponseHandler;
+import com.atlassian.sal.api.net.ResponseProtocolException;
+import com.atlassian.sal.api.net.ResponseReadTimeoutException;
+import com.atlassian.sal.api.net.ResponseStatusException;
+import com.atlassian.sal.api.net.ResponseTransportException;
 import com.atlassian.sal.api.net.ReturningResponseHandler;
 import com.atlassian.sal.api.net.auth.Authenticator;
 import com.atlassian.sal.api.user.UserManager;
@@ -12,10 +17,14 @@ import com.atlassian.sal.core.net.auth.HttpClientAuthenticator;
 import com.atlassian.sal.core.net.auth.SeraphAuthenticator;
 import com.atlassian.sal.core.net.auth.TrustedTokenAuthenticator;
 import com.atlassian.sal.core.trusted.CertificateFactory;
+
+import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.NoHttpResponseException;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
@@ -38,6 +47,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -296,6 +306,22 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
             executeMethod(method, 0);
             return httpClientResponseResponseHandler.handle(new HttpClientResponse(method));
         }
+        catch (ConnectTimeoutException cte)
+        {
+            throw new ResponseConnectTimeoutException(cte.getMessage(), cte);
+        }
+        catch (SocketException se)
+        {
+            throw new ResponseTransportException(se.getMessage(), se);
+        }
+        catch (NoHttpResponseException nhre)
+        {
+            throw new ResponseReadTimeoutException(nhre.getMessage(), nhre);
+        }
+        catch (HttpException he)
+        {
+            throw new ResponseProtocolException(he.getMessage(), he);
+        }
         catch (IOException ioe)
         {
             throw new ResponseException(ioe);
@@ -390,7 +416,8 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
             {
                 if (!response.isSuccessful())
                 {
-                    throw new ResponseException("Unexpected response received. Status code: " + response.getStatusCode());
+                    throw new ResponseStatusException("Unexpected response received. Status code: " + response.getStatusCode(),
+                                                      response);
                 }
                 return response.getResponseBodyAsString();
             }
@@ -439,11 +466,12 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
         new HttpClientProxyConfig().configureProxy(this.httpClient, this.url);
     }
 
-    private void executeMethod(final HttpMethod method, int redirectCounter) throws IOException
+    private void executeMethod(final HttpMethod method, int redirectCounter) throws IOException, ResponseProtocolException
     {
         if (++redirectCounter > MAX_REDIRECTS)
         {
-            throw new IOException("Maximum number of redirects (" + MAX_REDIRECTS + ") reached.");
+            // Putting the error message inside a wrapped IOException for backward compatibility
+            throw new ResponseProtocolException(new IOException("Maximum number of redirects (" + MAX_REDIRECTS + ") reached."));
         }
         else
         {
@@ -465,7 +493,8 @@ public class HttpClientRequest implements Request<HttpClientRequest, HttpClientR
                     // The response is invalid and did not provide the new location for
                     // the resource.  Report an error or possibly handle the response
                     // like a 404 Not Found error.
-                    throw new IOException("HTTP response returned redirect code " + statusCode + " but did not provide a location header");
+                    // (Putting the error message inside a wrapped IOException for backward compatibility)
+                    throw new ResponseProtocolException(new IOException("HTTP response returned redirect code " + statusCode + " but did not provide a location header"));
                 }
             }
         }
