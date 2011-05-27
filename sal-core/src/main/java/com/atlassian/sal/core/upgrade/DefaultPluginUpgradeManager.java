@@ -9,6 +9,9 @@ import org.apache.log4j.Logger;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.event.PluginEventListener;
+import com.atlassian.plugin.event.PluginEventManager;
+import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
@@ -18,28 +21,53 @@ import com.atlassian.sal.api.upgrade.PluginUpgradeManager;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
 
 /**
- * Processes plugin upgrade operations.  Upgrades are triggered by the start lifecycle event.
+ * Processes plugin upgrade operations.
+ * <p>
+ * Upgrades are triggered by the start lifecycle event, and plugin enabled.
  *
- * NOTE: Currently, this implementation only runs upgrade tasks when the plugins system is initialized or restarted.
+ * NOTE: The original implementation only runs upgrade tasks when the plugins system is initialized or restarted.
+ * If you use the old (deprecated) constructor you will get this behaviour.
  * If your plugin is disabled and it provides an upgrade task and a user then enables your plugin, the upgrade task
  * will not run until the plugins system or application is restarted.
+ *
+ * If you use the new Constructor, then upgrade tasks will also be run for plugins that are enabled.
  */
 public class DefaultPluginUpgradeManager implements PluginUpgradeManager, LifecycleAware
 {
     private static final Logger log = Logger.getLogger(DefaultPluginUpgradeManager.class);
+
+    private volatile boolean started = false;
 
     private final List<PluginUpgradeTask> upgradeTasks;
     private final TransactionTemplate transactionTemplate;
     private final PluginAccessor pluginAccessor;
     private final PluginSettingsFactory pluginSettingsFactory;
 
+    /**
+     * Deprecated Constructor that fails to upgrade plugins on enable
+     *
+     * @deprecated This Constructor fails to upgrade plugins on enable. Use {@link #DefaultPluginUpgradeManager(java.util.List,
+     *             com.atlassian.sal.api.transaction.TransactionTemplate, com.atlassian.plugin.PluginAccessor,
+     *             com.atlassian.sal.api.pluginsettings.PluginSettingsFactory, com.atlassian.plugin.event.PluginEventManager)}
+     *             instead. Since v4.4.
+     */
     public DefaultPluginUpgradeManager(final List<PluginUpgradeTask> upgradeTasks, final TransactionTemplate transactionTemplate,
-                                       final PluginAccessor pluginAccessor, final PluginSettingsFactory pluginSettingsFactory)
+            final PluginAccessor pluginAccessor, final PluginSettingsFactory pluginSettingsFactory)
     {
         this.upgradeTasks = upgradeTasks;
         this.transactionTemplate = transactionTemplate;
         this.pluginAccessor = pluginAccessor;
         this.pluginSettingsFactory = pluginSettingsFactory;
+    }
+
+    public DefaultPluginUpgradeManager(final List<PluginUpgradeTask> upgradeTasks, final TransactionTemplate transactionTemplate,
+            final PluginAccessor pluginAccessor, final PluginSettingsFactory pluginSettingsFactory, final PluginEventManager pluginEventManager)
+    {
+        this.upgradeTasks = upgradeTasks;
+        this.transactionTemplate = transactionTemplate;
+        this.pluginAccessor = pluginAccessor;
+        this.pluginSettingsFactory = pluginSettingsFactory;
+        pluginEventManager.register(this);
     }
 
     /**
@@ -74,6 +102,28 @@ public class DefaultPluginUpgradeManager implements PluginUpgradeManager, Lifecy
                 log.error("Upgrade error: "+msg);
             }
         }
+
+        started = true;
+    }
+
+    @PluginEventListener
+    public void onPluginEnabled(PluginEnabledEvent event)
+    {
+        // Check if the Application is fully started:
+        if (started)
+        {
+            // Run upgrades for this plugin that as been enabled AFTER the onStart event.
+            final List<Message> messages = upgradeInTransaction(event.getPlugin());
+            if (messages != null && messages.size() > 0)
+            {
+                log.error("Error(s) encountered while upgrading plugin '" + event.getPlugin().getName() + "' on enable.");
+                for(final Message msg : messages)
+                {
+                    log.error("Upgrade error: " + msg);
+                }
+            }
+        }
+        // If onStart() has not occurred yet then ignore event - we need to wait until the App is started properly.
     }
 
     /**
@@ -129,12 +179,7 @@ public class DefaultPluginUpgradeManager implements PluginUpgradeManager, Lifecy
         {
             final List<PluginUpgradeTask> upgrades = pluginUpgrades.get(pluginKey);
 
-            final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
-            if (plugin == null)
-                throw new IllegalArgumentException("Invalid plugin key: " + pluginKey);
-
-            final PluginUpgrader pluginUpgrader = new PluginUpgrader(plugin, pluginSettingsFactory.createGlobalSettings(), upgrades);
-            final List<Message> upgradeMessages = pluginUpgrader.upgrade();
+            final List<Message> upgradeMessages = upgradePlugin(pluginKey, upgrades);
             if (upgradeMessages != null)
             {
                 messages.addAll(upgradeMessages);
@@ -142,6 +187,43 @@ public class DefaultPluginUpgradeManager implements PluginUpgradeManager, Lifecy
         }
 
         return messages;
+    }
+
+    private List<Message> upgradeInTransaction(final Plugin plugin)
+    {
+        // Apparently we need to run in a transaction
+        final List<Message> messages = (List<Message>) transactionTemplate.execute(new TransactionCallback()
+        {
+            public Object doInTransaction()
+            {
+                return upgradeInternal(plugin);
+            }
+        });
+        return messages;
+    }
+
+    public List<Message> upgradeInternal(Plugin plugin)
+    {
+        final Map<String, List<PluginUpgradeTask>> pluginUpgrades = getUpgradeTasks();
+        final String pluginKey = plugin.getKey();
+        final List<PluginUpgradeTask> upgrades = pluginUpgrades.get(pluginKey);
+        if (upgrades == null)
+        {
+            // nothing to do
+            return null;
+        }
+        return upgradePlugin(pluginKey, upgrades);
+    }
+
+    private List<Message> upgradePlugin(String pluginKey, List<PluginUpgradeTask> upgrades)
+    {
+        final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
+        if (plugin == null)
+            throw new IllegalArgumentException("Invalid plugin key: " + pluginKey);
+
+        final PluginUpgrader pluginUpgrader = new PluginUpgrader(plugin, pluginSettingsFactory.createGlobalSettings(), upgrades);
+        final List<Message> upgradeMessages = pluginUpgrader.upgrade();
+        return upgradeMessages;
     }
 
 }
