@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
@@ -32,7 +34,7 @@ import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
  *
  * If you use the new Constructor, then upgrade tasks will also be run for plugins that are enabled.
  */
-public class DefaultPluginUpgradeManager implements PluginUpgradeManager, LifecycleAware
+public class DefaultPluginUpgradeManager implements PluginUpgradeManager, LifecycleAware, InitializingBean, DisposableBean
 {
     private static final Logger log = Logger.getLogger(DefaultPluginUpgradeManager.class);
 
@@ -42,6 +44,7 @@ public class DefaultPluginUpgradeManager implements PluginUpgradeManager, Lifecy
     private final TransactionTemplate transactionTemplate;
     private final PluginAccessor pluginAccessor;
     private final PluginSettingsFactory pluginSettingsFactory;
+    private final PluginEventManager pluginEventManager;
 
     /**
      * Deprecated Constructor that fails to upgrade plugins on enable
@@ -58,6 +61,7 @@ public class DefaultPluginUpgradeManager implements PluginUpgradeManager, Lifecy
         this.transactionTemplate = transactionTemplate;
         this.pluginAccessor = pluginAccessor;
         this.pluginSettingsFactory = pluginSettingsFactory;
+        this.pluginEventManager = null;
     }
 
     public DefaultPluginUpgradeManager(final List<PluginUpgradeTask> upgradeTasks, final TransactionTemplate transactionTemplate,
@@ -67,7 +71,7 @@ public class DefaultPluginUpgradeManager implements PluginUpgradeManager, Lifecy
         this.transactionTemplate = transactionTemplate;
         this.pluginAccessor = pluginAccessor;
         this.pluginSettingsFactory = pluginSettingsFactory;
-        pluginEventManager.register(this);
+        this.pluginEventManager = pluginEventManager;
     }
 
     /**
@@ -226,4 +230,19 @@ public class DefaultPluginUpgradeManager implements PluginUpgradeManager, Lifecy
         return upgradeMessages;
     }
 
+    public void afterPropertiesSet() throws Exception
+    {
+        if (pluginEventManager != null)
+        {
+            pluginEventManager.register(this);
+        }
+    }
+
+    public void destroy() throws Exception
+    {
+        if (pluginEventManager != null)
+        {
+            pluginEventManager.unregister(this);
+        }
+    }
 }
