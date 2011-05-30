@@ -49,7 +49,7 @@ public class DefaultPluginUpgradeManager implements PluginUpgradeManager, Lifecy
      * @deprecated This Constructor fails to upgrade plugins on enable. Use {@link #DefaultPluginUpgradeManager(java.util.List,
      *             com.atlassian.sal.api.transaction.TransactionTemplate, com.atlassian.plugin.PluginAccessor,
      *             com.atlassian.sal.api.pluginsettings.PluginSettingsFactory, com.atlassian.plugin.event.PluginEventManager)}
-     *             instead. Since v4.4.
+     *             instead. Since v2.6.1.
      */
     public DefaultPluginUpgradeManager(final List<PluginUpgradeTask> upgradeTasks, final TransactionTemplate transactionTemplate,
             final PluginAccessor pluginAccessor, final PluginSettingsFactory pluginSettingsFactory)
