@@ -47,6 +47,8 @@ public interface ApplicationProperties
      * Get the value of an application property by its key.
      * @param key The Key of the property to retrieve.
      * @return The value of the property or Null if the property does not exist
+     * @deprecated As of SAL 2.7.
      */
+    @Deprecated
     String getPropertyValue(String key);
 }
