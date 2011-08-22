@@ -319,7 +319,7 @@ public class TestAbstractStringPluginSettings
     }
 
     @Test
-    public void removeWitVeryhLongKeyDoesNotFail()
+    public void removeWithVeryLongKeyDoesNotFail()
     {
         assertNull(acceptor.remove(StringUtils.repeat("a", 256)));
     }
