@@ -18,7 +18,8 @@ public interface LicenseHandler
     /**
      * Gets the server ID of the currently running application.
      *
-     * @return the server ID.
+     * @return the server ID, or {@code null} if a license is not yet applied 
+     *         to the currently running application.
      */
     String getServerId();
 
