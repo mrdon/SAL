@@ -16,10 +16,13 @@ public interface LicenseHandler
     void setLicense(String license);
 
     /**
-     * Gets the server ID of the currently running application.
+     * Gets the server ID of the currently running application.  The server ID format is four quadruples of
+     * alphanumeric characters, each separated by a dash (<tt>-</tt>).
      *
-     * @return the server ID, or {@code null} if a license is not yet applied 
+     * @return the server ID, or {@code null} if a license is not yet applied
      *         to the currently running application.
+     *
+     * @since 2.7
      */
     String getServerId();
 
@@ -27,6 +30,8 @@ public interface LicenseHandler
      * Gets the Support Entitlement Number (SEN) for the currently running application.
      *
      * @return the Support Entitlement Number, or {@code null} if there is no current support entitlement.
+     *
+     * @since 2.7
      */
     String getSupportEntitlementNumber();
 }
