@@ -15,7 +15,7 @@
     </parent>
 
     <properties>
-        <plug.version>2.6.0</plug.version>
+        <plug.version>2.11.0-m1</plug.version>
         <fp.version>0.2-alpha1</fp.version>
         <jdkLevel>1.5</jdkLevel>
         <spring.version>2.5.6</spring.version>
@@ -119,9 +119,9 @@
                 <version>0.38</version>
             </dependency>
             <dependency>
-                <groupId>com.google.collections</groupId>
-                <artifactId>google-collections</artifactId>
-                <version>1.0</version>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>10.0.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
